@@ -30,3 +30,12 @@ export interface Tour {
   description: string;
   waypointIds: string[];
 }
+
+export interface AppState {
+  waypoints: Waypoint[];
+  edges: WaypointEdge[];
+  tours: Tour[];
+  selectedWaypointId: string | null;
+  activeTourId: string | null;
+  activeTourStep: number;
+}
