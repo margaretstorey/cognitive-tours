@@ -105,6 +105,9 @@ export const INITIAL_EDGES: WaypointEdge[] = [
   { id: 'e06', source: 'w06', target: 'w08' },
   { id: 'e07', source: 'w03', target: 'w09' },
   { id: 'e08', source: 'w10', target: 'w04' },
+  { id: 'e09', source: 'w01', target: 'w13' },
+  { id: 'e10', source: 'w02', target: 'w13' },
+  { id: 'e11', source: 'w03', target: 'w13' },
 ];
 
 export const INITIAL_TOURS: Tour[] = [
