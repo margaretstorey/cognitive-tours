@@ -81,6 +81,13 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     position: { x: 940, y: 500 },
   },
   {
+    id: 'w13',
+    label: 'Waypoints and Tours are Universal',
+    type: 'Feature',
+    description: 'A waypoint can represent anything meaningful: a decision, a risk, a component, a todo, or an open question. A tour can represent any ordered narrative: onboarding, a prioritized backlog, a sprint, or a roadmap. Shrimp is a unified intent and navigation layer, not just a code understanding tool.',
+    position: { x: 100, y: 450 },
+  },
+  {
     id: 'w12',
     label: 'How should waypoints be exported/shared?',
     type: 'Open Question',
