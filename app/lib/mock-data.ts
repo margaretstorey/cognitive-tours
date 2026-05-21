@@ -27,6 +27,7 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     label: 'Local state only for MVP',
     type: 'ADR',
     description: 'Decision: all data lives in React useState and resets on page refresh. Rationale: shipping a working, demonstrable tool matters more than persistence. A database adds complexity we don\'t need to validate the core concept.',
+    notes: 'Full decision record: docs/adr/002-local-state-for-mvp.md',
     position: { x: 660, y: 320 },
   },
   {
@@ -34,6 +35,7 @@ export const INITIAL_WAYPOINTS: Waypoint[] = [
     label: 'React Flow for graph visualization',
     type: 'ADR',
     description: 'Decision: use @xyflow/react for the graph canvas. Rationale: React Flow is a mature, TypeScript-first library that handles node rendering, edge routing, drag-to-connect, and pan/zoom — saving weeks of custom graph work.',
+    notes: 'Full decision record: docs/adr/001-use-react-flow.md',
     position: { x: 660, y: 80 },
   },
   {
