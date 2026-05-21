@@ -1,19 +1,20 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.0.0 → 1.1.0 (MINOR: new principle added)
+Version change: 1.1.0 → 1.2.0 (MINOR: two new principles added)
 
 Principles added:
-  - VI. Waypoints and Tours are Universal (new)
+  - VII. Flexible Navigation (new)
+  - VIII. Human and Agent Readable (new)
 
 Principles modified: none
 
 Sections modified:
-  - Development Workflow — updated "all five Core Principles" → "all six Core Principles"
+  - Development Workflow — updated "all six Core Principles" → "all eight Core Principles"
 
 Templates requiring updates:
   ✅ .specify/memory/constitution.md — this file
-  ✅ .specify/templates/plan-template.md — Constitution Check gate VI added
+  ✅ .specify/templates/plan-template.md — Constitution Check gates VII and VIII added
 
 Deferred TODOs: none
 -->
@@ -98,6 +99,39 @@ intent and navigation layer for software projects.
 - Any feature that makes Shrimp useful only for software codebases is a violation of this principle
   unless it is explicitly opt-in and does not degrade the general-purpose experience.
 
+### VII. Flexible Navigation
+
+Shrimp MUST support navigation of code, intent, or any combination of both. A project MUST be free
+to use only code waypoints, only intent waypoints, or mix them freely. The tool MUST NOT force or
+privilege one mode over the other.
+
+- The UI and data model MUST treat code-linked and intent-only waypoints as first-class equals.
+- Features MUST NOT assume that all waypoints reference a file, repository, or code artifact; a
+  waypoint describing a business goal or open question is fully valid with no code attachment.
+- Navigation affordances (tours, graph layout, filtering) MUST work equally well for code-centric
+  and intent-centric maps.
+- Defaults MUST NOT bias toward either mode; any mode-specific behaviour MUST be explicitly
+  user-configured.
+
+### VIII. Human and Agent Readable
+
+Every waypoint MUST be meaningful to both a human reader and an AI agent consuming it as context.
+Waypoints are not just documentation — they are structured context that helps humans build mental
+models and helps AI agents work safely and intentionally within a codebase. This is Shrimp's most
+important property.
+
+- Every waypoint's `label` and `description` MUST be written in plain language that a human with
+  no prior project knowledge can understand without additional context.
+- Waypoint content MUST be self-contained: it MUST NOT rely on implicit knowledge, internal
+  abbreviations, or links that may break.
+- AI Instruction waypoints MUST be actionable directives — concrete enough that an AI agent can
+  act on them without ambiguity.
+- Features that degrade waypoint readability (e.g., auto-generated opaque identifiers as labels,
+  truncated descriptions, or content only meaningful in a specific tool's UI) are violations of
+  this principle.
+- The waypoint data model MUST remain structured and machine-readable (typed fields, no free-form
+  blobs) so that AI agents can consume the full map as reliable context.
+
 ## Technology Standards
 
 - **Language**: TypeScript (strict mode). No JavaScript files in `src/`.
@@ -117,7 +151,7 @@ intent and navigation layer for software projects.
 - Each stage MUST be committed before the next begins (enforced by extension hooks).
 - PRs MUST reference the spec user story they satisfy.
 - A Constitution Check MUST be performed at the start of plan.md and re-checked after Phase 1 design.
-  The check MUST verify compliance with all six Core Principles before work is considered plannable.
+  The check MUST verify compliance with all eight Core Principles before work is considered plannable.
 - No feature is "done" until it passes its acceptance scenarios and the UI has been manually verified
   in a running browser.
 
@@ -139,4 +173,4 @@ conflicts with it MUST be updated to comply.
 All PRs and code reviews MUST verify compliance with the Core Principles. Non-compliance is a blocking
 review comment, not a suggestion.
 
-**Version**: 1.1.0 | **Ratified**: 2026-05-21 | **Last Amended**: 2026-05-21
+**Version**: 1.2.0 | **Ratified**: 2026-05-21 | **Last Amended**: 2026-05-21
