@@ -105,8 +105,8 @@ appears in the graph. Remove the connection and verify the edge disappears.
 
 **Acceptance Scenarios**:
 
-1. **Given** two waypoints exist, **When** the user performs a connect action between them,
-   **Then** a directed edge appears between the two nodes in the graph.
+1. **Given** two waypoints exist, **When** the user drags from a handle on the source node to the
+   target node, **Then** a directed edge appears between the two nodes in the graph.
 2. **Given** an edge exists, **When** the user selects and removes it, **Then** the edge disappears.
 3. **Given** the graph is rendered with connections, **When** the user views it, **Then** edges are
    visually distinct from nodes and do not obscure node labels.
@@ -149,6 +149,9 @@ order, reorder them, and verify the tour appears in the selector and navigates i
   an inline error shown; self-loops are not permitted.
 - What happens if state is lost on page refresh? The MVP uses local state only — data does not
   persist across refreshes. This is an accepted, documented limitation, not a bug.
+- What happens when a waypoint is deleted? All connections to or from that waypoint MUST be removed
+  automatically, and the waypoint MUST be removed from any tour that contains it. Tours that become
+  empty as a result of deletion MUST remain in the tour selector (the tour itself is not deleted).
 
 ## Requirements *(mandatory)*
 
@@ -170,14 +173,21 @@ order, reorder them, and verify the tour appears in the selector and navigates i
   - "Why Waypoints and Tours Exist"
 - **FR-010**: Users MUST be able to create a new waypoint with a title, type, and optional description.
 - **FR-011**: Users MUST be able to edit an existing waypoint's title, type, and description.
-- **FR-012**: Users MUST be able to draw a connection (directed edge) between two waypoints.
+- **FR-012**: Users MUST be able to create a connection (directed edge) between two waypoints by
+  dragging from a handle on the source node to the target node in the graph canvas.
 - **FR-013**: Users MUST be able to remove an existing connection between waypoints.
 - **FR-014**: Users MUST be able to create a new tour with a name and an ordered list of waypoints.
 - **FR-015**: Users MUST be able to reorder, add, and remove waypoints within a tour they are editing.
-- **FR-016**: All state MUST be held in local (in-memory) application state; no server, database, or
+- **FR-016a**: Users MUST be able to delete a waypoint from the graph.
+- **FR-016b**: Deleting a waypoint MUST automatically remove all connections to or from that waypoint
+  and MUST remove that waypoint from any tour that references it (cascade delete). The tour itself
+  is not deleted; it simply contains one fewer step.
+- **FR-016c**: All state MUST be held in local (in-memory) application state; no server, database, or
   external storage is used in this version.
-- **FR-017**: The app MUST ship with a pre-populated set of mock waypoints and the two sample tours to
-  demonstrate the map concept without requiring the user to build from scratch.
+- **FR-017**: The app MUST ship with a pre-populated set of mock waypoints and the two sample tours.
+  The mock data MUST use Shrimp 2.0 itself as the subject — the waypoints represent Shrimp's own
+  user needs, features, design decisions, and open questions, so the tool demonstrates its own
+  purpose on first load.
 - **FR-018**: The UI MUST be usable at a standard desktop viewport (1280px wide minimum) without
   horizontal scrolling.
 
@@ -203,12 +213,20 @@ order, reorder them, and verify the tour appears in the selector and navigates i
   identify each type without reading labels in at least 80% of cases during informal testing.
 - **SC-005**: The app loads and displays the sample data in under two seconds on a standard laptop.
 
+## Clarifications
+
+### Session 2026-05-21
+
+- Q: When a waypoint is deleted, what should happen to its connections and tour memberships? → A: Cascade delete — remove all connections to/from it and remove it from all tours automatically.
+- Q: How does the user create a connection between two waypoints? → A: Drag from the edge/handle of the source node to the target node in the graph canvas.
+- Q: What project should the sample tours and mock waypoints represent? → A: Shrimp 2.0 itself — the map explains Shrimp's own design, waypoints, and tours (dogfood).
+
 ## Assumptions
 
 - The MVP targets desktop browsers only; mobile and tablet layouts are out of scope.
 - All data is ephemeral — state resets on page refresh. Users are informed of this limitation in the UI.
-- The two sample tours and their associated waypoints are hard-coded as mock data and do not need to
-  be editable in the first release.
+- The two sample tours and their associated waypoints are hard-coded as mock data representing
+  Shrimp 2.0 itself (dogfood). They do not need to be editable in the first release.
 - No user accounts, login, or per-user state exist; the app is single-session.
 - Authentication, GitHub integration, AI summarization, repository parsing, and database persistence
   are explicitly out of scope for this version.
