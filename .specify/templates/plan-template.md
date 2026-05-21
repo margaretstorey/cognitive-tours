@@ -45,6 +45,9 @@
 - [ ] **III. Intent Before Implementation**: Is the spec complete with user stories and acceptance criteria before any code is planned?
 - [ ] **IV. Clean TypeScript**: Is strict TypeScript enforced with no `any` or unjustified type assertions planned?
 - [ ] **V. Minimal UI**: Does the UI design include only elements that earn their place and serve a functional purpose?
+- [ ] **VI. Universal Waypoints & Tours**: Does this feature keep waypoints and tours domain-agnostic, usable beyond code understanding contexts?
+- [ ] **VII. Flexible Navigation**: Does this feature treat code-linked and intent-only waypoints as equals, without forcing or privileging one navigation mode?
+- [ ] **VIII. Human and Agent Readable**: Are all waypoint labels and descriptions self-contained plain language, meaningful to both human readers and AI agents?
 
 ## Project Structure
 
