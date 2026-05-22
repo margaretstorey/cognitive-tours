@@ -228,6 +228,27 @@ export default function ShrimpApp() {
     [clearErrorAfterDelay],
   );
 
+  const deleteTour = useCallback(
+    (id: string) => {
+      const snapshot = tours;
+      setTours(prev => prev.filter(t => t.id !== id));
+      if (activeTourId === id) {
+        setActiveTourId(null);
+        setActiveTourStepRaw(0);
+      }
+      void (async () => {
+        try {
+          await apiFetch(`/api/tours/${id}`, { method: 'DELETE' });
+        } catch {
+          setTours(snapshot);
+          setErrorMessage('Failed to delete tour.');
+          clearErrorAfterDelay();
+        }
+      })();
+    },
+    [tours, activeTourId, clearErrorAfterDelay],
+  );
+
   // T025
   const updateTour = useCallback(
     (id: string, data: Partial<Omit<Tour, 'id'>>) => {
@@ -359,6 +380,7 @@ export default function ShrimpApp() {
         onPrev={onPrev}
         onCreateTour={createTour}
         onUpdateTour={updateTour}
+        onDeleteTour={deleteTour}
         waypoints={waypoints}
       />
       <div className="flex flex-1 overflow-hidden">

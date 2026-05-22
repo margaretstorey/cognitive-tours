@@ -84,7 +84,7 @@ data persists. Acceptance scenarios from spec.md should all pass.
 
 ## Phase 4: Polish & Cross-Cutting Concerns
 
-- [ ] T026 [P] Add `"postinstall": "prisma generate"` to `scripts` in `package.json` so the Prisma client is regenerated automatically after `npm install` (prevents stale generated code after schema changes)
+- [x] T026 [P] Add `"postinstall": "prisma generate"` to `scripts` in `package.json` so the Prisma client is regenerated automatically after `npm install` (prevents stale generated code after schema changes)
 - [ ] T027 Manually verify all four acceptance scenarios from spec.md User Story 1 in a running browser: (1) create waypoints+tours → reload → all present; (2) edit waypoint → reload → updated description shown; (3) delete waypoint → reload → absent; (4) create edge → reload → edge present
 
 ---
