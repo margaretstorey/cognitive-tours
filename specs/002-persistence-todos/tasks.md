@@ -21,10 +21,10 @@ ShrimpApp mutation conversions are sequential (same file).
 
 **Purpose**: Install dependencies and initialize the Prisma project.
 
-- [ ] T001 Install `prisma` and `@prisma/client` packages: `npm install prisma @prisma/client`
-- [ ] T002 Run `npx prisma init --datasource-provider sqlite`; in the generated `.env` change `DATABASE_URL` to `"file:./prisma/dev.db"`; confirm `prisma/dev.db` is listed in `.gitignore` (add it if not)
-- [ ] T003 Write `prisma/schema.prisma` — replace template with full schema from data-model.md: `Waypoint`, `Edge`, `Tour`, `TourWaypoint` models (including `onDelete: Cascade` on `TourWaypoint.tour`)
-- [ ] T004 Run `npx prisma migrate dev --name init` to create `prisma/dev.db` and generate the typed Prisma client under `node_modules/@prisma/client`
+- [x] T001 Install `prisma` and `@prisma/client` packages: `npm install prisma @prisma/client`
+- [x] T002 Run `npx prisma init --datasource-provider sqlite`; in the generated `.env` change `DATABASE_URL` to `"file:./prisma/dev.db"`; confirm `prisma/dev.db` is listed in `.gitignore` (add it if not)
+- [x] T003 Write `prisma/schema.prisma` — replace template with full schema from data-model.md: `Waypoint`, `Edge`, `Tour`, `TourWaypoint` models (including `onDelete: Cascade` on `TourWaypoint.tour`)
+- [x] T004 Run `npx prisma migrate dev --name init` to create `prisma/dev.db` and generate the typed Prisma client under `node_modules/@prisma/client`
 
 ---
 

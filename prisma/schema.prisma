@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Waypoint {
+  id          String  @id
+  label       String
+  type        String
+  description String
+  notes       String?
+  posX        Float
+  posY        Float
+}
+
+model Edge {
+  id     String  @id
+  source String
+  target String
+  label  String?
+}
+
+model Tour {
+  id          String         @id
+  name        String
+  description String
+  waypoints   TourWaypoint[]
+}
+
+model TourWaypoint {
+  tourId     String
+  waypointId String
+  order      Int
+  tour       Tour   @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  @@id([tourId, order])
+  @@index([tourId])
+}
