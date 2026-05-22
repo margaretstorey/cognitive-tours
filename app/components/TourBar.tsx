@@ -13,6 +13,7 @@ interface TourBarProps {
   onPrev: () => void;
   onCreateTour: (data: Omit<Tour, 'id'>) => void;
   onUpdateTour: (id: string, data: Partial<Omit<Tour, 'id'>>) => void;
+  onDeleteTour: (id: string) => void;
   waypoints: Waypoint[];
 }
 
@@ -35,6 +36,7 @@ export default function TourBar({
   onPrev,
   onCreateTour,
   onUpdateTour,
+  onDeleteTour,
   waypoints,
 }: TourBarProps) {
   const [editor, setEditor] = useState<TourEditorState>({
@@ -200,7 +202,15 @@ export default function TourBar({
                 ))}
               </select>
             </div>
-            <div className="flex gap-2 justify-end border-t pt-3">
+            <div className="flex gap-2 items-center border-t pt-3">
+              {editor.mode === 'edit' && editor.tourId && (
+                <button
+                  onClick={() => { onDeleteTour(editor.tourId!); closeEditor(); }}
+                  className="px-4 py-1.5 text-sm border border-red-300 text-red-600 rounded hover:bg-red-50 mr-auto"
+                >
+                  Delete tour
+                </button>
+              )}
               <button onClick={closeEditor} className="px-4 py-1.5 text-sm border rounded hover:bg-gray-50">Cancel</button>
               <button
                 onClick={saveEditor}
