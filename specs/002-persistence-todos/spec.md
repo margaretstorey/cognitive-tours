@@ -52,12 +52,15 @@ are present with the same content and connections.
   sessions.
 - **FR-002**: The app MUST load persisted data on startup; no data created in a previous session
   MUST be lost on reload.
-- **FR-003**: All create, update, and delete operations on waypoints, edges, and tours MUST be
-  durably saved before the operation is considered complete from the user's perspective.
+- **FR-003**: All create, update, and delete operations on waypoints, edges, and tours use an
+  optimistic update strategy: the UI updates immediately and the save completes in the background.
+  If the write fails, the UI MUST revert to the pre-operation state and display an error to the user.
 - **FR-004**: The app MUST seed the database with the existing Shrimp mock data on first run
   (when the database is empty), so new users see the sample understanding map without manual setup.
 - **FR-005**: If the persistence layer is unavailable or returns an error, the app MUST display a
   clear, user-visible error message and MUST NOT silently fail or show stale data.
+- **FR-006**: On startup, the app MUST display a loading spinner or skeleton screen while data is
+  being fetched from the database. The graph MUST NOT render until data is ready.
 
 ### Key Entities
 
@@ -73,6 +76,13 @@ are present with the same content and connections.
   normal operating conditions (no data loss on refresh).
 - **SC-002**: First load of a new database (with seed data) completes and renders the full
   understanding map in under 3 seconds.
+
+## Clarifications
+
+### Session 2026-05-21
+
+- Q: When a user saves a waypoint or creates a connection, does the UI update immediately or wait for the save to confirm? → A: Optimistic — UI updates immediately; save happens in background; UI reverts and shows error if write fails.
+- Q: What should the user see while the app is fetching persisted data on startup? → A: Loading spinner or skeleton screen shown until data is ready, then graph appears.
 
 ## Assumptions
 
