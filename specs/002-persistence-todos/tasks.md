@@ -34,8 +34,8 @@ ShrimpApp mutation conversions are sequential (same file).
 
 **⚠️ CRITICAL**: No API route work can begin until this phase is complete.
 
-- [ ] T005 [P] Create `app/lib/db.ts` — Prisma client singleton using the global-caching pattern for Next.js dev hot-reload compatibility (see plan.md Implementation Notes)
-- [ ] T006 [P] Create `app/lib/db-mappers.ts` — three pure mapping functions per data-model.md: `toWaypoint(row)`, `toEdge(row)`, `toTour(row & { waypoints })` with explicit Prisma input types and AppState return types; no `any`
+- [x] T005 [P] Create `app/lib/db.ts` — Prisma client singleton using the global-caching pattern for Next.js dev hot-reload compatibility (see plan.md Implementation Notes)
+- [x] T006 [P] Create `app/lib/db-mappers.ts` — three pure mapping functions per data-model.md: `toWaypoint(row)`, `toEdge(row)`, `toTour(row & { waypoints })` with explicit Prisma input types and AppState return types; no `any`
 
 **Checkpoint**: Foundation ready — API route implementation can begin in parallel.
 
