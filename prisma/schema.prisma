@@ -13,6 +13,7 @@ model Waypoint {
   type        String
   description String
   notes       String?
+  filePath    String?
   posX        Float
   posY        Float
 }

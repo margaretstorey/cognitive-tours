@@ -21,8 +21,8 @@ are blocking prerequisites; all UI and API changes are then parallelizable.
 **Purpose**: Add the `filePath` column to the database. Must complete before any code change,
 because the Prisma client is regenerated here and all subsequent TypeScript imports depend on it.
 
-- [ ] T001 Add `filePath String?` to the `Waypoint` model in `prisma/schema.prisma` (after the `notes` field)
-- [ ] T002 Run `npx prisma migrate dev --name add-waypoint-filepath` to create the migration and regenerate the Prisma client in `app/generated/prisma/`
+- [x] T001 Add `filePath String?` to the `Waypoint` model in `prisma/schema.prisma` (after the `notes` field)
+- [x] T002 Run `npx prisma migrate dev --name add-waypoint-filepath` to create the migration and regenerate the Prisma client in `app/generated/prisma/`
 
 ---
 
@@ -33,8 +33,8 @@ tasks depend on these two files being updated first.
 
 **⚠️ CRITICAL**: UI and API tasks cannot be completed correctly until T003 and T004 are done.
 
-- [ ] T003 [P] Add `filePath?: string` to the `Waypoint` interface in `app/lib/types.ts` (after the `notes?: string` field)
-- [ ] T004 [P] Add `filePath: row.filePath ?? undefined` to `toWaypoint()` in `app/lib/db-mappers.ts` (after the `notes` line)
+- [x] T003 [P] Add `filePath?: string` to the `Waypoint` interface in `app/lib/types.ts` (after the `notes?: string` field)
+- [x] T004 [P] Add `filePath: row.filePath ?? undefined` to `toWaypoint()` in `app/lib/db-mappers.ts` (after the `notes` line)
 
 **Checkpoint**: Foundation ready — all remaining tasks can proceed in parallel.
 
