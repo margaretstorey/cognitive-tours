@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 
@@ -16,6 +19,7 @@ export default function WaypointDetail({ waypoint, onEdit, onDelete }: WaypointD
     );
   }
 
+  const [copied, setCopied] = useState(false);
   const colorClass = WAYPOINT_COLORS[waypoint.type];
 
   return (
@@ -31,6 +35,32 @@ export default function WaypointDetail({ waypoint, onEdit, onDelete }: WaypointD
         <div className="text-sm text-gray-500 border-t pt-3">
           <div className="font-medium text-gray-600 mb-1">Notes</div>
           <p className="leading-relaxed">{waypoint.notes}</p>
+        </div>
+      )}
+      {waypoint.filePath && (
+        <div className="text-sm text-gray-500 border-t pt-3">
+          <div className="font-medium text-gray-600 mb-1">File Path</div>
+          <p className="font-mono text-xs text-gray-700 break-all mb-2">{waypoint.filePath}</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(waypoint.filePath!).catch(() => {});
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+            >
+              {copied ? <span className="text-green-600 font-medium">Copied!</span> : 'Copy path'}
+            </button>
+            <a
+              href={`vscode://file/Users/mstorey/shrimp-2/${waypoint.filePath}`}
+              target="_blank"
+              rel="noreferrer"
+              className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+            >
+              Open in VS Code
+            </a>
+          </div>
         </div>
       )}
       <div className="flex gap-2 border-t pt-3">

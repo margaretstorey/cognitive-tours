@@ -14,6 +14,7 @@ export function toWaypoint(row: DbWaypoint): Waypoint {
     type: row.type as WaypointType,
     description: row.description,
     notes: row.notes ?? undefined,
+    filePath: row.filePath ?? undefined,
     position: { x: row.posX, y: row.posY },
   };
 }
