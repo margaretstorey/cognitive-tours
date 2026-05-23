@@ -51,13 +51,13 @@ path and "Copied!" appears briefly.
 
 ### API routes (T005–T006 are parallel — different files)
 
-- [ ] T005 [P] [US1] In `app/api/waypoints/route.ts`: add `filePath: body.filePath ?? null` to the `prisma.waypoint.create` data object (after `notes`)
-- [ ] T006 [P] [US1] In `app/api/waypoints/[id]/route.ts`: add `...(body.filePath !== undefined && { filePath: body.filePath || null })` to the conditional update spread in the `PUT` handler
+- [x] T005 [P] [US1] In `app/api/waypoints/route.ts`: add `filePath: body.filePath ?? null` to the `prisma.waypoint.create` data object (after `notes`)
+- [x] T006 [P] [US1] In `app/api/waypoints/[id]/route.ts`: add `...(body.filePath !== undefined && { filePath: body.filePath || null })` to the conditional update spread in the `PUT` handler
 
 ### UI components (T007–T008 are parallel — different files)
 
-- [ ] T007 [P] [US1] In `app/components/WaypointForm.tsx`: add `filePath` to local form state (init: `initialValues?.filePath ?? ''`); add an optional "File Path" text input after the Notes field (placeholder: "e.g. src/components/MyComponent.tsx"); pass `filePath: filePath.trim() || undefined` in the `onSave` call
-- [ ] T008 [P] [US1] In `app/components/WaypointDetail.tsx`: add `const [copied, setCopied] = useState(false)`; below the notes section, conditionally render a "File Path" row when `waypoint.filePath` is truthy — show the path in monospace text; on click call `navigator.clipboard.writeText(waypoint.filePath).catch(() => {})`, `setCopied(true)`, and `setTimeout(() => setCopied(false), 2000)`; show "Copied!" in place of the copy hint while `copied` is true
+- [x] T007 [P] [US1] In `app/components/WaypointForm.tsx`: add `filePath` to local form state (init: `initialValues?.filePath ?? ''`); add an optional "File Path" text input after the Notes field (placeholder: "e.g. src/components/MyComponent.tsx"); pass `filePath: filePath.trim() || undefined` in the `onSave` call
+- [x] T008 [P] [US1] In `app/components/WaypointDetail.tsx`: add `const [copied, setCopied] = useState(false)`; below the notes section, conditionally render a "File Path" row when `waypoint.filePath` is truthy — show the path in monospace text; on click call `navigator.clipboard.writeText(waypoint.filePath).catch(() => {})`, `setCopied(true)`, and `setTimeout(() => setCopied(false), 2000)`; show "Copied!" in place of the copy hint while `copied` is true
 
 **Checkpoint**: US1 fully functional — all four acceptance scenarios from spec.md should pass.
 

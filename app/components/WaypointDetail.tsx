@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 
@@ -16,6 +19,7 @@ export default function WaypointDetail({ waypoint, onEdit, onDelete }: WaypointD
     );
   }
 
+  const [copied, setCopied] = useState(false);
   const colorClass = WAYPOINT_COLORS[waypoint.type];
 
   return (
@@ -31,6 +35,22 @@ export default function WaypointDetail({ waypoint, onEdit, onDelete }: WaypointD
         <div className="text-sm text-gray-500 border-t pt-3">
           <div className="font-medium text-gray-600 mb-1">Notes</div>
           <p className="leading-relaxed">{waypoint.notes}</p>
+        </div>
+      )}
+      {waypoint.filePath && (
+        <div className="text-sm text-gray-500 border-t pt-3">
+          <div className="font-medium text-gray-600 mb-1">File Path</div>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(waypoint.filePath!).catch(() => {});
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            className="font-mono text-xs text-gray-700 hover:text-blue-600 cursor-pointer text-left break-all"
+            title="Click to copy"
+          >
+            {copied ? <span className="text-green-600 font-sans font-medium">Copied!</span> : waypoint.filePath}
+          </button>
         </div>
       )}
       <div className="flex gap-2 border-t pt-3">

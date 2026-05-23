@@ -15,6 +15,7 @@ export async function POST(request: Request) {
         type: body.type,
         description: body.description,
         notes: body.notes ?? null,
+        filePath: body.filePath ?? null,
         posX: body.position.x,
         posY: body.position.y,
       },

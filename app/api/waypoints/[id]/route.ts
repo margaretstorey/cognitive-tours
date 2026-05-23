@@ -17,6 +17,7 @@ export async function PUT(
         ...(body.type !== undefined && { type: body.type }),
         ...(body.description !== undefined && { description: body.description }),
         ...(body.notes !== undefined && { notes: body.notes ?? null }),
+        ...(body.filePath !== undefined && { filePath: body.filePath || null }),
         ...(body.position !== undefined && { posX: body.position.x, posY: body.position.y }),
       },
     });

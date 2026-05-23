@@ -26,12 +26,13 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
   const [type, setType] = useState<WaypointType | ''>(initialValues?.type ?? '');
   const [description, setDescription] = useState(initialValues?.description ?? '');
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
+  const [filePath, setFilePath] = useState(initialValues?.filePath ?? '');
 
   const canSave = label.trim() !== '' && type !== '';
 
   const handleSave = () => {
     if (!canSave) return;
-    onSave({ label: label.trim(), type: type as WaypointType, description: description.trim(), notes: notes.trim() || undefined });
+    onSave({ label: label.trim(), type: type as WaypointType, description: description.trim(), notes: notes.trim() || undefined, filePath: filePath.trim() || undefined });
   };
 
   return (
@@ -85,6 +86,16 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
             value={notes}
             onChange={e => setNotes(e.target.value)}
             placeholder="Supplementary notes"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium">File Path <span className="text-gray-400 font-normal">(optional)</span></label>
+          <input
+            className="border border-gray-300 rounded px-3 py-1.5 text-sm font-mono"
+            value={filePath}
+            onChange={e => setFilePath(e.target.value)}
+            placeholder="e.g. src/components/MyComponent.tsx"
           />
         </div>
 
