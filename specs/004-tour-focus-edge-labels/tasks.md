@@ -23,9 +23,9 @@ implemented sequentially in the same files.
 **Purpose**: Update shared prop interfaces in both components so US1 and US2 can be added
 cleanly. These are non-breaking additive changes that must precede story implementation.
 
-- [ ] T001 In `app/components/WaypointGraph.tsx`: add `activeTourWaypointIds: string[]` to the `WaypointGraphProps` interface and destructure it in the `Graph` function signature
-- [ ] T002 In `app/components/WaypointGraph.tsx`: update the `onConnect` prop type in `WaypointGraphProps` from `(connection: { source: string; target: string }) => void` to `(connection: { source: string; target: string; label?: string }) => void`
-- [ ] T003 [P] In `app/components/ShrimpApp.tsx`: update the `addEdge` handler parameter from `{ source: string; target: string }` to `{ source: string; target: string; label?: string }` and spread `label` into the `WaypointEdge` object alongside `id`, `source`, and `target`
+- [x] T001 In `app/components/WaypointGraph.tsx`: add `activeTourWaypointIds: string[]` to the `WaypointGraphProps` interface and destructure it in the `Graph` function signature
+- [x] T002 In `app/components/WaypointGraph.tsx`: update the `onConnect` prop type in `WaypointGraphProps` from `(connection: { source: string; target: string }) => void` to `(connection: { source: string; target: string; label?: string }) => void`
+- [x] T003 [P] In `app/components/ShrimpApp.tsx`: update the `addEdge` handler parameter from `{ source: string; target: string }` to `{ source: string; target: string; label?: string }` and spread `label` into the `WaypointEdge` object alongside `id`, `source`, and `target`
 
 **Checkpoint**: `tsc --noEmit` passes. Foundation ready for story implementation.
 
@@ -40,9 +40,9 @@ opacity in the graph. Full opacity is restored when no tour is selected.
 Verify the 3 non-tour waypoints are visually faint and the 2 tour waypoints are at full
 brightness. Deselect the tour and verify all 5 return to full opacity.
 
-- [ ] T004 [US1] In `app/components/ShrimpApp.tsx`: derive `const activeTourWaypointIds = activeTour?.waypointIds ?? []` and pass it to `<WaypointGraph activeTourWaypointIds={activeTourWaypointIds} />`
-- [ ] T005 [US1] In `app/components/WaypointGraph.tsx` `Graph` component: update the `nodes` `useMemo` to add `style: activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(w.id) ? { opacity: 0.2 } : undefined` on each node; add `activeTourWaypointIds` to the `useMemo` dependency array
-- [ ] T006 [US1] In `app/components/WaypointGraph.tsx` `Graph` component: update the `rfEdges` `useMemo` to add `style: activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(e.source) && !activeTourWaypointIds.includes(e.target) ? { opacity: 0.2 } : undefined` on each edge; add `activeTourWaypointIds` to the `useMemo` dependency array
+- [x] T004 [US1] In `app/components/ShrimpApp.tsx`: derive `const activeTourWaypointIds = activeTour?.waypointIds ?? []` and pass it to `<WaypointGraph activeTourWaypointIds={activeTourWaypointIds} />`
+- [x] T005 [US1] In `app/components/WaypointGraph.tsx` `Graph` component: update the `nodes` `useMemo` to add `style: activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(w.id) ? { opacity: 0.2 } : undefined` on each node; add `activeTourWaypointIds` to the `useMemo` dependency array
+- [x] T006 [US1] In `app/components/WaypointGraph.tsx` `Graph` component: update the `rfEdges` `useMemo` to add `style: activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(e.source) && !activeTourWaypointIds.includes(e.target) ? { opacity: 0.2 } : undefined` on each edge; add `activeTourWaypointIds` to the `useMemo` dependency array
 
 **Checkpoint**: Tour focus verified — selecting a tour dims non-tour elements; deselecting restores all.
 

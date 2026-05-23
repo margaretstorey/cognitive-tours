@@ -165,7 +165,7 @@ export default function ShrimpApp() {
 
   // T022
   const addEdge = useCallback(
-    (connection: { source: string; target: string }) => {
+    (connection: { source: string; target: string; label?: string }) => {
       if (connection.source === connection.target) return;
       const id = `e-${Date.now()}`;
       const newEdge: WaypointEdge = { id, ...connection };
@@ -389,6 +389,7 @@ export default function ShrimpApp() {
             waypoints={waypoints}
             edges={edges}
             selectedWaypointId={selectedWaypointId}
+            activeTourWaypointIds={activeTour?.waypointIds ?? []}
             onSelectWaypoint={selectWaypoint}
             onConnect={addEdge}
             onDeleteEdge={deleteEdge}

@@ -45,8 +45,9 @@ interface WaypointGraphProps {
   waypoints: Waypoint[];
   edges: WaypointEdge[];
   selectedWaypointId: string | null;
+  activeTourWaypointIds: string[];
   onSelectWaypoint: (id: string | null) => void;
-  onConnect: (connection: { source: string; target: string }) => void;
+  onConnect: (connection: { source: string; target: string; label?: string }) => void;
   onDeleteEdge: (id: string) => void;
   onDeleteWaypoint: (id: string) => void;
   onNodePositionChange: (id: string, position: { x: number; y: number }) => void;
@@ -57,6 +58,7 @@ function Graph({
   waypoints,
   edges,
   selectedWaypointId,
+  activeTourWaypointIds,
   onSelectWaypoint,
   onConnect,
   onDeleteEdge,
@@ -71,13 +73,29 @@ function Graph({
         position: w.position,
         data: { waypoint: w },
         selected: w.id === selectedWaypointId,
+        style:
+          activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(w.id)
+            ? { opacity: 0.2 }
+            : undefined,
       })),
-    [waypoints, selectedWaypointId]
+    [waypoints, selectedWaypointId, activeTourWaypointIds]
   );
 
   const rfEdges: Edge[] = useMemo(
-    () => edges.map(e => ({ id: e.id, source: e.source, target: e.target, label: e.label })),
-    [edges]
+    () =>
+      edges.map(e => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        label: e.label,
+        style:
+          activeTourWaypointIds.length > 0 &&
+          !activeTourWaypointIds.includes(e.source) &&
+          !activeTourWaypointIds.includes(e.target)
+            ? { opacity: 0.2 }
+            : undefined,
+      })),
+    [edges, activeTourWaypointIds]
   );
 
   const onNodesChange = useCallback(
