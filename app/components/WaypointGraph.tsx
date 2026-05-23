@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -65,6 +65,8 @@ function Graph({
   onNodePositionChange,
   onAddWaypointClick,
 }: WaypointGraphProps) {
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+
   const nodes: Node[] = useMemo(
     () =>
       waypoints.map(w => ({
@@ -88,6 +90,7 @@ function Graph({
         source: e.source,
         target: e.target,
         label: e.label,
+        selected: e.id === selectedEdgeId,
         style:
           activeTourWaypointIds.length > 0 &&
           !activeTourWaypointIds.includes(e.source) &&
@@ -95,8 +98,11 @@ function Graph({
             ? { opacity: 0.2 }
             : undefined,
       })),
-    [edges, activeTourWaypointIds]
+    [edges, activeTourWaypointIds, selectedEdgeId]
   );
+
+  const [pendingConnection, setPendingConnection] = useState<{ source: string; target: string } | null>(null);
+  const [pendingLabel, setPendingLabel] = useState('');
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -113,6 +119,7 @@ function Graph({
     (changes: EdgeChange[]) => {
       changes.forEach(change => {
         if (change.type === 'remove') onDeleteEdge(change.id);
+        if (change.type === 'select') setSelectedEdgeId(change.selected ? change.id : null);
       });
     },
     [onDeleteEdge]
@@ -121,11 +128,22 @@ function Graph({
   const handleConnect = useCallback(
     (connection: Connection) => {
       if (connection.source && connection.target && connection.source !== connection.target) {
-        onConnect({ source: connection.source, target: connection.target });
+        setPendingConnection({ source: connection.source, target: connection.target });
+        setPendingLabel('');
       }
     },
-    [onConnect]
+    []
   );
+
+  const confirmConnect = useCallback(() => {
+    if (!pendingConnection) return;
+    onConnect({ ...pendingConnection, label: pendingLabel.trim() || undefined });
+    setPendingConnection(null);
+  }, [pendingConnection, pendingLabel, onConnect]);
+
+  const cancelConnect = useCallback(() => {
+    setPendingConnection(null);
+  }, []);
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
@@ -137,6 +155,13 @@ function Graph({
   const onPaneClick = useCallback(() => {
     onSelectWaypoint(null);
   }, [onSelectWaypoint]);
+
+  const onEdgeDoubleClick = useCallback(
+    (_: React.MouseEvent, edge: Edge) => {
+      onDeleteEdge(edge.id);
+    },
+    [onDeleteEdge]
+  );
 
   if (waypoints.length === 0) {
     return (
@@ -162,9 +187,10 @@ function Graph({
       onConnect={handleConnect}
       onNodeClick={onNodeClick}
       onPaneClick={onPaneClick}
+      onEdgeDoubleClick={onEdgeDoubleClick}
       fitView
       fitViewOptions={{ padding: 0.2 }}
-      deleteKeyCode="Delete"
+      deleteKeyCode={null}
     >
       <Background />
       <Controls />
@@ -176,6 +202,32 @@ function Graph({
           + Add Waypoint
         </button>
       </div>
+      {pendingConnection && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">
+          <div className="bg-white rounded-xl shadow-xl p-5 flex flex-col gap-3 w-72">
+            <p className="text-sm font-medium text-gray-800">Add a label to this connection</p>
+            <input
+              autoFocus
+              className="border border-gray-300 rounded px-3 py-1.5 text-sm"
+              value={pendingLabel}
+              onChange={e => setPendingLabel(e.target.value)}
+              placeholder="e.g. depends on, implements… (optional)"
+              onKeyDown={e => {
+                if (e.key === 'Enter') confirmConnect();
+                if (e.key === 'Escape') cancelConnect();
+              }}
+            />
+            <div className="flex gap-2 justify-end">
+              <button onClick={cancelConnect} className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50">
+                Cancel
+              </button>
+              <button onClick={confirmConnect} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+                Add Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ReactFlow>
   );
 }
