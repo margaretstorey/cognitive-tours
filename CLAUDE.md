@@ -1,9 +1,7 @@
 @AGENTS.md
 
 <!-- SPECKIT START -->
-For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan:
-@specs/004-tour-focus-edge-labels/plan.md
+No active feature spec. See cognitive layer below for current project state.
 <!-- SPECKIT END -->
 
 <!-- COGNITIVE LAYER START -->
