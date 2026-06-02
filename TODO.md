@@ -13,6 +13,13 @@
 - [x] Two formal ADRs: docs/adr/001-use-react-flow.md and docs/adr/002-local-state-for-mvp.md
 - [x] Waypoints w04 and w05 reference real ADR files in notes field
 
+## next session priorities
+- [ ] Rename Shrimp → Cognitive Tours in all UI text, page title, and favicon
+- [ ] Remove this file don't need it anymore!  Move anything important from it into waypoints in the app
+Use CLAUDE.md for the "next priorities" section
+Use Spec Kit for active feature tracking
+- [ ] Export summary as CLAUDE.md (separate task probably)
+
 ---
 
 ## 🔜 Phase 2 — Persistence + File Links

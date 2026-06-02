@@ -1,4 +1,5 @@
 @AGENTS.md
+Last updated: Jun 1 2026
 
 <!-- SPECKIT START -->
 Active feature: **005-waypoint-type-filter** — see `specs/005-waypoint-type-filter/plan.md`
@@ -53,8 +54,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
-- One rogue waypoint (w-1779834401416 "tiago forte second brain") needs deletion
-- All waypoints still say "Shrimp" — needs rename to "Cognitive Tours"
+- UI still shows "Shrimp" branding — needs rename to "Cognitive Tours" throughout
 
 ---
 
