@@ -1,4 +1,5 @@
 export type WaypointType =
+  | 'Goal'
   | 'User Need'
   | 'Feature'
   | 'ADR'
@@ -7,6 +8,20 @@ export type WaypointType =
   | 'Risk'
   | 'AI Instruction'
   | 'Open Question';
+
+export const WAYPOINT_TYPES: WaypointType[] = [
+  'Goal',
+  'User Need',
+  'Feature',
+  'ADR',
+  'Code Component',
+  'Test',
+  'Risk',
+  'AI Instruction',
+  'Open Question',
+];
+
+export type FilterState = Record<WaypointType, boolean>;
 
 export interface Waypoint {
   id: string;

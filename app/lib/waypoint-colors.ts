@@ -1,6 +1,7 @@
 import type { WaypointType } from './types';
 
 export const WAYPOINT_COLORS: Record<WaypointType, string> = {
+  'Goal':            'bg-violet-200 border-violet-600 text-violet-950',
   'User Need':       'bg-blue-100 border-blue-300 text-blue-900',
   'Feature':         'bg-green-100 border-green-300 text-green-900',
   'ADR':             'bg-yellow-100 border-yellow-300 text-yellow-900',
