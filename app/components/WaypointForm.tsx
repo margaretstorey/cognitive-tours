@@ -2,17 +2,7 @@
 
 import { useState } from 'react';
 import type { Waypoint, WaypointType } from '@/app/lib/types';
-
-const WAYPOINT_TYPES: WaypointType[] = [
-  'User Need',
-  'Feature',
-  'ADR',
-  'Code Component',
-  'Test',
-  'Risk',
-  'AI Instruction',
-  'Open Question',
-];
+import { WAYPOINT_TYPES } from '@/app/lib/types';
 
 interface WaypointFormProps {
   mode: 'create' | 'edit';

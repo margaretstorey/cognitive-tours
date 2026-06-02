@@ -1,7 +1,7 @@
 @AGENTS.md
 
 <!-- SPECKIT START -->
-No active feature spec. See cognitive layer below for current project state.
+Active feature: **005-waypoint-type-filter** — see `specs/005-waypoint-type-filter/plan.md`
 <!-- SPECKIT END -->
 
 <!-- COGNITIVE LAYER START -->

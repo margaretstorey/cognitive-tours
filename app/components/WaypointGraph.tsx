@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -18,7 +18,8 @@ import {
   type NodeTypes,
   type NodeProps,
 } from '@xyflow/react';
-import type { Waypoint, WaypointEdge } from '@/app/lib/types';
+import type { Waypoint, WaypointEdge, WaypointType, FilterState } from '@/app/lib/types';
+import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 
 type WaypointNodeData = { waypoint: Waypoint };
@@ -52,6 +53,8 @@ interface WaypointGraphProps {
   onDeleteWaypoint: (id: string) => void;
   onNodePositionChange: (id: string, position: { x: number; y: number }) => void;
   onAddWaypointClick: () => void;
+  filterState: FilterState;
+  onFilterChange: (type: WaypointType, visible: boolean) => void;
 }
 
 function Graph({
@@ -64,41 +67,59 @@ function Graph({
   onDeleteEdge,
   onNodePositionChange,
   onAddWaypointClick,
+  filterState,
+  onFilterChange,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const filterPanelRef = useRef<HTMLDivElement>(null);
+
+  const hiddenNodeIds = useMemo(
+    () => new Set(waypoints.filter(w => !filterState[w.type]).map(w => w.id)),
+    [waypoints, filterState]
+  );
+
+  const hiddenCount = useMemo(
+    () => WAYPOINT_TYPES.filter(t => !filterState[t]).length,
+    [filterState]
+  );
 
   const nodes: Node[] = useMemo(
     () =>
-      waypoints.map(w => ({
-        id: w.id,
-        type: 'waypointNode',
-        position: w.position,
-        data: { waypoint: w },
-        selected: w.id === selectedWaypointId,
-        style:
-          activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(w.id)
-            ? { opacity: 0.2 }
-            : undefined,
-      })),
-    [waypoints, selectedWaypointId, activeTourWaypointIds]
+      waypoints
+        .filter(w => filterState[w.type])
+        .map(w => ({
+          id: w.id,
+          type: 'waypointNode',
+          position: w.position,
+          data: { waypoint: w },
+          selected: w.id === selectedWaypointId,
+          style:
+            activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(w.id)
+              ? { opacity: 0.2 }
+              : undefined,
+        })),
+    [waypoints, selectedWaypointId, activeTourWaypointIds, filterState]
   );
 
   const rfEdges: Edge[] = useMemo(
     () =>
-      edges.map(e => ({
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        label: e.label,
-        selected: e.id === selectedEdgeId,
-        style:
-          activeTourWaypointIds.length > 0 &&
-          !activeTourWaypointIds.includes(e.source) &&
-          !activeTourWaypointIds.includes(e.target)
-            ? { opacity: 0.2 }
-            : undefined,
-      })),
-    [edges, activeTourWaypointIds, selectedEdgeId]
+      edges
+        .filter(e => !hiddenNodeIds.has(e.source) && !hiddenNodeIds.has(e.target))
+        .map(e => ({
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          label: e.label,
+          selected: e.id === selectedEdgeId,
+          style:
+            activeTourWaypointIds.length > 0 &&
+            !activeTourWaypointIds.includes(e.source) &&
+            !activeTourWaypointIds.includes(e.target)
+              ? { opacity: 0.2 }
+              : undefined,
+        })),
+    [edges, activeTourWaypointIds, selectedEdgeId, hiddenNodeIds]
   );
 
   const [pendingConnection, setPendingConnection] = useState<{ source: string; target: string } | null>(null);
@@ -154,6 +175,7 @@ function Graph({
 
   const onPaneClick = useCallback(() => {
     onSelectWaypoint(null);
+    setFilterPanelOpen(false);
   }, [onSelectWaypoint]);
 
   const onEdgeDoubleClick = useCallback(
@@ -194,13 +216,40 @@ function Graph({
     >
       <Background />
       <Controls />
-      <div className="absolute top-3 left-3 z-10">
+      <div className="absolute top-3 left-3 z-10 flex gap-2">
         <button
           onClick={onAddWaypointClick}
           className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
         >
           + Add Waypoint
         </button>
+        <div ref={filterPanelRef} className="relative">
+          <button
+            onClick={() => setFilterPanelOpen(o => !o)}
+            className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
+          >
+            {hiddenCount > 0 ? `Filter (${hiddenCount} hidden)` : 'Filter'}
+          </button>
+          {filterPanelOpen && (
+            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px]">
+              {WAYPOINT_TYPES.map(type => (
+                <label
+                  key={type}
+                  className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filterState[type]}
+                    onChange={e => onFilterChange(type, e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
+                  <span>{type}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       {pendingConnection && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">
