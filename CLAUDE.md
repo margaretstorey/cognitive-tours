@@ -53,7 +53,6 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
-- No way to filter graph by waypoint type
 - One rogue waypoint (w-1779834401416 "tiago forte second brain") needs deletion
 - All waypoints still say "Shrimp" — needs rename to "Cognitive Tours"
 
