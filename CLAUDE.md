@@ -40,9 +40,9 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Drag to connect waypoints with optional edge label prompt
 - 30 seeded waypoints and 5 tours (self-documenting — the app documents itself)
 - Spec Kit installed with constitution at .specify/memory/constitution.md
+- Filter/hide waypoints by type - toggle panel with active badge ✅
 
 ### What is NOT yet built
-- Filter/hide waypoints by type (needed urgently — graph gets cluttered)
 - File content preview in detail panel
 - AI-guided waypoint creation
 - Export to JSON or Markdown
