@@ -120,11 +120,9 @@ function Graph({
             id: e.id,
             source: e.source,
             target: e.target,
-            label: e.label,
+            label: dimmed ? undefined : e.label,
             selected: e.id === selectedEdgeId,
             style: dimmed ? { opacity: 0.2 } : undefined,
-            labelStyle: dimmed ? { opacity: 0.2 } : undefined,
-            labelBgStyle: dimmed ? { opacity: 0.2 } : undefined,
           };
         }),
     [edges, activeTourWaypointIds, selectedEdgeId, hiddenNodeIds]
