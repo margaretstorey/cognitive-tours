@@ -15,7 +15,7 @@ type FormState =
 type LoadState = 'loading' | 'ready' | 'error';
 
 interface BulkDataResponse {
-  waypoints: Waypoint[];ls ls ls
+  waypoints: Waypoint[];
   edges: WaypointEdge[];
   tours: Tour[];
 }
