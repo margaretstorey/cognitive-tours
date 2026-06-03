@@ -26,8 +26,7 @@ list needs a small cleanup before you trust it.
 
 ### Waypoint 2: The Last Thing You Built
 **Artifact:** `specs/005-waypoint-type-filter/` → `plan.md` and `tasks.md`
-**Why it matters:** The filter panel with active badge is complete. All tasks
-in tasks.md were executed. If anything feels unfamiliar, skim the spec to
+1in tasks.md were executed. If anything feels unfamiliar, skim the spec to
 remind yourself what was decided and why.
 **Understanding gained:** Confirmation that 005 is fully done and you can
 stop thinking about it.
