@@ -22,14 +22,16 @@ import type { Waypoint, WaypointEdge, WaypointType, FilterState } from '@/app/li
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 
-type WaypointNodeData = { waypoint: Waypoint };
+type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean };
 
 function WaypointNode({ data, selected }: NodeProps & { data: WaypointNodeData }) {
   const colorClass = WAYPOINT_COLORS[data.waypoint.type];
   return (
     <div
       className={`px-3 py-2 rounded-lg border-2 text-sm font-medium max-w-[180px] shadow-sm ${colorClass} ${
-        selected ? 'ring-2 ring-offset-1 ring-blue-500' : ''
+        data.isActiveTourStep
+          ? 'ring-4 ring-offset-2 ring-blue-500 shadow-lg shadow-blue-400/50'
+          : selected ? 'ring-2 ring-offset-1 ring-blue-500' : ''
       }`}
     >
       <Handle type="target" position={Position.Left} className="!bg-gray-400" />
@@ -92,7 +94,10 @@ function Graph({
           id: w.id,
           type: 'waypointNode',
           position: w.position,
-          data: { waypoint: w },
+          data: {
+            waypoint: w,
+            isActiveTourStep: activeTourWaypointIds.length > 0 && w.id === selectedWaypointId,
+          },
           selected: w.id === selectedWaypointId,
           style:
             activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(w.id)
@@ -106,19 +111,22 @@ function Graph({
     () =>
       edges
         .filter(e => !hiddenNodeIds.has(e.source) && !hiddenNodeIds.has(e.target))
-        .map(e => ({
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          label: e.label,
-          selected: e.id === selectedEdgeId,
-          style:
+        .map(e => {
+          const dimmed =
             activeTourWaypointIds.length > 0 &&
             !activeTourWaypointIds.includes(e.source) &&
-            !activeTourWaypointIds.includes(e.target)
-              ? { opacity: 0.2 }
-              : undefined,
-        })),
+            !activeTourWaypointIds.includes(e.target);
+          return {
+            id: e.id,
+            source: e.source,
+            target: e.target,
+            label: e.label,
+            selected: e.id === selectedEdgeId,
+            style: dimmed ? { opacity: 0.2 } : undefined,
+            labelStyle: dimmed ? { opacity: 0.2 } : undefined,
+            labelBgStyle: dimmed ? { opacity: 0.2 } : undefined,
+          };
+        }),
     [edges, activeTourWaypointIds, selectedEdgeId, hiddenNodeIds]
   );
 
