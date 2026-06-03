@@ -1,8 +1,8 @@
 @AGENTS.md
-Last updated: Jun 1 2026
+Last updated: Jun 2 2026
 
 <!-- SPECKIT START -->
-Active feature: **005-waypoint-type-filter** — see `specs/005-waypoint-type-filter/plan.md`
+No active feature. Run `/speckit-specify` to start a new one.
 <!-- SPECKIT END -->
 
 <!-- COGNITIVE LAYER START -->
@@ -22,7 +22,7 @@ The core thesis: understanding cannot be outsourced or automated. Tours you
 create yourself repair your own cognitive debt. AI is a scaffold, not a substitute.
 
 **Domains:** cognitive.tours | cognitivetours.dev
-**GitHub:** margaretstorey/shrimp-2 (repo name predates the rename)
+**GitHub:** margaretstorey/cognitive-tours
 **Research foundation:** Triple Debt Model paper (arXiv:2603.22106)
 
 ---
@@ -42,19 +42,19 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - 30 seeded waypoints and 5 tours (self-documenting — the app documents itself)
 - Spec Kit installed with constitution at .specify/memory/constitution.md
 - Filter/hide waypoints by type - toggle panel with active badge ✅
+- Deployed to Vercel with Turso persistent SQLite (survives deploys, shared across users) ✅
+- Root component renamed CognitiveToursApp, repo renamed to cognitive-tours ✅
 
 ### What is NOT yet built
 - File content preview in detail panel
 - AI-guided waypoint creation
 - Export to JSON or Markdown
-- Deployment to Vercel (blocked by SQLite ephemeral filesystem issue)
 - Playwright automated tests
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
-- UI still shows "Shrimp" branding — needs rename to "Cognitive Tours" throughout
 
 ---
 
@@ -101,7 +101,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - **Web app, not VS Code extension** — tool-agnostic, shareable URL. VS Code
   link is provided as a convenience but the tool doesn't require VS Code.
 - **Single user for now** — no auth, no multi-project, no collaboration yet.
-- **SQLite locally** — Turso for cloud deployment when ready.
+- **Turso for cloud, SQLite locally** — Vercel deployment live; Turso provides persistent SQLite across deploys.
 
 ---
 
@@ -137,12 +137,10 @@ Full constitution: .specify/memory/constitution.md
 
 1. **Repair the waypoints** — delete rogue waypoint, rename Shrimp → Cognitive Tours
    in all waypoint labels and descriptions, add a Goal-level node
-2. **Filter by waypoint type** — small feature, high impact for usability
-3. **Refine New Developer Orientation tour** — reorder for genuine newcomer narrative
+2. **Refine New Developer Orientation tour** — reorder for genuine newcomer narrative
+3. **Write README** — explains what Cognitive Tours is, links to paper (app is now public)
 4. **Edge management panel** — show edge details in right panel, delete button there
-5. **Deploy to Vercel** — using Turso for persistent SQLite in cloud
-6. **Write README** — explains what Cognitive Tours is, links to paper
-7. **Playwright tests** — before sharing with real users
+5. **Playwright tests** — before sharing with real users
 
 ---
 

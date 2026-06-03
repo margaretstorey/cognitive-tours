@@ -15,9 +15,9 @@ navigable — not just readable.
 - Prisma + SQLite for persistence
 
 ## Pipeline / workflow stages
-1. **Browser loads** → Next.js App Router → `app/page.tsx` (one line: renders `ShrimpApp`)
-2. **ShrimpApp mounts** → fetches `/api/data` → seeds DB from `mock-data.ts` if empty → sets all React state
-3. **User interacts** (creates/edits/deletes waypoints, edges, tours) → mutation handler in `ShrimpApp.tsx` fires
+1. **Browser loads** → Next.js App Router → `app/page.tsx` (one line: renders `CognitiveToursApp`)
+2. **CognitiveToursApp mounts** → fetches `/api/data` → seeds DB from `mock-data.ts` if empty → sets all React state
+3. **User interacts** (creates/edits/deletes waypoints, edges, tours, or toggles filters) → mutation handler in `CognitiveToursApp.tsx` fires
 4. **Optimistic update** → React state updated immediately, async API call fires in background
 5. **API route** → Prisma client → SQLite (`prisma/dev.db`) → persisted; rollback on failure
 6. **React Flow re-renders** the graph from updated state in `WaypointGraph.tsx`
@@ -26,7 +26,7 @@ navigable — not just readable.
 - `CLAUDE.md` — cognitive layer: current project state, what's built, what's next, known issues. **Read this before touching any code.**
 - `app/lib/types.ts` — the data model (`Waypoint`, `WaypointEdge`, `Tour`, `FilterState`). Every component and API route maps to these shapes.
 - `app/components/CognitiveToursApp.tsx` — root `'use client'` component; owns all app state and every mutation handler. If you need to find a handler, it's here.
-- `app/components/WaypointGraph.tsx` — the React Flow canvas (left panel); renders nodes with type-colour coding, handles drag-to-connect and filter visibility.
+- `app/components/WaypointGraph.tsx` — the React Flow canvas (left panel); renders nodes with type-colour coding, handles drag-to-connect, filter toggle panel, and visibility.
 - `app/lib/db.ts` — Prisma client construction; reads `DATABASE_URL` from env and strips the `file:` prefix for `better-sqlite3`.
 - `app/api/data/route.ts` — bulk load endpoint; seeds from `mock-data.ts` when the DB is empty (triggered on first cold start).
 - `app/lib/db-mappers.ts` — translates raw Prisma rows into app-layer types; the contract between persistence and UI.
@@ -40,7 +40,7 @@ navigable — not just readable.
 
 **Tour**: An ordered sequence of waypoint IDs. Drives the Prev/Next navigation in the top bar. Stored as `Tour` + `TourWaypoint` join rows (sorted by `order` column). The app ships with self-documenting tours that explain its own architecture.
 
-**Optimistic updates**: Every mutation in `ShrimpApp.tsx` updates React state immediately, then fires an async API call. If the API call fails, the original state snapshot is restored and an error message is shown. There is no loading state between user action and UI update.
+**Optimistic updates**: Every mutation in `CognitiveToursApp.tsx` updates React state immediately, then fires an async API call. If the API call fails, the original state snapshot is restored and an error message is shown. There is no loading state between user action and UI update.
 
 **Controlled flow (React Flow)**: `WaypointGraph.tsx` passes `nodes` and `edges` as React state to `<ReactFlow>`. Changes (drag, delete) come back as events; `applyNodeChanges`/`applyEdgeChanges` must be called to apply them. Skipping this pattern causes nodes to snap back after dragging.
 
@@ -48,11 +48,11 @@ navigable — not just readable.
 
 ## Common gotchas
 
-1. **The repo is named `shrimp-2` and the root component is `ShrimpApp.tsx`**, but the product is called Cognitive Tours. This is a known branding issue. Do not rename files without checking all import paths — the component tree is deeply interconnected.
+1. **The repo is named `shrimp-2`**, but the product is called Cognitive Tours and the root component is `CognitiveToursApp.tsx`. Spec files and ADRs written before the rename still say "ShrimpApp" — treat those as historical records, not guidance.
 
-2. **React Flow components must be `'use client'`**. `WaypointGraph.tsx` uses React Flow hooks (`useNodesState`, `useReactFlow`) which are incompatible with React Server Components. Any new graph-related component must have `'use client'` at the top, or it will silently fail to render.
+2. **React Flow components must be `'use client'`**. `WaypointGraph.tsx` uses React Flow hooks which are incompatible with React Server Components. Any new graph-related component must have `'use client'` at the top, or it will silently fail to render.
 
-3. **`db-mappers.ts` casts `row.type as WaypointType` with no runtime validation**. If you add a new waypoint type, you must update `WAYPOINT_TYPES` in `types.ts` AND `WAYPOINT_COLORS` in `waypoint-colors.ts`. Existing DB rows with an unrecognised type string will not error — they will silently produce broken colour coding.
+3. **`db-mappers.ts` casts `row.type as WaypointType` with no runtime validation**. If you add a new waypoint type, you must update `WAYPOINT_TYPES` in `types.ts`, `WAYPOINT_COLORS` in `waypoint-colors.ts`, and `DEFAULT_FILTER_STATE` in `CognitiveToursApp.tsx`. Existing DB rows with an unrecognised type string will not error — they will silently produce broken colour coding and filter behaviour.
 
 ## Suggested exercise sequence
 
@@ -80,4 +80,4 @@ Open `CLAUDE.md` and read the sections "What is built and working", "What is NOT
 - `.specify/memory/constitution.md`
 - `docs/adr/001-use-react-flow.md`
 - `docs/adr/002-local-state-for-mvp.md`
-- `git log --oneline -20`
+- `git log --oneline -5`
