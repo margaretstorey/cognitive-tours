@@ -144,9 +144,7 @@ export default function TourBar({
           </button>
         </div>
 
-        <span className="text-xs text-gray-400 hidden sm:block">
-          Data resets on refresh · no persistence
-        </span>
+
       </div>
 
       {editor.open && (

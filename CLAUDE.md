@@ -5,6 +5,10 @@ Last updated: Jun 2 2026
 No active feature. Run `/speckit-specify` to start a new one.
 <!-- SPECKIT END -->
 
+# CLAUDE.md — The Cognitive Bridge
+> This file is the cognitive layer — the bridge between intent (Spec Kit), 
+> understanding (waypoints and tours), and code.
+
 <!-- COGNITIVE LAYER START -->
 
 # Cognitive Tours — Project State for AI Agents
@@ -52,6 +56,11 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Playwright automated tests
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
+
+## Maintenance reminders
+- **Backup Turso data periodically** — visit https://cognitive-tours.vercel.app/api/data and save the JSON. Last backup: June 2, 2026.
+- **Update "Last updated" date** at the top of this file each session.
+- **Create a waypoint** for any significant new feature or decision before closing a session.
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
