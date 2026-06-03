@@ -49,7 +49,8 @@ export async function GET() {
       edges: edgeRows.map(toEdge),
       tours: tourRows.map(toTour),
     });
-  } catch {
-    return Response.json({ error: 'Failed to load data' }, { status: 500 });
+  } catch (err) {
+    console.error('Failed to load data:', err);
+    return Response.json({ error: 'Failed to load data', detail: String(err) }, { status: 500 });
   }
 }
