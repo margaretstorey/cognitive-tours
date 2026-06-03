@@ -25,7 +25,7 @@ navigable — not just readable.
 ## Key files
 - `CLAUDE.md` — cognitive layer: current project state, what's built, what's next, known issues. **Read this before touching any code.**
 - `app/lib/types.ts` — the data model (`Waypoint`, `WaypointEdge`, `Tour`, `FilterState`). Every component and API route maps to these shapes.
-- `app/components/ShrimpApp.tsx` — root `'use client'` component; owns all app state and every mutation handler. If you need to find a handler, it's here.
+- `app/components/CognitiveToursApp.tsx` — root `'use client'` component; owns all app state and every mutation handler. If you need to find a handler, it's here.
 - `app/components/WaypointGraph.tsx` — the React Flow canvas (left panel); renders nodes with type-colour coding, handles drag-to-connect and filter visibility.
 - `app/lib/db.ts` — Prisma client construction; reads `DATABASE_URL` from env and strips the `file:` prefix for `better-sqlite3`.
 - `app/api/data/route.ts` — bulk load endpoint; seeds from `mock-data.ts` when the DB is empty (triggered on first cold start).
@@ -71,7 +71,7 @@ Open `CLAUDE.md` and read the sections "What is built and working", "What is NOT
 - `app/lib/db.ts`
 - `app/lib/db-mappers.ts`
 - `app/lib/mock-data.ts`
-- `app/components/ShrimpApp.tsx`
+- `app/components/CognitiveToursApp.tsx`
 - `app/components/TourBar.tsx`
 - `app/components/WaypointGraph.tsx`
 - `app/page.tsx`

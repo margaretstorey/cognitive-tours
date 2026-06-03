@@ -1,5 +1,5 @@
-import ShrimpApp from './components/ShrimpApp';
+import CognitiveToursApp from './components/CognitiveToursApp';
 
 export default function Page() {
-  return <ShrimpApp />;
+  return <CognitiveToursApp />;
 }

@@ -160,7 +160,7 @@ Full constitution: .specify/memory/constitution.md
 ```
 app/
   components/
-    ShrimpApp.tsx      — root state, all mutation handlers
+    CognitiveToursApp.tsx — root state, all mutation handlers
     WaypointGraph.tsx  — React Flow canvas (left panel)
     WaypointDetail.tsx — selected waypoint detail (right panel)
     TourBar.tsx        — tour navigation + editor (top bar)

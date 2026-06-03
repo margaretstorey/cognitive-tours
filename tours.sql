@@ -1,0 +1,5 @@
+INSERT INTO Tour (id, name, description) VALUES ('t01','How Shrimp Works — Architecture of the Code','A guided walkthrough of Shrimp''s component architecture. Start with the data types, follow the state through ShrimpApp, and see how each panel renders.');
+INSERT INTO Tour (id, name, description) VALUES ('t02','Why Shrimp Exists — The Research Story','The philosophical and research motivation for Shrimp. From the triple debt paper through the original Tours plugin to the modern AI-assisted development context.');
+INSERT INTO Tour (id, name, description) VALUES ('t03','Intent-First Development in Practice','How Shrimp was built using intent-first development — constitution, spec, plan, tasks, then code. Each waypoint in this tour is an artifact from that process.');
+INSERT INTO Tour (id, name, description) VALUES ('t05','Risks and Open Questions','A tour of the known risks and unresolved questions in the project. Good for understanding where the boundaries are and what decisions still need to be made.');
+INSERT INTO Tour (id, name, description) VALUES ('t-1780379652948','Start here - overview','A tour to help a newcomer onboard to the project');

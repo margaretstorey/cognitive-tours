@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import type { Waypoint, WaypointEdge, Tour, WaypointType, FilterState } from '@/app/lib/types';
-import { WAYPOINT_TYPES } from '@/app/lib/types';
+import type { Waypoint, WaypointEdge, Tour } from '@/app/lib/types';
 import WaypointGraph from './WaypointGraph';
 import WaypointDetail from './WaypointDetail';
 import TourBar from './TourBar';
@@ -16,23 +15,19 @@ type FormState =
 type LoadState = 'loading' | 'ready' | 'error';
 
 interface BulkDataResponse {
-  waypoints: Waypoint[];
+  waypoints: Waypoint[];ls ls ls
   edges: WaypointEdge[];
   tours: Tour[];
 }
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
-const DEFAULT_FILTER_STATE: FilterState = Object.fromEntries(
-  WAYPOINT_TYPES.map(t => [t, true])
-) as FilterState;
-
 async function apiFetch(url: string, options: RequestInit): Promise<void> {
   const res = await fetch(url, options);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
-export default function ShrimpApp() {
+export default function CognitiveToursApp() {
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
   const [edges, setEdges] = useState<WaypointEdge[]>([]);
   const [tours, setTours] = useState<Tour[]>([]);
@@ -42,7 +37,6 @@ export default function ShrimpApp() {
   const [form, setForm] = useState<FormState>({ open: false });
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [filterState, setFilterState] = useState<FilterState>(DEFAULT_FILTER_STATE);
   // Per-node debounce map for position changes (onNodesChange fires on every drag frame).
   const positionDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -332,10 +326,6 @@ export default function ShrimpApp() {
     [clearErrorAfterDelay],
   );
 
-  const onFilterChange = useCallback((type: WaypointType, visible: boolean) => {
-    setFilterState(prev => ({ ...prev, [type]: visible }));
-  }, []);
-
   const openCreateForm = useCallback(() => setForm({ open: true, mode: 'create' }), []);
   const openEditForm = useCallback(
     (waypoint: Waypoint) => setForm({ open: true, mode: 'edit', waypoint }),
@@ -406,8 +396,6 @@ export default function ShrimpApp() {
             onDeleteWaypoint={deleteWaypoint}
             onNodePositionChange={onNodePositionChange}
             onAddWaypointClick={openCreateForm}
-            filterState={filterState}
-            onFilterChange={onFilterChange}
           />
         </div>
         <div className="w-80 border-l border-gray-200 overflow-y-auto bg-white">
