@@ -114,8 +114,7 @@ function Graph({
         .map(e => {
           const dimmed =
             activeTourWaypointIds.length > 0 &&
-            !activeTourWaypointIds.includes(e.source) &&
-            !activeTourWaypointIds.includes(e.target);
+            !(activeTourWaypointIds.includes(e.source) && activeTourWaypointIds.includes(e.target));
           return {
             id: e.id,
             source: e.source,

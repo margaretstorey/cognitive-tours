@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: Jun 2 2026
+Last updated: Jun 10 2026
 
 <!-- SPECKIT START -->
 No active feature. Run `/speckit-specify` to start a new one.
@@ -38,7 +38,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - SQLite + Prisma persistence — data survives page refresh
 - Three-panel layout: graph (left), waypoint detail (right), tour bar (top)
 - 8 waypoint types with colour coding
-- Tours with Next/Prev navigation and tour focus mode (non-tour nodes dim)
+- Tours with Next/Prev navigation and tour focus mode (non-tour nodes dim — approach under reconsideration, see Key Decisions)
 - Edge labels showing relationships between waypoints
 - filePath field on waypoints with clipboard copy and VS Code link
 - Create, edit, delete waypoints and tours
@@ -56,6 +56,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Playwright automated tests
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
+- Separate Tours tab with independent layout
 
 ## Maintenance reminders
 - **Backup Turso data periodically** — visit https://cognitive-tours.vercel.app/api/data and save the JSON. Last backup: June 2, 2026.
@@ -64,6 +65,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
+- Edge label dimming bug — labels dim incorrectly when only one endpoint is outside the active tour. Fix: only dim an edge (and its label) if BOTH source AND target are outside the active tour. See WaypointGraph.tsx dimming logic.
+- Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead)
 
 ---
 
@@ -111,6 +114,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
   link is provided as a convenience but the tool doesn't require VS Code.
 - **Single user for now** — no auth, no multi-project, no collaboration yet.
 - **Turso for cloud, SQLite locally** — Vercel deployment live; Turso provides persistent SQLite across deploys.
+- **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning.
 
 ---
 
@@ -137,19 +141,21 @@ Full constitution: .specify/memory/constitution.md
 - **Russ Miles** — diagnostic legibility, chaos engineering (student collaboration)
 - **Cat Hicks** — learning science, developer psychology (potential collaborator)
 - **DORA team** — practitioner reach, industry validation (in progress)
-- **Rahul Garg / Lattice** — complementary tool (Martin Fowler contributor,
-  engaged on LinkedIn)
+- **Rahul Garg / Lattice** — complementary tool (Martin Fowler contributor, engaged on LinkedIn)
+- **Cognitive Tours paper** — in early planning, targeting NIER or CHASE track at ICSE (deadline TBD)
 
 ---
 
 ## What to work on next (in priority order)
 
-1. **Repair the waypoints** — delete rogue waypoint, rename Shrimp → Cognitive Tours
-   in all waypoint labels and descriptions, add a Goal-level node
-2. **Refine New Developer Orientation tour** — reorder for genuine newcomer narrative
-3. **Write README** — explains what Cognitive Tours is, links to paper (app is now public)
-4. **Edge management panel** — show edge details in right panel, delete button there
-5. **Playwright tests** — before sharing with real users
+1. **Fix edge label dimming bug** — WaypointGraph.tsx, both endpoints must be outside tour to dim
+2. **Repair the waypoints** — delete rogue waypoint, rename Shrimp → Cognitive Tours
+   in all waypoint labels and descriptions, add a Goal-level node, fix incorrect tour connections
+3. **Refine New Developer Orientation tour** — reorder for genuine newcomer narrative
+4. **Begin Tours tab design** — separate tab with Dagre auto-layout, independent of main graph
+5. **Write README** — explains what Cognitive Tours is, links to paper (app is now public)
+6. **Edge management panel** — show edge details in right panel, delete button there
+7. **Playwright tests** — before sharing with real users
 
 ---
 
