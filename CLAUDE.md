@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: Jun 10 2026
+Last updated: Jun 16 2026
 
 <!-- SPECKIT START -->
 No active feature. Run `/speckit-specify` to start a new one.
@@ -39,15 +39,18 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Three-panel layout: graph (left), waypoint detail (right), tour bar (top)
 - 8 waypoint types with colour coding
 - Tours with Next/Prev navigation and tour focus mode (non-tour nodes dim — approach under reconsideration, see Key Decisions)
+- Edge dimming fixed — both endpoints must be outside the active tour for an edge/label to dim ✅
 - Edge labels showing relationships between waypoints
 - filePath field on waypoints with clipboard copy and VS Code link
 - Create, edit, delete waypoints and tours
 - Drag to connect waypoints with optional edge label prompt
-- 30 seeded waypoints and 5 tours (self-documenting — the app documents itself)
+- 30+ seeded waypoints and 4 tours (self-documenting — the app documents itself)
 - Spec Kit installed with constitution at .specify/memory/constitution.md
 - Filter/hide waypoints by type - toggle panel with active badge ✅
 - Deployed to Vercel with Turso persistent SQLite (survives deploys, shared across users) ✅
 - Root component renamed CognitiveToursApp, repo renamed to cognitive-tours ✅
+- Page title fixed (was showing default "Create Next App") ✅
+- Git repository reconnected in Vercel project settings — see Known Issues ✅
 
 ### What is NOT yet built
 - File content preview in detail panel
@@ -57,6 +60,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
 - Separate Tours tab with independent layout
+- Per-step tour narrative ("docent mode") — see Open Question below
 
 ## Maintenance reminders
 - **Backup Turso data periodically** — visit https://cognitive-tours.vercel.app/api/data and save the JSON. Last backup: June 2, 2026.
@@ -65,8 +69,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
-- Edge label dimming bug — labels dim incorrectly when only one endpoint is outside the active tour. Fix: only dim an edge (and its label) if BOTH source AND target are outside the active tour. See WaypointGraph.tsx dimming logic.
-- Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead)
+- Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead) — needs a pass to verify across all tours
+- **Vercel Git connection can silently disconnect.** If pushes stop triggering deploys (commits show on `origin/main` via `git log`, but nothing new appears in Vercel's Deployments tab), check Project Settings → Git in Vercel. It may show "Connect Git" instead of a connected repo. Fix: reconnect via "Adjust GitHub App Permissions" if the repo isn't listed, then "Connect."
+- **ADR 002 (Local React State, No Persistence for MVP) is orphaned** — the file exists at docs/adr/002-*.md but has no waypoint pointing to it, and still references "Shrimp 2.0" / "ShrimpApp" throughout. It's correctly marked Superseded (replaced by Phase 2 Prisma/SQLite) but isn't part of the graph. See "What to work on next."
+- **ADR convention is inconsistent.** Some ADR waypoints (e.g. "Use React Flow") have a filePath pointing to a real docs/adr/*.md file. Others (e.g. "Deploy to Vercel," "Use Turso") have filePath pointing to implementation code (db.ts) instead of a decision doc, and some (e.g. "SQLite + Prisma for persistence") have no filePath at all. Needs a decision: should every ADR have a backing markdown file, or is the waypoint itself the ADR?
 
 ---
 
@@ -75,7 +81,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 Margaret-Anne's intended ontology — not fully implemented yet:
 
 **Strategic level:**
-- **Goal** — the highest level "why" (e.g. "Mitigate and repair cognitive debt") — NOT YET A TYPE
+- **Goal** — the highest level "why" (e.g. "Mitigate and repair cognitive debt") — now implemented as a type ✅
 - **User Need** — specific needs that support goals
 
 **Tactical level:**
@@ -97,6 +103,8 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - Test → validates → Feature
 - Risk → threatens → Feature or ADR
 
+**Note from tour review (June 16):** not every true relationship needs a graph edge. Some relationships are better expressed in a waypoint's own description/notes than as a separate edge — especially when an edge would point backward through an otherwise linear tour sequence and create a confusing visual knot. Edges are for the map; not every map fact needs to become a tour beat.
+
 ---
 
 ## Key decisions made (not in Spec Kit)
@@ -115,6 +123,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - **Single user for now** — no auth, no multi-project, no collaboration yet.
 - **Turso for cloud, SQLite locally** — Vercel deployment live; Turso provides persistent SQLite across deploys.
 - **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning.
+- **Waypoint content must be context-free.** A waypoint's description/notes should make sense regardless of which tour (or no tour) brought a reader to it. Tour-specific transition narrative ("now that you've seen X, let's look at Y") does not belong in waypoint notes — it contaminates the waypoint for every other entry point. For now, if a transition insight is worth keeping, prefer rephrasing it as a standalone true fact about the waypoint itself, or hold it in the tour's own description field as a stopgap. See "docent mode" Open Question below for the real fix.
 
 ---
 
@@ -143,28 +152,30 @@ Full constitution: .specify/memory/constitution.md
 - **DORA team** — practitioner reach, industry validation (in progress)
 - **Rahul Garg / Lattice** — complementary tool (Martin Fowler contributor, engaged on LinkedIn)
 - **Cognitive Tours paper** — in early planning, targeting NIER or CHASE track at ICSE (deadline TBD)
+- **Missing Stop Sign blog post** (June 9, margaretstorey.com) — intent debt explained via the out-of-town-driver metaphor; first in a series
 
 ---
 
 ## What to work on next (in priority order)
 
-1. **Fix edge label dimming bug** — WaypointGraph.tsx, both endpoints must be outside tour to dim
-2. **Repair the waypoints** — delete rogue waypoint, rename Shrimp → Cognitive Tours
-   in all waypoint labels and descriptions, add a Goal-level node, fix incorrect tour connections
-3. **Refine New Developer Orientation tour** — reorder for genuine newcomer narrative
-4. **Begin Tours tab design** — separate tab with Dagre auto-layout, independent of main graph
-5. **Write README** — explains what Cognitive Tours is, links to paper (app is now public)
-6. **Edge management panel** — show edge details in right panel, delete button there
-7. **Playwright tests** — before sharing with real users
+1. **Create a waypoint for ADR 002** (Local React State, No Persistence) — link filePath to docs/adr/002-*.md, update Shrimp references, connect into the graph
+2. **Decide the ADR convention** — every ADR gets a backing docs/adr/*.md file with filePath pointing to it, vs. filePath pointing to implementing code. Currently inconsistent across existing ADR waypoints.
+3. **Repair remaining waypoints** — rename any lingering Shrimp → Cognitive Tours references, fix incorrect tour connections flagged in Known Issues
+4. **Delete "Start here - overview" tour** — redundant with "Why Cognitive Tours Exists" (research story) and "How Cognitive Tours Work" (architecture); decided June 16 it duplicates both without adding value
+5. **Begin Tours tab design** — separate tab with Dagre auto-layout, independent of main graph
+6. **Docent mode (real fix)** — add a `narrative` text field to the `TourWaypoint` join table for per-step, tour-specific transition text between stops. Confirmed need by walking the deployment tour June 16 — transition narrative kept wanting to leak into waypoint notes, which contaminates the waypoint for other entry points. Schema migration + API + TourBar UI.
+7. **Write README** — explains what Cognitive Tours is, links to paper (app is now public)
+8. **Edge management panel** — show edge details in right panel, delete button there
+9. **Playwright tests** — before sharing with real users
 
 ---
 
 ## What Margaret-Anne is confused about
 
 - How to keep waypoints and tours in sync as the code evolves
-- Whether the current ontology (8 types) is the right one or needs a Goal level
 - How the cognitive layer (this document + the app's waypoints) connects to
   the intent layer (Spec Kit) and technical layer (code) in a sustainable way
+- Whether every ADR needs its own markdown file, or whether the waypoint itself can be the ADR (see Known Issues — ADR convention inconsistency)
 
 ---
 
@@ -180,6 +191,7 @@ app/
     WaypointForm.tsx   — create/edit modal
   lib/
     types.ts           — TypeScript interfaces (source of truth)
+    db.ts              — database client (Turso in production, local SQLite in dev)
     db-mappers.ts      — Prisma rows → AppState types
     mock-data.ts       — seed data (used only on first DB run)
   api/
@@ -193,6 +205,6 @@ prisma/
 .specify/
   memory/constitution.md — 8 principles
 specs/                 — Spec Kit feature specs
-docs/adr/              — Architectural Decision Records
+docs/adr/              — Architectural Decision Records (convention inconsistent, see Known Issues)
 ```
 <!-- COGNITIVE LAYER END -->
