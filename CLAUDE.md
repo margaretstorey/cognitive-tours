@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: Jun 16 2026
+Last updated: Jun 26 2026
 
 <!-- SPECKIT START -->
 No active feature. Run `/speckit-specify` to start a new one.
@@ -51,6 +51,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Root component renamed CognitiveToursApp, repo renamed to cognitive-tours ✅
 - Page title fixed (was showing default "Create Next App") ✅
 - Git repository reconnected in Vercel project settings — see Known Issues ✅
+- README written and reflects current project state ✅
+- Constitution updated to Cognitive Tours (v1.3.0) ✅  
+- ADR 003 (Use Turso) written at docs/adr/003-use-turso.md ✅
+- tours/ folder established for markdown tour exports ✅
+
+---
 
 ### What is NOT yet built
 - File content preview in detail panel
@@ -72,11 +78,11 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead) — needs a pass to verify across all tours
 - **Vercel Git connection can silently disconnect.** If pushes stop triggering deploys (commits show on `origin/main` via `git log`, but nothing new appears in Vercel's Deployments tab), check Project Settings → Git in Vercel. It may show "Connect Git" instead of a connected repo. Fix: reconnect via "Adjust GitHub App Permissions" if the repo isn't listed, then "Connect."
 - **ADR 002 (Local React State, No Persistence for MVP) is orphaned** — the file exists at docs/adr/002-*.md but has no waypoint pointing to it, and still references "Shrimp 2.0" / "ShrimpApp" throughout. It's correctly marked Superseded (replaced by Phase 2 Prisma/SQLite) but isn't part of the graph. See "What to work on next."
-- **ADR convention is inconsistent.** Some ADR waypoints (e.g. "Use React Flow") have a filePath pointing to a real docs/adr/*.md file. Others (e.g. "Deploy to Vercel," "Use Turso") have filePath pointing to implementation code (db.ts) instead of a decision doc, and some (e.g. "SQLite + Prisma for persistence") have no filePath at all. Needs a decision: should every ADR have a backing markdown file, or is the waypoint itself the ADR?
+- **ADR convention is inconsistent.** Some ADR waypoints (e.g. "Use React Flow") have a filePath pointing to a real docs/adr/*.md file. Others (e.g."Others (e.g. "Deploy to Vercel") have filePath pointing to implementation code — Use Turso now has docs/adr/003-use-turso.md ✅"
 
 ---
 
-## The ontology (waypoint types and their meaning)
+## The ontology (waypoint types and their meaning) - note not evaluated
 
 Margaret-Anne's intended ontology — not fully implemented yet:
 
@@ -127,7 +133,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 
 ---
 
-## Constitution (8 principles — v1.2.0)
+## Constitution (8 principles — v1.3.0)
 
 I. Simplicity Over Complexity — YAGNI enforced
 II. Incremental Growth — one small verifiable step at a time
@@ -156,18 +162,38 @@ Full constitution: .specify/memory/constitution.md
 
 ---
 
-## What to work on next (in priority order)
 
-1. **Create a waypoint for ADR 002** (Local React State, No Persistence) — link filePath to docs/adr/002-*.md, update Shrimp references, connect into the graph
-2. **Decide the ADR convention** — every ADR gets a backing docs/adr/*.md file with filePath pointing to it, vs. filePath pointing to implementing code. Currently inconsistent across existing ADR waypoints.
-3. **Repair remaining waypoints** — rename any lingering Shrimp → Cognitive Tours references, fix incorrect tour connections flagged in Known Issues
-4. **Delete "Start here - overview" tour** — redundant with "Why Cognitive Tours Exists" (research story) and "How Cognitive Tours Work" (architecture); decided June 16 it duplicates both without adding value
-5. **Begin Tours tab design** — separate tab with Dagre auto-layout, independent of main graph
-6. **Docent mode (real fix)** — add a `narrative` text field to the `TourWaypoint` join table for per-step, tour-specific transition text between stops. Confirmed need by walking the deployment tour June 16 — transition narrative kept wanting to leak into waypoint notes, which contaminates the waypoint for other entry points. Schema migration + API + TourBar UI.
-7. **Write README** — explains what Cognitive Tours is, links to paper (app is now public)
-8. **Edge management panel** — show edge details in right panel, delete button there
-9. **Playwright tests** — before sharing with real users
-10. Markdown tour export — tours can be manually saved to `tours/` as dated 
+  ## What to work on next (in priority order)
+
+1. **Clean up stale waypoints in the app** — rename any remaining Shrimp 
+   references (w11 filePath still points to ShrimpApp.tsx, w12 still called 
+   "ShrimpApp", tour t01 still named "How Shrimp Works"), fix incorrect tour 
+   connections flagged in Known Issues. Do this directly in the running app.
+
+2. **Delete "Start here - overview" tour** (t-1780379652948) — redundant, 
+   decided June 16. Do this directly in the running app.
+
+3. **Decide the ADR convention** — every ADR gets a backing docs/adr/*.md 
+   file with filePath pointing to it. ADR 003 (Turso) is now done. ADR 002 
+   still has Shrimp references and needs updating. Deploy to Vercel ADR 
+   needs a backing file.
+
+4. **Create waypoint for ADR 002** — link filePath to docs/adr/002-*.md, 
+   update Shrimp references in that file.
+
+5. **Begin Tours tab design** — separate tab with Dagre auto-layout, 
+   independent of main graph.
+
+6. **Docent mode (real fix)** — add a `narrative` text field to the 
+   `TourWaypoint` join table for per-step transition text. Schema migration 
+   + API + TourBar UI. Use `/speckit-specify` to start spec 006.
+
+7. **Edge management panel** — show edge details in right panel, delete 
+   button there.
+
+8. **Playwright tests** — before sharing with real users.
+
+9. Markdown tour export — tours can be manually saved to `tours/` as dated 
   markdown snapshots (see `tours/re-entry-tour-june2.md` for the format). 
   Automated export from the app is a future feature.
 
@@ -178,9 +204,9 @@ Full constitution: .specify/memory/constitution.md
 - How to keep waypoints and tours in sync as the code evolves
 - How the cognitive layer (this document + the app's waypoints) connects to
   the intent layer (Spec Kit) and technical layer (code) in a sustainable way
-- Whether every ADR needs its own markdown file, or whether the waypoint itself can be the ADR (see Known Issues — ADR convention inconsistency)
 
 ---
+
 
 ## Stack reference
 
