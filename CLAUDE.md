@@ -167,6 +167,9 @@ Full constitution: .specify/memory/constitution.md
 7. **Write README** — explains what Cognitive Tours is, links to paper (app is now public)
 8. **Edge management panel** — show edge details in right panel, delete button there
 9. **Playwright tests** — before sharing with real users
+10. Markdown tour export — tours can be manually saved to `tours/` as dated 
+  markdown snapshots (see `tours/re-entry-tour-june2.md` for the format). 
+  Automated export from the app is a future feature.
 
 ---
 

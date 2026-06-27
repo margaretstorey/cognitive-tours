@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cognitive Tours
 
-## Getting Started
+<!-- Semi-automated by Claude-->
 
-First, run the development server:
+A software comprehension tool where developers create waypoints and guided 
+tours to navigate intent, decisions, and code together.
+
+The core thesis: understanding cannot be outsourced or automated. Tours you 
+create yourself repair your own cognitive debt, tours you create for others are sharing some
+of your understanding with others. AI is a scaffold, an amplifier, not a 
+substitute.
+
+**Live app:** https://cognitive-tours.vercel.app  
+<!-- Note this is not password protected -->
+**Domains:** cognitive.tours | cognitivetours.dev  
+**Research foundation:** [From Technical Debt to Cognitive and Intent Debt](https://arxiv.org/abs/2603.22106) (Storey, 2026)
+
+---
+
+## What it does
+
+Cognitive Tours lets you place waypoints on an interactive graph — each 
+waypoint is a meaningful place in your project: a user need, a design 
+decision, a risk, a key component, a test, or an open question. You then 
+connect waypoints into guided tours that tell the story of your codebase.
+
+The app is self-documenting: the waypoints and tours in the live app 
+describe Cognitive Tours itself.
+
+---
+
+## Ontology (in progress!)
+
+Waypoints are typed - and for now hardcoded.  Edges are not typed.
+Waypoints can be of type: Goal, User need, feature, ADR, risk, open question, code components
+Tours link waypoints according to a goal (name of the tour)
+
+---
+
+## Running locally
 
 ```bash
+git clone https://github.com/margaretstorey/cognitive-tours
+cd cognitive-tours
+npm install
+npx prisma generate
+npx prisma migrate dev
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app uses SQLite locally via Prisma. The production deployment uses 
+Turso (hosted SQLite) on Vercel.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 16 + TypeScript + Tailwind + React Flow**
+- **Three-panel layout:** graph (left), waypoint detail (right), tour bar (top)
+- **Persistence:** SQLite + Prisma locally, Turso in production
+- **State:** single root component `CognitiveToursApp.tsx` owns all app state
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See `CLAUDE.md` for the full project state, key decisions, and backlog.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Read `CLAUDE.md` before touching any code. It is the cognitive layer — the 
+bridge between intent, understanding, and code.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project uses a two-Claude workflow: one Claude instance handles 
+planning and architecture (working from CLAUDE.md), another handles 
+implementation via Claude Code. If you are contributing as a developer, 
+start Claude Code from the repo root and it will read CLAUDE.md 
+automatically.
+
+The constitution (8 principles) lives at `.specify/memory/constitution.md`. 
+Read it before adding any feature.

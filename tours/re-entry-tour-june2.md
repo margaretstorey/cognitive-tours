@@ -1,4 +1,6 @@
 # Cognitive Tour: Re-entry — June 2, 2026
+# deprecated right now but keep it as an idea for future tour template idea
+# note : I played around with saving tours as markdown - will come back to this
 
 ## Purpose
 Help Margaret-Anne pick up where she left off and answer the question:
