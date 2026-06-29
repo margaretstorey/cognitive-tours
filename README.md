@@ -77,5 +77,8 @@ implementation via Claude Code. If you are contributing as a developer,
 start Claude Code from the repo root and it will read CLAUDE.md 
 automatically.
 
+**Note for collaborators:** Before making significant changes, visit 
+/api/data and save the JSON as a backup. There is no undo.
+
 The constitution (8 principles) lives at `.specify/memory/constitution.md`. 
 Read it before adding any feature.
