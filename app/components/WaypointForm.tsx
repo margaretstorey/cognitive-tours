@@ -58,7 +58,7 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium">Description</label>
+          <label className="text-sm font-medium">Description <span className="text-gray-400 font-normal">(optional)</span></label>
           <textarea
             className="border border-gray-300 rounded px-3 py-1.5 text-sm resize-none"
             rows={3}
