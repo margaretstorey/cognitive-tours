@@ -1,0 +1,61 @@
+'use client';
+
+import type { Tour, Waypoint } from '@/app/lib/types';
+
+interface TourMarkdownViewProps {
+  tour: Tour;
+  waypoints: Waypoint[];
+}
+
+export default function TourMarkdownView({ tour, waypoints }: TourMarkdownViewProps) {
+  const waypointMap = new Map(waypoints.map(w => [w.id, w]));
+
+  return (
+    <div className="h-full overflow-y-auto p-6 bg-white">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{tour.name}</h1>
+        {tour.description.trim() && (
+          <p className="text-gray-600 mb-3">{tour.description}</p>
+        )}
+        <p className="text-xs text-gray-400 mb-6">
+          {tour.stops.length} stop{tour.stops.length === 1 ? '' : 's'}
+        </p>
+
+        {tour.stops.length === 0 ? (
+          <p className="text-sm text-gray-400 italic">This tour has no waypoints yet.</p>
+        ) : (
+          <div className="flex flex-col gap-6">
+            {tour.stops.map((stop, index) => {
+              const wp = waypointMap.get(stop.waypointId);
+              if (!wp) return null;
+              return (
+                <div key={`${stop.waypointId}-${index}`} className="border-l-2 border-gray-200 pl-4">
+                  <h2 className="text-base font-semibold text-gray-800 mb-1">
+                    <span className="text-gray-400 font-normal text-sm mr-2">{index + 1}.</span>
+                    {wp.label}
+                  </h2>
+                  {wp.description.trim() && (
+                    <p className="text-sm text-gray-700 mb-2">{wp.description}</p>
+                  )}
+                  {wp.notes?.trim() && (
+                    <p className="text-sm text-gray-600 mb-2">{wp.notes}</p>
+                  )}
+                  {wp.filePath?.trim() && (
+                    <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 block mb-2">
+                      {wp.filePath}
+                    </code>
+                  )}
+                  {stop.narrative?.trim() && (
+                    <div className="mt-2 border-l-2 border-amber-300 pl-3">
+                      <p className="text-sm text-amber-800 italic">{stop.narrative}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

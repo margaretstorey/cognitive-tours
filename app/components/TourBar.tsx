@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Tour, TourStop, Waypoint } from '@/app/lib/types';
+import { generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
 
 interface TourBarProps {
   tours: Tour[];
@@ -15,6 +16,8 @@ interface TourBarProps {
   onUpdateTour: (id: string, data: Partial<Omit<Tour, 'id'>>) => void;
   onDeleteTour: (id: string) => void;
   waypoints: Waypoint[];
+  markdownViewOpen: boolean;
+  onToggleMarkdownView: () => void;
 }
 
 interface TourEditorState {
@@ -38,6 +41,8 @@ export default function TourBar({
   onUpdateTour,
   onDeleteTour,
   waypoints,
+  markdownViewOpen,
+  onToggleMarkdownView,
 }: TourBarProps) {
   const [editor, setEditor] = useState<TourEditorState>({
     open: false,
@@ -94,6 +99,20 @@ export default function TourBar({
     });
   };
 
+  const handleExport = () => {
+    const tour = tours.find(t => t.id === activeTourId);
+    if (!tour) return;
+    const markdown = generateTourMarkdown(tour, waypoints);
+    const filename = `${tourSlug(tour.name)}-${new Date().toISOString().slice(0, 10)}.md`;
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <div className="flex items-center gap-3 px-4 h-12 border-b border-gray-200 bg-white shrink-0">
@@ -131,6 +150,22 @@ export default function TourBar({
               className="ml-1 px-2 py-1 text-xs border border-gray-200 rounded text-gray-500 hover:bg-gray-50"
             >
               Edit tour
+            </button>
+            <button
+              onClick={onToggleMarkdownView}
+              className={`px-2 py-1 text-xs border rounded ${
+                markdownViewOpen
+                  ? 'border-blue-400 bg-blue-50 text-blue-700'
+                  : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              {markdownViewOpen ? 'Graph' : 'Markdown'}
+            </button>
+            <button
+              onClick={handleExport}
+              className="px-2 py-1 text-xs border border-gray-200 rounded text-gray-500 hover:bg-gray-50"
+            >
+              Export ↓
             </button>
           </div>
         ) : null}

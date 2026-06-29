@@ -6,6 +6,7 @@ import { WAYPOINT_TYPES } from '@/app/lib/types';
 import WaypointGraph from './WaypointGraph';
 import WaypointDetail from './WaypointDetail';
 import TourBar from './TourBar';
+import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
 
 type FormState =
@@ -43,6 +44,7 @@ export default function CognitiveToursApp() {
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterState, setFilterState] = useState<FilterState>(DEFAULT_FILTER_STATE);
+  const [markdownViewOpen, setMarkdownViewOpen] = useState(false);
   // Per-node debounce map for position changes (onNodesChange fires on every drag frame).
   const positionDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -279,10 +281,13 @@ export default function CognitiveToursApp() {
     [tours, clearErrorAfterDelay],
   );
 
+  const onToggleMarkdownView = useCallback(() => setMarkdownViewOpen(v => !v), []);
+
   const selectTour = useCallback(
     (id: string | null) => {
       setActiveTourId(id);
       setActiveTourStepRaw(0);
+      setMarkdownViewOpen(false);
       if (id) {
         const tour = tours.find(t => t.id === id);
         setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
@@ -389,6 +394,8 @@ export default function CognitiveToursApp() {
         onUpdateTour={updateTour}
         onDeleteTour={deleteTour}
         waypoints={waypoints}
+        markdownViewOpen={markdownViewOpen}
+        onToggleMarkdownView={onToggleMarkdownView}
       />
       {currentNarrative && (
         <div className="bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
@@ -396,21 +403,25 @@ export default function CognitiveToursApp() {
         </div>
       )}
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 relative">
-          <WaypointGraph
-            waypoints={waypoints}
-            edges={edges}
-            selectedWaypointId={selectedWaypointId}
-            activeTourWaypointIds={activeTour?.stops.map(s => s.waypointId) ?? []}
-            onSelectWaypoint={selectWaypoint}
-            onConnect={addEdge}
-            onDeleteEdge={deleteEdge}
-            onDeleteWaypoint={deleteWaypoint}
-            onNodePositionChange={onNodePositionChange}
-            onAddWaypointClick={openCreateForm}
-            filterState={filterState}
-            onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
-          />
+        <div className="flex-1 relative overflow-hidden">
+          {markdownViewOpen && activeTour ? (
+            <TourMarkdownView tour={activeTour} waypoints={waypoints} />
+          ) : (
+            <WaypointGraph
+              waypoints={waypoints}
+              edges={edges}
+              selectedWaypointId={selectedWaypointId}
+              activeTourWaypointIds={activeTour?.stops.map(s => s.waypointId) ?? []}
+              onSelectWaypoint={selectWaypoint}
+              onConnect={addEdge}
+              onDeleteEdge={deleteEdge}
+              onDeleteWaypoint={deleteWaypoint}
+              onNodePositionChange={onNodePositionChange}
+              onAddWaypointClick={openCreateForm}
+              filterState={filterState}
+              onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
+            />
+          )}
         </div>
         <div className="w-80 border-l border-gray-200 overflow-y-auto bg-white">
           <WaypointDetail
