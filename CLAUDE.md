@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: Jun 26 2026
+Last updated: Jun 28 2026
 
 <!-- SPECKIT START -->
 No active feature. Run `/speckit-specify` to start a new one.
@@ -77,8 +77,6 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Edge deletion via keyboard doesn't work reliably on Mac
 - Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead) — needs a pass to verify across all tours
 - **Vercel Git connection can silently disconnect.** If pushes stop triggering deploys (commits show on `origin/main` via `git log`, but nothing new appears in Vercel's Deployments tab), check Project Settings → Git in Vercel. It may show "Connect Git" instead of a connected repo. Fix: reconnect via "Adjust GitHub App Permissions" if the repo isn't listed, then "Connect."
-- **ADR 002 (Local React State, No Persistence for MVP) is orphaned** — the file exists at docs/adr/002-*.md but has no waypoint pointing to it, and still references "Shrimp 2.0" / "ShrimpApp" throughout. It's correctly marked Superseded (replaced by Phase 2 Prisma/SQLite) but isn't part of the graph. See "What to work on next."
-- **ADR convention is inconsistent.** Some ADR waypoints (e.g. "Use React Flow") have a filePath pointing to a real docs/adr/*.md file. Others (e.g."Others (e.g. "Deploy to Vercel") have filePath pointing to implementation code — Use Turso now has docs/adr/003-use-turso.md ✅"
 
 ---
 
