@@ -41,9 +41,14 @@ export default function TourMarkdownView({ tour, waypoints }: TourMarkdownViewPr
                     <p className="text-sm text-gray-600 mb-2">{wp.notes}</p>
                   )}
                   {wp.filePath?.trim() && (
-                    <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 block mb-2">
+                    <a
+                      href={`vscode://file/Users/mstorey/shrimp-2/${wp.filePath}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 hover:bg-gray-200 block mb-2 font-mono break-all"
+                    >
                       {wp.filePath}
-                    </code>
+                    </a>
                   )}
                   {stop.narrative?.trim() && (
                     <div className="mt-2 border-l-2 border-amber-300 pl-3">
