@@ -12,7 +12,7 @@ export function toWaypoint(row: DbWaypoint): Waypoint {
     label: row.label,
     // SQLite stores WaypointType as a plain string; safe to cast because only valid union values are written.
     type: row.type as WaypointType,
-    description: row.description,
+    description: row.description ?? undefined,
     notes: row.notes ?? undefined,
     filePath: row.filePath ?? undefined,
     position: { x: row.posX, y: row.posY },
