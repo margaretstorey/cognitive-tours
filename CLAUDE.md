@@ -61,6 +61,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Optional waypoint description — missing description currently shows an error; should fail gracefully (show nothing)
 - Suppress amber narrative bar in markdown mode — narrative already appears as blockquote in markdown view; amber bar is redundant when markdownViewOpen is true
 - VS Code links in markdown view — filePath should render as a clickable vscode://file/... link in TourMarkdownView, matching the behaviour in the detail panel
+- Search/filter bar on graph — graph is getting dense; need a way to find nodes quickly by name so added this, also has a filter by type! 
+- Alphabetical ordering in tour waypoint picker — make it easier to find waypoints when adding stops to a tour
 
 ---
 
@@ -89,8 +91,6 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Small improvements (quality of life)
 
-- **Search/filter bar on graph** — graph is getting dense; need a way to find nodes quickly by name
-- **Alphabetical ordering in tour waypoint picker** — hard to find waypoints when adding stops to a tour
 
 ---
 
