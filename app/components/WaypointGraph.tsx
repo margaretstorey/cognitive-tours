@@ -97,7 +97,7 @@ function Graph({
   const nodes: Node[] = useMemo(
     () =>
       waypoints
-        .filter(w => filterState[w.type])
+        .filter(w => !hiddenNodeIds.has(w.id))
         .map(w => ({
           id: w.id,
           type: 'waypointNode',
@@ -112,7 +112,7 @@ function Graph({
               ? { opacity: 0.2 }
               : undefined,
         })),
-    [waypoints, selectedWaypointId, activeTourWaypointIds, filterState]
+    [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds]
   );
 
   const rfEdges: Edge[] = useMemo(
