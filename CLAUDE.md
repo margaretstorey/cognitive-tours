@@ -67,6 +67,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
 - Separate Tours tab with independent layout
+- Markdown view for tours (toggle from tour bar) + dated snapshot export to tours/ folder
 
 ## Maintenance reminders
 - **Backup before onboarding new collaborators** — visit /api/data and 
@@ -132,6 +133,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - **Turso for cloud, SQLite locally** — Vercel deployment live; Turso provides persistent SQLite across deploys.
 - **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning.
 - **Waypoint content must be context-free.** A waypoint's description/notes should make sense regardless of which tour (or no tour) brought a reader to it. Tour-specific transition narrative ("now that you've seen X, let's look at Y") does not belong in waypoint notes — it contaminates the waypoint for every other entry point. For now, if a transition insight is worth keeping, prefer rephrasing it as a standalone true fact about the waypoint itself, or hold it in the tour's own description field as a stopgap. 
+- **Tours as markdown.** Using live-render for a tour's markdown versus archived snapshot and the markodwn view is toggled from the tour bar.
 
 ---
 
@@ -167,17 +169,16 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
-1. **Begin Tours tab design** — separate tab with Dagre auto-layout, 
-   independent of main graph.
-
+1. **Markdown tour export** — tours can be manually saved to `tours/` as dated 
+  markdown snapshots (see `tours/re-entry-tour-june2.md` for one format). 
+  Automated export from the app is also in the works. 
+  
 2. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
 3. **Playwright tests** — before sharing with real users.
 
-4. Markdown tour export — tours can be manually saved to `tours/` as dated 
-  markdown snapshots (see `tours/re-entry-tour-june2.md` for the format). 
-  Automated export from the app is a future feature.
+
 
 ---
 
