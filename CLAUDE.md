@@ -2,7 +2,9 @@
 Last updated: Jun 28 2026
 
 <!-- SPECKIT START -->
-No active feature. Run `/speckit-specify` to start a new one.
+Active feature: **Docent Mode — Per-Step Tour Narrative** (`006-docent-mode`)
+Plan: `specs/006-docent-mode/plan.md`
+Spec: `specs/006-docent-mode/spec.md`
 <!-- SPECKIT END -->
 
 # CLAUDE.md — The Cognitive Bridge
@@ -69,7 +71,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Per-step tour narrative ("docent mode") — see Open Question below
 
 ## Maintenance reminders
-- **Backup Turso data periodically** — visit https://cognitive-tours.vercel.app/api/data and save the JSON. Last backup: June 2, 2026.
+- - **Backup before onboarding new collaborators** — visit /api/data and 
+  save the JSON before giving anyone else access to the live app.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session.
 
@@ -77,6 +80,9 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Edge deletion via keyboard doesn't work reliably on Mac
 - Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead) — needs a pass to verify across all tours
 - **Vercel Git connection can silently disconnect.** If pushes stop triggering deploys (commits show on `origin/main` via `git log`, but nothing new appears in Vercel's Deployments tab), check Project Settings → Git in Vercel. It may show "Connect Git" instead of a connected repo. Fix: reconnect via "Adjust GitHub App Permissions" if the repo isn't listed, then "Connect."
+- **No undo and no multi-user conflict protection** — the app has no undo 
+  and no locking. With multiple users, concurrent edits can overwrite each 
+  other silently. Back up /api/data before collaborative sessions.
 
 ---
 
