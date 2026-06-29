@@ -2,9 +2,7 @@
 Last updated: Jun 28 2026
 
 <!-- SPECKIT START -->
-Active feature: **Docent Mode — Per-Step Tour Narrative** (`006-docent-mode`)
-Plan: `specs/006-docent-mode/plan.md`
-Spec: `specs/006-docent-mode/spec.md`
+No active feature. Run `/speckit-specify` to start a new one.
 <!-- SPECKIT END -->
 
 # CLAUDE.md — The Cognitive Bridge
@@ -57,6 +55,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Constitution updated to Cognitive Tours (v1.3.0) ✅  
 - ADR 003 (Use Turso) written at docs/adr/003-use-turso.md ✅
 - tours/ folder established for markdown tour exports ✅
+- Docent mode — per-step narrative on tour stops, displayed in amber bar below tour bar ✅
 
 ---
 
@@ -68,7 +67,6 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
 - Separate Tours tab with independent layout
-- Per-step tour narrative ("docent mode") — see Open Question below
 
 ## Maintenance reminders
 - - **Backup before onboarding new collaborators** — visit /api/data and 
@@ -103,7 +101,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - **Open Question** — unresolved issues
 - **Todo** — work to be done (not yet implemented as a type)
 
-**Intended edge semantics:**
+**Intended edge semantics but not enforced:**
 - Goal → motivates → User Need
 - User Need → supported by → Feature
 - Feature → contains → Feature
@@ -133,7 +131,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - **Single user for now** — no auth, no multi-project, no collaboration yet.
 - **Turso for cloud, SQLite locally** — Vercel deployment live; Turso provides persistent SQLite across deploys.
 - **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning.
-- **Waypoint content must be context-free.** A waypoint's description/notes should make sense regardless of which tour (or no tour) brought a reader to it. Tour-specific transition narrative ("now that you've seen X, let's look at Y") does not belong in waypoint notes — it contaminates the waypoint for every other entry point. For now, if a transition insight is worth keeping, prefer rephrasing it as a standalone true fact about the waypoint itself, or hold it in the tour's own description field as a stopgap. See "docent mode" Open Question below for the real fix.
+- **Waypoint content must be context-free.** A waypoint's description/notes should make sense regardless of which tour (or no tour) brought a reader to it. Tour-specific transition narrative ("now that you've seen X, let's look at Y") does not belong in waypoint notes — it contaminates the waypoint for every other entry point. For now, if a transition insight is worth keeping, prefer rephrasing it as a standalone true fact about the waypoint itself, or hold it in the tour's own description field as a stopgap. 
 
 ---
 
@@ -177,27 +175,15 @@ Full constitution: .specify/memory/constitution.md
 2. **Delete "Start here - overview" tour** (t-1780379652948) — redundant, 
    decided June 16. Do this directly in the running app.
 
-3. **Decide the ADR convention** — every ADR gets a backing docs/adr/*.md 
-   file with filePath pointing to it. ADR 003 (Turso) is now done. ADR 002 
-   still has Shrimp references and needs updating. Deploy to Vercel ADR 
-   needs a backing file.
-
-4. **Create waypoint for ADR 002** — link filePath to docs/adr/002-*.md, 
-   update Shrimp references in that file.
-
-5. **Begin Tours tab design** — separate tab with Dagre auto-layout, 
+3. **Begin Tours tab design** — separate tab with Dagre auto-layout, 
    independent of main graph.
 
-6. **Docent mode (real fix)** — add a `narrative` text field to the 
-   `TourWaypoint` join table for per-step transition text. Schema migration 
-   + API + TourBar UI. Use `/speckit-specify` to start spec 006.
-
-7. **Edge management panel** — show edge details in right panel, delete 
+4. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
-8. **Playwright tests** — before sharing with real users.
+5. **Playwright tests** — before sharing with real users.
 
-9. Markdown tour export — tours can be manually saved to `tours/` as dated 
+6. Markdown tour export — tours can be manually saved to `tours/` as dated 
   markdown snapshots (see `tours/re-entry-tour-june2.md` for the format). 
   Automated export from the app is a future feature.
 
@@ -238,6 +224,6 @@ prisma/
 .specify/
   memory/constitution.md — 8 principles
 specs/                 — Spec Kit feature specs
-docs/adr/              — Architectural Decision Records (convention inconsistent, see Known Issues)
+docs/adr/              — Architectural Decision Records 
 ```
 <!-- COGNITIVE LAYER END -->
