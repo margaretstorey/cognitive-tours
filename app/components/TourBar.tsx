@@ -242,7 +242,7 @@ export default function TourBar({
                 onChange={e => { if (e.target.value) { addWaypointToTour(e.target.value); e.target.value = ''; } }}
               >
                 <option value="">Add a waypoint…</option>
-                {waypoints.map(w => (
+                {[...waypoints].sort((a, b) => a.label.localeCompare(b.label)).map(w => (
                   <option key={w.id} value={w.id}>{w.label}</option>
                 ))}
               </select>

@@ -58,6 +58,9 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - tours/ folder established for markdown tour exports ✅
 - Docent mode — per-step narrative on tour stops, displayed in amber bar below tour bar ✅
 - Markdown view for tours (toggle from tour bar) + dated snapshot export to tours/ folder (well manually) ✅
+- Optional waypoint description — missing description currently shows an error; should fail gracefully (show nothing)
+- Suppress amber narrative bar in markdown mode — narrative already appears as blockquote in markdown view; amber bar is redundant when markdownViewOpen is true
+- VS Code links in markdown view — filePath should render as a clickable vscode://file/... link in TourMarkdownView, matching the behaviour in the detail panel
 
 ---
 
@@ -88,9 +91,6 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 - **Search/filter bar on graph** — graph is getting dense; need a way to find nodes quickly by name
 - **Alphabetical ordering in tour waypoint picker** — hard to find waypoints when adding stops to a tour
-- **Optional waypoint description** — missing description currently shows an error; should fail gracefully (show nothing)
-- **Suppress amber narrative bar in markdown mode** — narrative already appears as blockquote in markdown view; amber bar is redundant when markdownViewOpen is true
-- **VS Code links in markdown view** — filePath should render as a clickable vscode://file/... link in TourMarkdownView, matching the behaviour in the detail panel
 
 ---
 
