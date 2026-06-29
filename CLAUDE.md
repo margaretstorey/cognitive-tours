@@ -2,7 +2,8 @@
 Last updated: Jun 29 2026
 
 <!-- SPECKIT START -->
-No active feature. Run `/speckit-specify` to start a new one.
+Active feature: **Tour Markdown View** — `specs/007-tour-markdown-view/plan.md`
+Branch: `007-tour-markdown-view`
 <!-- SPECKIT END -->
 
 # CLAUDE.md — The Cognitive Bridge
