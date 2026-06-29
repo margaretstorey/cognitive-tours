@@ -1,25 +1,47 @@
 # ADR 002: Local React State with No Persistence for MVP
 
-**Date**: 2026-05-21
-**Status**: Superseded (will be replaced by SQLite + Prisma in Phase 2)
+**Date:** 2026-05-21  
+**Status:** Superseded by ADR 003 (SQLite + Prisma, then Turso for cloud)
+
+---
 
 ## Context
 
-Shrimp 2.0 needs to store waypoints, edges, and tours. Before committing to a persistence layer, we need to validate the core concept: does the three-panel understanding map (graph + detail + tours) actually help developers navigate a project? Adding a database, ORM, migrations, and API routes before validating this would front-load infrastructure complexity that may need to change once we learn what users actually need.
+Cognitive Tours needed to store waypoints, edges, and tours. Before 
+committing to a persistence layer, the core concept needed validation: 
+does the three-panel understanding map (graph + detail + tours) actually 
+help developers navigate a project? Adding a database, ORM, migrations, 
+and API routes before validating this would front-load infrastructure 
+complexity that might need to change once we learned what users actually need.
+
+---
 
 ## Decision
 
-Use React `useState` with hard-coded mock data for all application state in the MVP. No server, no database, no API routes. All state resets on page refresh. Mock data represents Shrimp itself as the example project.
+Use React `useState` with hard-coded mock data for all application state 
+in the MVP. No server, no database, no API routes. All state resets on 
+page refresh. Mock data represented Cognitive Tours itself as the example 
+project.
+
+---
 
 ## Consequences
 
-**Positive**:
+**Positive:**
 - Extremely fast to build — no database setup, migrations, or API layer
-- Easy to understand — all state flows from a single root component (`ShrimpApp`)
+- Easy to understand — all state flows from a single root component
 - No infrastructure to maintain during the validation phase
-- Mock data can be designed to tell a compelling demo story (Shrimp explaining itself)
+- Mock data designed to tell a compelling demo story (the app explaining itself)
 
-**Negative**:
+**Negative:**
 - Data does not persist across page refreshes — users lose work on reload
-- Not usable for real projects until Phase 2 persistence is added
-- Acceptable for MVP demo purposes; users are informed via a visible notice in the UI
+- Not usable for real projects until Phase 2 persistence was added
+- Acceptable for MVP demo purposes; users were informed via a visible notice in the UI
+
+---
+
+## Superseded by
+
+Phase 2 replaced local state with SQLite + Prisma (ADR not written at the 
+time). Production deployment uses Turso for persistent cloud SQLite — 
+see ADR 003.
