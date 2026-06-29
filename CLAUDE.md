@@ -58,11 +58,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - tours/ folder established for markdown tour exports ✅
 - Docent mode — per-step narrative on tour stops, displayed in amber bar below tour bar ✅
 - Markdown view for tours (toggle from tour bar) + dated snapshot export to tours/ folder (well manually) ✅
-- Optional waypoint description — missing description currently shows an error; should fail gracefully (show nothing)
-- Suppress amber narrative bar in markdown mode — narrative already appears as blockquote in markdown view; amber bar is redundant when markdownViewOpen is true
-- VS Code links in markdown view — filePath should render as a clickable vscode://file/... link in TourMarkdownView, matching the behaviour in the detail panel
-- Search/filter bar on graph — graph is getting dense; need a way to find nodes quickly by name so added this, also has a filter by type! 
-- Alphabetical ordering in tour waypoint picker — make it easier to find waypoints when adding stops to a tour
+- Optional waypoint description — missing description currently shows an error; should fail gracefully (show nothing) ✅
+- Suppress amber narrative bar in markdown mode — narrative already appears as blockquote in markdown view; amber bar is redundant when markdownViewOpen is true ✅
+- VS Code links in markdown view — filePath should render as a clickable vscode://file/... link in TourMarkdownView, matching the behaviour in the detail panel ✅
+- Search/filter bar on graph — graph is getting dense; need a way to find nodes quickly by name so added this, also has a filter by type! ✅
+- Alphabetical ordering in tour waypoint picker — make it easier to find waypoints when adding stops to a tour ✅
+- Tour markdown view and export — toggle from tour bar; export downloads a dated .md snapshot. ✅
 
 ---
 
@@ -178,9 +179,7 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
-1. **Markdown tour export** — tours can be manually saved to `tours/` as dated 
-  markdown snapshots (see `tours/re-entry-tour-june2.md` for one format). 
-  Automated export from the app is also in the works. 
+ 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context. Needs spec before implementation (008-ai-suggest).
   
 2. **Edge management panel** — show edge details in right panel, delete 
    button there.
