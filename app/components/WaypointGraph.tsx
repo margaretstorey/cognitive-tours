@@ -57,6 +57,8 @@ interface WaypointGraphProps {
   onAddWaypointClick: () => void;
   filterState: FilterState;
   onFilterChange: (type: WaypointType, visible: boolean) => void;
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
 }
 
 function Graph({
@@ -71,15 +73,21 @@ function Graph({
   onAddWaypointClick,
   filterState,
   onFilterChange,
+  searchQuery,
+  onSearchChange,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const filterPanelRef = useRef<HTMLDivElement>(null);
 
-  const hiddenNodeIds = useMemo(
-    () => new Set(waypoints.filter(w => !filterState[w.type]).map(w => w.id)),
-    [waypoints, filterState]
-  );
+  const hiddenNodeIds = useMemo(() => {
+    const q = searchQuery.toLowerCase();
+    return new Set(
+      waypoints
+        .filter(w => !filterState[w.type] || (q && !w.label.toLowerCase().includes(q)))
+        .map(w => w.id)
+    );
+  }, [waypoints, filterState, searchQuery]);
 
   const hiddenCount = useMemo(
     () => WAYPOINT_TYPES.filter(t => !filterState[t]).length,
@@ -228,6 +236,13 @@ function Graph({
         >
           + Add Waypoint
         </button>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={e => onSearchChange(e.target.value)}
+          placeholder="Search…"
+          className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
+        />
         <div ref={filterPanelRef} className="relative">
           <button
             onClick={() => setFilterPanelOpen(o => !o)}

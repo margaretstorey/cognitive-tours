@@ -44,6 +44,7 @@ export default function CognitiveToursApp() {
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterState, setFilterState] = useState<FilterState>(DEFAULT_FILTER_STATE);
+  const [searchQuery, setSearchQuery] = useState('');
   const [markdownViewOpen, setMarkdownViewOpen] = useState(false);
   // Per-node debounce map for position changes (onNodesChange fires on every drag frame).
   const positionDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -420,6 +421,8 @@ export default function CognitiveToursApp() {
               onAddWaypointClick={openCreateForm}
               filterState={filterState}
               onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
             />
           )}
         </div>
