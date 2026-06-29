@@ -22,7 +22,7 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
 
   const handleSave = () => {
     if (!canSave) return;
-    onSave({ label: label.trim(), type: type as WaypointType, description: description.trim(), notes: notes.trim() || undefined, filePath: filePath.trim() || undefined });
+    onSave({ label: label.trim(), type: type as WaypointType, description: description.trim() || undefined, notes: notes.trim() || undefined, filePath: filePath.trim() || undefined });
   };
 
   return (

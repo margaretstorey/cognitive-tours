@@ -11,7 +11,7 @@ model Waypoint {
   id          String  @id
   label       String
   type        String
-  description String
+  description String?
   notes       String?
   filePath    String?
   posX        Float

@@ -27,7 +27,7 @@ export interface Waypoint {
   id: string;
   label: string;
   type: WaypointType;
-  description: string;
+  description?: string;
   notes?: string;
   filePath?: string;
   position: { x: number; y: number };
