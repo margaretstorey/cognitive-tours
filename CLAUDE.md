@@ -57,6 +57,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - ADR 003 (Use Turso) written at docs/adr/003-use-turso.md ✅
 - tours/ folder established for markdown tour exports ✅
 - Docent mode — per-step narrative on tour stops, displayed in amber bar below tour bar ✅
+- Markdown view for tours (toggle from tour bar) + dated snapshot export to tours/ folder (well manually) ✅
 
 ---
 
@@ -68,7 +69,6 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
 - Separate Tours tab with independent layout
-- Markdown view for tours (toggle from tour bar) + dated snapshot export to tours/ folder
 
 ## Maintenance reminders
 - **Backup before onboarding new collaborators** — visit /api/data and 
@@ -83,6 +83,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - **No undo and no multi-user conflict protection** — the app has no undo 
   and no locking. With multiple users, concurrent edits can overwrite each 
   other silently. Back up /api/data before collaborative sessions.
+
+### Small improvements (quality of life)
+
+- **Search/filter bar on graph** — graph is getting dense; need a way to find nodes quickly by name
+- **Alphabetical ordering in tour waypoint picker** — hard to find waypoints when adding stops to a tour
+- **Optional waypoint description** — missing description currently shows an error; should fail gracefully (show nothing)
+- **Suppress amber narrative bar in markdown mode** — narrative already appears as blockquote in markdown view; amber bar is redundant when markdownViewOpen is true
+- **VS Code links in markdown view** — filePath should render as a clickable vscode://file/... link in TourMarkdownView, matching the behaviour in the detail panel
 
 ---
 
