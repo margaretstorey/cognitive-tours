@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: Jun 28 2026
+Last updated: Jun 29 2026
 
 <!-- SPECKIT START -->
 No active feature. Run `/speckit-specify` to start a new one.
@@ -69,8 +69,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Separate Tours tab with independent layout
 
 ## Maintenance reminders
-- - **Backup before onboarding new collaborators** — visit /api/data and 
-  save the JSON before giving anyone else access to the live app.
+- **Backup before onboarding new collaborators** — visit /api/data and 
+  save the JSON before giving anyone else access to the live app. Last backup June 29, 2026.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session.
 
@@ -167,23 +167,15 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
-1. **Clean up stale waypoints in the app** — rename any remaining Shrimp 
-   references (w11 filePath still points to ShrimpApp.tsx, w12 still called 
-   "ShrimpApp", tour t01 still named "How Shrimp Works"), fix incorrect tour 
-   connections flagged in Known Issues. Do this directly in the running app.
-
-2. **Delete "Start here - overview" tour** (t-1780379652948) — redundant, 
-   decided June 16. Do this directly in the running app.
-
-3. **Begin Tours tab design** — separate tab with Dagre auto-layout, 
+1. **Begin Tours tab design** — separate tab with Dagre auto-layout, 
    independent of main graph.
 
-4. **Edge management panel** — show edge details in right panel, delete 
+2. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
-5. **Playwright tests** — before sharing with real users.
+3. **Playwright tests** — before sharing with real users.
 
-6. Markdown tour export — tours can be manually saved to `tours/` as dated 
+4. Markdown tour export — tours can be manually saved to `tours/` as dated 
   markdown snapshots (see `tours/re-entry-tour-june2.md` for the format). 
   Automated export from the app is a future feature.
 
