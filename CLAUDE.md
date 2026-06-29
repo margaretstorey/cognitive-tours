@@ -179,13 +179,14 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
- 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context. Needs spec before implementation (008-ai-suggest).
+ 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
   
 2. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
 3. **Playwright tests** — before sharing with real users.
 
+4. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
 
 
 ---
