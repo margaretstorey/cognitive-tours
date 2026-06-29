@@ -14,7 +14,7 @@ export default function TourMarkdownView({ tour, waypoints }: TourMarkdownViewPr
     <div className="h-full overflow-y-auto p-6 bg-white">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{tour.name}</h1>
-        {tour.description.trim() && (
+        {tour.description?.trim() && (
           <p className="text-gray-600 mb-3">{tour.description}</p>
         )}
         <p className="text-xs text-gray-400 mb-6">
@@ -34,7 +34,7 @@ export default function TourMarkdownView({ tour, waypoints }: TourMarkdownViewPr
                     <span className="text-gray-400 font-normal text-sm mr-2">{index + 1}.</span>
                     {wp.label}
                   </h2>
-                  {wp.description.trim() && (
+                  {wp.description?.trim() && (
                     <p className="text-sm text-gray-700 mb-2">{wp.description}</p>
                   )}
                   {wp.notes?.trim() && (
