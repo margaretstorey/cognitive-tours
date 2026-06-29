@@ -1,4 +1,4 @@
-import type { Waypoint, WaypointEdge, Tour } from './types';
+import type { Waypoint, WaypointEdge, Tour, TourStop } from './types';
 
 export const INITIAL_WAYPOINTS: Waypoint[] = [
   {
@@ -110,17 +110,19 @@ export const INITIAL_EDGES: WaypointEdge[] = [
   { id: 'e11', source: 'w03', target: 'w13' },
 ];
 
+const tourStops = (...ids: string[]): TourStop[] => ids.map(waypointId => ({ waypointId }));
+
 export const INITIAL_TOURS: Tour[] = [
   {
     id: 't01',
     name: 'New Developer Orientation',
     description: 'A first tour for someone who just joined the project. Starts with why Shrimp exists and walks through the core concepts and key components.',
-    waypointIds: ['w01', 'w02', 'w03', 'w06', 'w04', 'w12'],
+    stops: tourStops('w01', 'w02', 'w03', 'w06', 'w04', 'w12'),
   },
   {
     id: 't02',
     name: 'Why Waypoints and Tours Exist',
     description: 'A philosophical tour explaining the design rationale behind Shrimp — from the core problem through the risks, the technology choices, and the guiding concepts.',
-    waypointIds: ['w01', 'w10', 'w05', 'w02', 'w03', 'w11'],
+    stops: tourStops('w01', 'w10', 'w05', 'w02', 'w03', 'w11'),
   },
 ];

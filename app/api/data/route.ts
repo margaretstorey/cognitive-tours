@@ -31,7 +31,11 @@ export async function GET() {
             name: t.name,
             description: t.description,
             waypoints: {
-              create: t.waypointIds.map((waypointId, order) => ({ waypointId, order })),
+              create: t.stops.map((s, order) => ({
+                waypointId: s.waypointId,
+                order,
+                narrative: s.narrative?.trim() || null,
+              })),
             },
           },
         });

@@ -48,7 +48,8 @@ export default function CognitiveToursApp() {
 
   const selectedWaypoint = waypoints.find(w => w.id === selectedWaypointId) ?? null;
   const activeTour = tours.find(t => t.id === activeTourId) ?? null;
-  const activeTourLength = activeTour?.waypointIds.length ?? 0;
+  const activeTourLength = activeTour?.stops.length ?? 0;
+  const currentNarrative = activeTour?.stops[activeTourStep]?.narrative?.trim() ?? '';
 
   // T015: Startup fetch — load all persisted data on mount.
   useEffect(() => {
@@ -130,15 +131,15 @@ export default function CognitiveToursApp() {
       const tourSnapshot = tours;
       const removedEdges = edges.filter(e => e.source === id || e.target === id);
       const modifiedTours = tours
-        .filter(t => t.waypointIds.includes(id))
-        .map(t => ({ ...t, waypointIds: t.waypointIds.filter(wid => wid !== id) }));
+        .filter(t => t.stops.some(s => s.waypointId === id))
+        .map(t => ({ ...t, stops: t.stops.filter(s => s.waypointId !== id) }));
 
       setWaypoints(prev => prev.filter(w => w.id !== id));
       setEdges(prev => prev.filter(e => e.source !== id && e.target !== id));
       setTours(prev =>
         prev.map(t =>
-          t.waypointIds.includes(id)
-            ? { ...t, waypointIds: t.waypointIds.filter(wid => wid !== id) }
+          t.stops.some(s => s.waypointId === id)
+            ? { ...t, stops: t.stops.filter(s => s.waypointId !== id) }
             : t,
         ),
       );
@@ -153,7 +154,7 @@ export default function CognitiveToursApp() {
               apiFetch(`/api/tours/${t.id}`, {
                 method: 'PUT',
                 headers: JSON_HEADERS,
-                body: JSON.stringify({ waypointIds: t.waypointIds }),
+                body: JSON.stringify({ stops: t.stops }),
               }),
             ),
           );
@@ -284,7 +285,7 @@ export default function CognitiveToursApp() {
       setActiveTourStepRaw(0);
       if (id) {
         const tour = tours.find(t => t.id === id);
-        setSelectedWaypointId(tour?.waypointIds[0] ?? null);
+        setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
       }
     },
     [tours],
@@ -293,19 +294,19 @@ export default function CognitiveToursApp() {
   const onNext = useCallback(() => {
     if (!activeTour) return;
     const next = activeTourStep + 1;
-    if (next >= activeTour.waypointIds.length) {
+    if (next >= activeTour.stops.length) {
       setActiveTourId(null);
       return;
     }
     setActiveTourStepRaw(next);
-    setSelectedWaypointId(activeTour.waypointIds[next]);
+    setSelectedWaypointId(activeTour.stops[next].waypointId);
   }, [activeTour, activeTourStep]);
 
   const onPrev = useCallback(() => {
     if (!activeTour || activeTourStep === 0) return;
     const prev = activeTourStep - 1;
     setActiveTourStepRaw(prev);
-    setSelectedWaypointId(activeTour.waypointIds[prev]);
+    setSelectedWaypointId(activeTour.stops[prev].waypointId);
   }, [activeTour, activeTourStep]);
 
   // T020 — debounced per node ID: onNodesChange fires on every drag frame.
@@ -389,13 +390,18 @@ export default function CognitiveToursApp() {
         onDeleteTour={deleteTour}
         waypoints={waypoints}
       />
+      {currentNarrative && (
+        <div className="bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
+          {currentNarrative}
+        </div>
+      )}
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 relative">
           <WaypointGraph
             waypoints={waypoints}
             edges={edges}
             selectedWaypointId={selectedWaypointId}
-            activeTourWaypointIds={activeTour?.waypointIds ?? []}
+            activeTourWaypointIds={activeTour?.stops.map(s => s.waypointId) ?? []}
             onSelectWaypoint={selectWaypoint}
             onConnect={addEdge}
             onDeleteEdge={deleteEdge}

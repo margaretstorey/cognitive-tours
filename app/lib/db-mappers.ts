@@ -4,7 +4,7 @@ import type {
   Tour as DbTour,
   TourWaypoint as DbTourWaypoint,
 } from '../generated/prisma/client';
-import type { Waypoint, WaypointEdge, Tour, WaypointType } from './types';
+import type { Waypoint, WaypointEdge, Tour, TourStop, WaypointType } from './types';
 
 export function toWaypoint(row: DbWaypoint): Waypoint {
   return {
@@ -34,6 +34,9 @@ export function toTour(row: DbTour & { waypoints: DbTourWaypoint[] }): Tour {
     id: row.id,
     name: row.name,
     description: row.description,
-    waypointIds: sorted.map(tw => tw.waypointId),
+    stops: sorted.map((tw): TourStop => ({
+      waypointId: tw.waypointId,
+      ...(tw.narrative ? { narrative: tw.narrative } : {}),
+    })),
   };
 }

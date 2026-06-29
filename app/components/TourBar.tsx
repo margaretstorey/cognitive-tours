@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Tour, Waypoint } from '@/app/lib/types';
+import type { Tour, TourStop, Waypoint } from '@/app/lib/types';
 
 interface TourBarProps {
   tours: Tour[];
@@ -23,7 +23,7 @@ interface TourEditorState {
   tourId?: string;
   name: string;
   description: string;
-  waypointIds: string[];
+  stops: TourStop[];
 }
 
 export default function TourBar({
@@ -44,13 +44,13 @@ export default function TourBar({
     mode: 'create',
     name: '',
     description: '',
-    waypointIds: [],
+    stops: [],
   });
 
   const isLast = activeTourLength > 0 && activeTourStep === activeTourLength - 1;
 
   const openCreate = () =>
-    setEditor({ open: true, mode: 'create', name: '', description: '', waypointIds: [] });
+    setEditor({ open: true, mode: 'create', name: '', description: '', stops: [] });
 
   const openEdit = () => {
     const tour = tours.find(t => t.id === activeTourId);
@@ -61,14 +61,14 @@ export default function TourBar({
       tourId: tour.id,
       name: tour.name,
       description: tour.description,
-      waypointIds: [...tour.waypointIds],
+      stops: tour.stops.map(s => ({ ...s })),
     });
   };
 
   const closeEditor = () => setEditor(e => ({ ...e, open: false }));
 
   const saveEditor = () => {
-    const data = { name: editor.name.trim(), description: editor.description.trim(), waypointIds: editor.waypointIds };
+    const data = { name: editor.name.trim(), description: editor.description.trim(), stops: editor.stops };
     if (!data.name) return;
     if (editor.mode === 'create') {
       onCreateTour(data);
@@ -79,18 +79,18 @@ export default function TourBar({
   };
 
   const addWaypointToTour = (id: string) =>
-    setEditor(e => ({ ...e, waypointIds: [...e.waypointIds, id] }));
+    setEditor(e => ({ ...e, stops: [...e.stops, { waypointId: id }] }));
 
   const removeWaypointFromTour = (idx: number) =>
-    setEditor(e => ({ ...e, waypointIds: e.waypointIds.filter((_, i) => i !== idx) }));
+    setEditor(e => ({ ...e, stops: e.stops.filter((_, i) => i !== idx) }));
 
   const moveWaypoint = (idx: number, dir: -1 | 1) => {
     setEditor(e => {
-      const ids = [...e.waypointIds];
+      const stops = [...e.stops];
       const target = idx + dir;
-      if (target < 0 || target >= ids.length) return e;
-      [ids[idx], ids[target]] = [ids[target], ids[idx]];
-      return { ...e, waypointIds: ids };
+      if (target < 0 || target >= stops.length) return e;
+      [stops[idx], stops[target]] = [stops[target], stops[idx]];
+      return { ...e, stops };
     });
   };
 
@@ -173,18 +173,30 @@ export default function TourBar({
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Waypoints (ordered)</label>
-              {editor.waypointIds.length === 0 && (
+              {editor.stops.length === 0 && (
                 <p className="text-xs text-gray-400">No waypoints added yet.</p>
               )}
               <ul className="flex flex-col gap-1">
-                {editor.waypointIds.map((wid, idx) => {
-                  const wp = waypoints.find(w => w.id === wid);
+                {editor.stops.map((stop, idx) => {
+                  const wp = waypoints.find(w => w.id === stop.waypointId);
                   return (
-                    <li key={`${wid}-${idx}`} className="flex items-center gap-2 text-sm">
-                      <span className="flex-1 truncate">{wp?.label ?? wid}</span>
-                      <button onClick={() => moveWaypoint(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↑</button>
-                      <button onClick={() => moveWaypoint(idx, 1)} disabled={idx === editor.waypointIds.length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↓</button>
-                      <button onClick={() => removeWaypointFromTour(idx)} className="text-red-400 hover:text-red-600">✕</button>
+                    <li key={`${stop.waypointId}-${idx}`} className="flex flex-col gap-1 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="flex-1 truncate">{wp?.label ?? stop.waypointId}</span>
+                        <button onClick={() => moveWaypoint(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↑</button>
+                        <button onClick={() => moveWaypoint(idx, 1)} disabled={idx === editor.stops.length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↓</button>
+                        <button onClick={() => removeWaypointFromTour(idx)} className="text-red-400 hover:text-red-600">✕</button>
+                      </div>
+                      <textarea
+                        rows={2}
+                        className="text-sm border border-gray-200 rounded px-2 py-1 w-full resize-none"
+                        placeholder="Narrative for this stop (optional)"
+                        value={stop.narrative ?? ''}
+                        onChange={ev => setEditor(ed => {
+                          const stops = ed.stops.map((s, i) => i === idx ? { ...s, narrative: ev.target.value } : s);
+                          return { ...ed, stops };
+                        })}
+                      />
                     </li>
                   );
                 })}

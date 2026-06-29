@@ -36,6 +36,7 @@ model TourWaypoint {
   tourId     String
   waypointId String
   order      Int
+  narrative  String?
   tour       Tour   @relation(fields: [tourId], references: [id], onDelete: Cascade)
 
   @@id([tourId, order])

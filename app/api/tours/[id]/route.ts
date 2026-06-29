@@ -11,10 +11,15 @@ export async function PUT(
   try {
     const body = (await request.json()) as Partial<Tour>;
     const row = await prisma.$transaction(async (tx) => {
-      if (body.waypointIds !== undefined) {
+      if (body.stops !== undefined) {
         await tx.tourWaypoint.deleteMany({ where: { tourId: id } });
         await tx.tourWaypoint.createMany({
-          data: body.waypointIds.map((waypointId, order) => ({ tourId: id, waypointId, order })),
+          data: body.stops.map((s, order) => ({
+            tourId: id,
+            waypointId: s.waypointId,
+            order,
+            narrative: s.narrative?.trim() || null,
+          })),
         });
       }
       return tx.tour.update({

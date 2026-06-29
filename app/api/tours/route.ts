@@ -14,7 +14,11 @@ export async function POST(request: Request) {
         name: body.name,
         description: body.description ?? '',
         waypoints: {
-          create: (body.waypointIds ?? []).map((waypointId, order) => ({ waypointId, order })),
+          create: (body.stops ?? []).map((s, order) => ({
+            waypointId: s.waypointId,
+            order,
+            narrative: s.narrative?.trim() || null,
+          })),
         },
       },
       include: { waypoints: true },

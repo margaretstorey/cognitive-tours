@@ -40,11 +40,16 @@ export interface WaypointEdge {
   label?: string;
 }
 
+export interface TourStop {
+  waypointId: string;
+  narrative?: string;
+}
+
 export interface Tour {
   id: string;
   name: string;
   description: string;
-  waypointIds: string[];
+  stops: TourStop[];
 }
 
 export interface AppState {
