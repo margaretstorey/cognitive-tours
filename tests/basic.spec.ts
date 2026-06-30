@@ -30,3 +30,24 @@ test('tour navigation increments step counter', async ({ page }) => {
   await page.getByRole('button', { name: 'Next →' }).click();
   await expect(page.getByText(/Step 2 of/)).toBeVisible();
 });
+
+test('docent mode shows amber narrative bar for stops with narrative', async ({ page }) => {
+  const narrative = 'Docent test narrative for Playwright.';
+  await page.goto('/');
+
+  // Create a tour with a narrative on the first stop
+  await page.getByRole('button', { name: '+ New Tour' }).click();
+  const modal = page.locator('.fixed.inset-0.z-50');
+  await modal.getByPlaceholder('Tour name').fill('Docent Test Tour');
+  await modal.locator('select').filter({ hasText: 'Add a waypoint' }).selectOption({ index: 1 });
+  await modal.getByPlaceholder('Narrative for this stop (optional)').fill(narrative);
+  await modal.getByRole('button', { name: 'Save' }).click();
+
+  // Activate the tour
+  await page.locator('select').filter({ hasText: 'No tour selected' }).selectOption({ label: 'Docent Test Tour' });
+
+  // Amber narrative bar should be visible with the stop's narrative
+  const bar = page.getByTestId('docent-narrative-bar');
+  await expect(bar).toBeVisible();
+  await expect(bar).toContainText(narrative);
+});
