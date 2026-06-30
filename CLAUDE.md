@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: Jun 29 2026
+Last updated: Jun 30 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -61,6 +61,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Tour markdown view and export — toggle from tour bar; export downloads a dated .md snapshot. ✅
 - Playwright test for docent mode amber bar ✅
 - End-to-end docent feature tour ("Building Docent Mode — From Need to Test") ✅
+- Playwright test isolation fixed (June 30) — Root cause was db.ts and prisma.config.ts both defaulting to Turso whenever TURSO_DATABASE_URL was present in the environment, regardless of NODE_ENV, meaning local dev and test runs were silently writing to production. Fixed both files to key off NODE_ENV === 'production' explicitly. Added .env.test and a Playwright webServer config pointing to an isolated prisma/test.db. Added afterEach teardown hooks so tests clean up what they create. Confirmed across multiple runs: test.db stays stable in size, dev.db and Turso are both untouched by test runs. ✅ 
 
 ---
 
@@ -128,6 +129,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 
 **Note from tour review (June 16):** not every true relationship needs a graph edge. Some relationships are better expressed in a waypoint's own description/notes than as a separate edge — especially when an edge would point backward through an otherwise linear tour sequence and create a confusing visual knot. Edges are for the map; not every map fact needs to become a tour beat.
 
+**Caution:** any file resolving TURSO_DATABASE_URL vs DATABASE_URL must check NODE_ENV explicitly, never just "if Turso var is present," since that variable is always present in .env.
 ---
 
 ## Key decisions made (not in Spec Kit)
@@ -189,22 +191,12 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
-**Session 10 plan**
-
-1. **Investigate Playwright test data pollution** (do first)
-Playwright tests appear to be creating waypoints and tours that aren't cleaned up afterward, leaving junk data behind in the database. Before any other Session 10 work:
-
-- Check whether tests run against production Turso or a local/test database (DATABASE_URL / TURSO_DATABASE_URL in test environment)
-- If pointed at production: add test database isolation (local SQLite or Turso test branch)
-- Add proper teardown (afterEach/afterAll) so tests delete what they create regardless of pass/fail
-- Manually clean up any accumulated junk waypoints/tours already in the database from past test runs
-
- 2. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
+ 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
   
-3. **Edge management panel** — show edge details in right panel, delete 
+2. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
-4. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
+3. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
 
 
 ---
