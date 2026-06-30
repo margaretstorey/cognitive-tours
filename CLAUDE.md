@@ -92,6 +92,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Small improvements (quality of life)
 
+- **Simplify tour bar in markdown mode** — Prev/Next buttons and step counter are redundant when the full tour is visible as a document. Hide them when markdownViewOpen is true, keep only the tour selector, markdown toggle, and export button.
+
 
 ---
 
@@ -121,6 +123,11 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - ADR → leads to → Code Component
 - Test → validates → Feature
 - Risk → threatens → Feature or ADR
+
+**Not done**
+- **SDR as waypoint type** — Social Decision Records (team/social decisions, 
+  analogous to ADRs) may warrant their own type. See Open Question waypoint 
+  added June 29. Reference: Team Topologies post by Vanessa Formicola.
 
 **Note from tour review (June 16):** not every true relationship needs a graph edge. Some relationships are better expressed in a waypoint's own description/notes than as a separate edge — especially when an edge would point backward through an otherwise linear tour sequence and create a confusing visual knot. Edges are for the map; not every map fact needs to become a tour beat.
 
@@ -178,6 +185,19 @@ Full constitution: .specify/memory/constitution.md
 
 
   ## What to work on next (in priority order)
+
+  **Session 9 plan:**
+1. Playwright test for docent mode — add a 4th test to tests/basic.spec.ts 
+   that verifies amber bar appears for tour stops with narrative. Claude Code 
+   handles this.
+2. End-to-end docent feature tour — a tour spanning user need → feature → 
+   schema → code → test for docent mode specifically. Use as template for 
+   other features. Stops: w01, w-1782491878877, w-1782714501781, w18, w15, 
+   w12, plus new Playwright docent test waypoint.
+3. Tour metadata — author field (manual) + updatedAt (auto via Prisma @updatedAt)
+4. AI suggest feature — needs spec first (008-ai-suggest)
+
+**Future sessions plan**
 
  1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
   

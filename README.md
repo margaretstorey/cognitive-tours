@@ -10,6 +10,11 @@ create yourself repair your own cognitive debt, tours you create for others are 
 of your understanding with others. AI is a scaffold, an amplifier, not a 
 substitute.
 
+**If you are a new collaborator, start here:** Open the live app and follow 
+the tours before reading any code. "Cognitive Tours - A Research Story" explains 
+the research motivation. "How Cognitive Tours Work" walks through the code 
+architecture. The app is self-documenting — the tours are the onboarding.
+
 **Live app:** https://cognitive-tours.vercel.app  
 <!-- Note this is not password protected -->
 **Domains:** cognitive.tours | cognitivetours.dev  
@@ -26,6 +31,12 @@ connect waypoints into guided tours that tell the story of your codebase.
 
 The app is self-documenting: the waypoints and tours in the live app 
 describe Cognitive Tours itself.
+
+Tours support **docent mode** — per-step narrative written by the tour author 
+that guides the reader between waypoints, like a museum audio guide. Tours can 
+also be toggled to a **markdown view** and exported as dated snapshots to the 
+`tours/` folder. The graph panel has a **search/filter bar** to find nodes 
+quickly as the map grows.
 
 ---
 
@@ -49,6 +60,23 @@ npm run dev
 ```
 
 Open http://localhost:3000.
+
+### Environment variables
+
+To connect to the shared Turso database, 
+create a `.env.local` file:
+
+TURSO_DATABASE_URL=your-turso-url
+
+TURSO_AUTH_TOKEN=your-turso-token
+
+Contact Margaret-Anne for the credentials.
+
+**Note:** The shared database has no conflict protection. If two people 
+edit simultaneously, changes can overwrite each other silently. Coordinate 
+with Margaret-Anne before making significant changes, and back up `/api/data` 
+first. Alternatively, create your own Turso database at turso.tech for 
+isolated local development.
 
 The app uses SQLite locally via Prisma. The production deployment uses 
 Turso (hosted SQLite) on Vercel.
