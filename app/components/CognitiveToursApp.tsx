@@ -399,7 +399,7 @@ export default function CognitiveToursApp() {
         onToggleMarkdownView={onToggleMarkdownView}
       />
       {!markdownViewOpen && currentNarrative && (
-        <div className="bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
+        <div data-testid="docent-narrative-bar" className="bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
           {currentNarrative}
         </div>
       )}

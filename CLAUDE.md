@@ -1,11 +1,6 @@
 @AGENTS.md
 Last updated: Jun 29 2026
 
-<!-- SPECKIT START -->
-Active feature: **Tour Markdown View** — `specs/007-tour-markdown-view/plan.md`
-Branch: `007-tour-markdown-view`
-<!-- SPECKIT END -->
-
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
 > understanding (waypoints and tours), and code.
@@ -64,6 +59,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Search/filter bar on graph — graph is getting dense; need a way to find nodes quickly by name so added this, also has a filter by type! ✅
 - Alphabetical ordering in tour waypoint picker — make it easier to find waypoints when adding stops to a tour ✅
 - Tour markdown view and export — toggle from tour bar; export downloads a dated .md snapshot. ✅
+- Playwright test for docent mode amber bar ✅
+- End-to-end docent feature tour ("Building Docent Mode — From Need to Test") ✅
 
 ---
 
@@ -92,7 +89,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Small improvements (quality of life)
 
-- **Simplify tour bar in markdown mode** — Prev/Next buttons and step counter are redundant when the full tour is visible as a document. Hide them when markdownViewOpen is true, keep only the tour selector, markdown toggle, and export button.
+- **Simplify tour bar in markdown mode** — Prev/Next buttons and step counter are redundant when the full tour is visible as a document. Hide them when markdownViewOpen is true, keep only the tour selector, markdown toggle, and export button. Still pending - not sure how I want to address this - not broken just a bit confusing for now. 
 
 
 ---
@@ -180,33 +177,23 @@ Full constitution: .specify/memory/constitution.md
 - **Rahul Garg / Lattice** — complementary tool (Martin Fowler contributor, engaged on LinkedIn)
 - **Cognitive Tours paper** — in early planning, targeting NIER or CHASE track at ICSE (deadline TBD)
 - **Missing Stop Sign blog post** (June 9, margaretstorey.com) — intent debt explained via the out-of-town-driver metaphor; first in a series
+- **LACY - cognitive tours for onboarding**, to be presented at FSE 2026. Focused on code, semi-automated. See [here](https://arxiv.org/pdf/2603.25391)
+- **Narrative driven development** https://specdriven.com/dialects/narrative-driven 
+- **SDR** - social decision records from Team Topologies see [here](https://teamtopologies.com/news-blogs-newsletters/social-decision-records-and-team-apis-documenting-human-interactions-for-better-collaboration) 
 
 ---
 
 
   ## What to work on next (in priority order)
 
-  **Session 9 plan:**
-1. Playwright test for docent mode — add a 4th test to tests/basic.spec.ts 
-   that verifies amber bar appears for tour stops with narrative. Claude Code 
-   handles this.
-2. End-to-end docent feature tour — a tour spanning user need → feature → 
-   schema → code → test for docent mode specifically. Use as template for 
-   other features. Stops: w01, w-1782491878877, w-1782714501781, w18, w15, 
-   w12, plus new Playwright docent test waypoint.
-3. Tour metadata — author field (manual) + updatedAt (auto via Prisma @updatedAt)
-4. AI suggest feature — needs spec first (008-ai-suggest)
-
-**Future sessions plan**
+**Session 10 plan**
 
  1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
   
 2. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
-3. **Playwright tests** — before sharing with real users.
-
-4. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
+3. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
 
 
 ---
