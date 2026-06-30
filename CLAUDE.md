@@ -181,6 +181,8 @@ Full constitution: .specify/memory/constitution.md
 - **Narrative driven development** https://specdriven.com/dialects/narrative-driven 
 - **SDR** - social decision records from Team Topologies see [here](https://teamtopologies.com/news-blogs-newsletters/social-decision-records-and-team-apis-documenting-human-interactions-for-better-collaboration) 
 - **CodeMap** presented at ICPC 2026, see [here](https://arxiv.org/html/2504.04553v3)
+- See also [this] (scriptbyai.com/claude-code-resource-list/) 
+
 
 ---
 
@@ -189,12 +191,20 @@ Full constitution: .specify/memory/constitution.md
 
 **Session 10 plan**
 
- 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
+1. **Investigate Playwright test data pollution** (do first)
+Playwright tests appear to be creating waypoints and tours that aren't cleaned up afterward, leaving junk data behind in the database. Before any other Session 10 work:
+
+- Check whether tests run against production Turso or a local/test database (DATABASE_URL / TURSO_DATABASE_URL in test environment)
+- If pointed at production: add test database isolation (local SQLite or Turso test branch)
+- Add proper teardown (afterEach/afterAll) so tests delete what they create regardless of pass/fail
+- Manually clean up any accumulated junk waypoints/tours already in the database from past test runs
+
+ 2. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
   
-2. **Edge management panel** — show edge details in right panel, delete 
+3. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
-3. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
+4. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
 
 
 ---
