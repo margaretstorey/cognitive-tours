@@ -180,6 +180,7 @@ Full constitution: .specify/memory/constitution.md
 - **LACY - cognitive tours for onboarding**, to be presented at FSE 2026. Focused on code, semi-automated. See [here](https://arxiv.org/pdf/2603.25391)
 - **Narrative driven development** https://specdriven.com/dialects/narrative-driven 
 - **SDR** - social decision records from Team Topologies see [here](https://teamtopologies.com/news-blogs-newsletters/social-decision-records-and-team-apis-documenting-human-interactions-for-better-collaboration) 
+- **CodeMap** presented at ICPC 2026, see [here](https://arxiv.org/html/2504.04553v3)
 
 ---
 
