@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Tour, TourStop, Waypoint } from '@/app/lib/types';
 import { generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
 
@@ -18,6 +18,7 @@ interface TourBarProps {
   waypoints: Waypoint[];
   markdownViewOpen: boolean;
   onToggleMarkdownView: () => void;
+  onEditorOpenChange?: (open: boolean) => void;
 }
 
 interface TourEditorState {
@@ -43,6 +44,7 @@ export default function TourBar({
   waypoints,
   markdownViewOpen,
   onToggleMarkdownView,
+  onEditorOpenChange,
 }: TourBarProps) {
   const [editor, setEditor] = useState<TourEditorState>({
     open: false,
@@ -51,6 +53,22 @@ export default function TourBar({
     description: '',
     stops: [],
   });
+
+  useEffect(() => {
+    onEditorOpenChange?.(editor.open);
+  }, [editor.open, onEditorOpenChange]);
+
+  useEffect(() => {
+    if (!editor.open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        setEditor(ed => ({ ...ed, open: false }));
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [editor.open]);
 
   const isLast = activeTourLength > 0 && activeTourStep === activeTourLength - 1;
 
@@ -129,69 +147,93 @@ export default function TourBar({
 
   return (
     <>
-      <div className="flex items-center gap-3 px-4 h-12 border-b border-gray-200 bg-white shrink-0">
-        <select
-          className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
-          value={activeTourId ?? ''}
-          onChange={e => onSelectTour(e.target.value || null)}
-        >
-          <option value="">No tour selected</option>
-          {tours.map(t => (
-            <option key={t.id} value={t.id}>{t.name}</option>
-          ))}
-        </select>
+      <div className="flex items-center gap-3 px-4 h-14 border-b-2 border-gray-200 bg-slate-50 shrink-0">
+        {activeTourId ? (
+          <select
+            className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
+            value={activeTourId ?? ''}
+            onChange={e => onSelectTour(e.target.value || null)}
+          >
+            <option value="">No tour selected</option>
+            {tours.map(t => (
+              <option key={t.id} value={t.id}>{t.name}</option>
+            ))}
+          </select>
+        ) : (
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-2 py-1">
+            <select
+              className="text-sm border-0 focus:ring-0 bg-transparent"
+              value={activeTourId ?? ''}
+              onChange={e => onSelectTour(e.target.value || null)}
+            >
+              <option value="">No tour selected</option>
+              {tours.map(t => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+            <span className="text-sm text-gray-400">or</span>
+            <button
+              onClick={openCreate}
+              className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 shadow-sm"
+            >
+              + New Tour
+            </button>
+          </div>
+        )}
+
+        {!activeTourId && (
+          <span className="text-sm text-gray-600">Select a tour to begin, or create a new one</span>
+        )}
 
         {activeTourId ? (
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrev}
               disabled={activeTourStep === 0}
-              className="px-2 py-1 text-sm border rounded disabled:opacity-40 hover:bg-gray-50"
+              className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded-md disabled:opacity-40 hover:bg-gray-100 text-gray-700"
             >
               ← Prev
             </button>
-            <span className="text-sm text-gray-600 tabular-nums">
+            <span className="text-sm font-medium text-gray-700 tabular-nums">
               Step {activeTourStep + 1} of {activeTourLength}
             </span>
             <button
               onClick={handleNext}
-              className="px-2 py-1 text-sm border rounded hover:bg-gray-50"
+              className="px-3 py-1.5 text-sm font-semibold bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-sm"
             >
               {isLast ? 'Finish' : 'Next →'}
             </button>
             <button
               onClick={openEdit}
-              className="ml-1 px-2 py-1 text-xs border border-gray-200 rounded text-gray-500 hover:bg-gray-50"
+              className="ml-1 px-2.5 py-1 text-xs font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
             >
               Edit tour
             </button>
             <button
               onClick={onToggleMarkdownView}
-              className={`px-2 py-1 text-xs border rounded ${
-                markdownViewOpen
-                  ? 'border-blue-400 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 text-gray-500 hover:bg-gray-50'
-              }`}
+              className="px-2.5 py-1 text-xs font-medium border border-blue-400 bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
             >
-              {markdownViewOpen ? 'Graph' : 'Markdown'}
+              {markdownViewOpen ? 'Graph View' : 'Markdown View'}
             </button>
             <button
               onClick={handleExport}
-              className="px-2 py-1 text-xs border border-gray-200 rounded text-gray-500 hover:bg-gray-50"
+              className="px-2.5 py-1 text-xs font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
             >
               Export ↓
             </button>
           </div>
         ) : null}
 
-        <div className="ml-auto flex gap-2">
-          <button
-            onClick={openCreate}
-            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
-          >
-            + New Tour
-          </button>
-        </div>
+        {activeTourId && (
+          <div className="ml-auto flex gap-2">
+            <button
+              onClick={openCreate}
+              className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 shadow-sm"
+            >
+              + New Tour
+            </button>
+          </div>
+        )}
 
 
       </div>

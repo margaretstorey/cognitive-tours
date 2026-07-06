@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Waypoint, WaypointType } from '@/app/lib/types';
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 
@@ -17,6 +17,17 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
   const [description, setDescription] = useState(initialValues?.description ?? '');
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
   const [filePath, setFilePath] = useState(initialValues?.filePath ?? '');
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onCancel();
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onCancel]);
 
   const canSave = label.trim() !== '' && type !== '';
 

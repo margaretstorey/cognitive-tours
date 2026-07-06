@@ -46,6 +46,7 @@ export default function CognitiveToursApp() {
   const [filterState, setFilterState] = useState<FilterState>(DEFAULT_FILTER_STATE);
   const [searchQuery, setSearchQuery] = useState('');
   const [markdownViewOpen, setMarkdownViewOpen] = useState(false);
+  const [tourEditorOpen, setTourEditorOpen] = useState(false);
   // Per-node debounce map for position changes (onNodesChange fires on every drag frame).
   const positionDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -297,6 +298,21 @@ export default function CognitiveToursApp() {
     [tours],
   );
 
+  // Escape exits the active tour, unless a modal is open (which takes
+  // priority and handles its own Escape) or focus is in a text input.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      if (!activeTourId) return;
+      if (tourEditorOpen || form.open) return;
+      const tag = document.activeElement?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      selectTour(null);
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [activeTourId, tourEditorOpen, form.open, selectTour]);
+
   const onNext = useCallback(() => {
     if (!activeTour) return;
     const next = activeTourStep + 1;
@@ -377,6 +393,10 @@ export default function CognitiveToursApp() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
+      <div className="px-4 py-3 border-b border-gray-200 bg-white shrink-0 text-center">
+        <h1 className="text-2xl font-bold text-gray-900">Cognitive Tours</h1>
+        <p className="text-sm text-gray-500 mt-0.5">Cognitive Scaffolding for Building and Navigating Understanding</p>
+      </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-2 text-sm">
@@ -397,10 +417,11 @@ export default function CognitiveToursApp() {
         waypoints={waypoints}
         markdownViewOpen={markdownViewOpen}
         onToggleMarkdownView={onToggleMarkdownView}
+        onEditorOpenChange={setTourEditorOpen}
       />
       {!markdownViewOpen && activeTour && (
-        <div data-testid="tour-header" className="px-4 py-2 border-b border-gray-200 bg-white shrink-0">
-          <h2 className="text-sm font-semibold text-gray-800">{activeTour.name}</h2>
+        <div data-testid="tour-header" className="px-4 py-3 border-b border-gray-200 bg-white shrink-0">
+          <h2 className="text-lg font-bold text-gray-900">{activeTour.name}</h2>
           {activeTour.description?.trim() && (
             <p className="text-sm text-gray-500 mt-0.5">{activeTour.description}</p>
           )}
@@ -439,6 +460,8 @@ export default function CognitiveToursApp() {
             waypoint={selectedWaypoint}
             onEdit={openEditForm}
             onDelete={deleteWaypoint}
+            hasActiveTour={!!activeTour}
+            tours={tours}
           />
         </div>
       </div>

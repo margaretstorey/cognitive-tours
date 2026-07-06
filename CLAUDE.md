@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: Jun 30 2026
+Last updated: July 6 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -23,7 +23,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 **Domains:** cognitive.tours | cognitivetours.dev
 **GitHub:** margaretstorey/cognitive-tours
-**Research foundation:** Triple Debt Model paper (arXiv:2603.22106)
+**Research foundation:** Triple Debt Model paper (arXiv:2603.22106) see ACM Queue paper
 
 ---
 
@@ -67,6 +67,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Prev/Next in markdown view now scrolls to the corresponding stop heading instead of re-rendering single-stop content ✅
 - Active stop highlighted in markdown view (border + background tint, consistent with graph view highlight) — updates on Prev/Next clicks, not scroll position ✅
 - Tour edit modal now scrolls internally with fixed header/footer — previously Save/Cancel/Quit buttons became unreachable when a tour had many stops; also did the same fix for the waypoint model edit window ✅
+- App title "Cognitive Tours" and tagline "Cognitive Scaffolding for Building and Navigating Understanding" added — centered, bold, persistent above the tour control bar across both landing and active tour states ✅
+- Tour control bar (Edit tour / Markdown View / Export / New Tour buttons) given stronger visual contrast — previously read as faint/disabled-looking ✅
+- Markdown toggle relabeled "Markdown View" and paired with a "Graph View" button for clearer, symmetric view-switching ✅
+- Landing state ("No tour selected") now shows a clear call-to-action prompting the user to select or create a tour, with dropdown and "+ New Tour" visually grouped ✅
+- Right panel now shows onboarding content (what a waypoint/tour is, suggested starting tour) when nothing is selected and no tour is active — replaces the old passive "Select a waypoint to see its details" placeholder ✅
+- Escape key exits the active tour — correctly yields to modal-close and text-input-blur first (doesn't exit tour if a modal is open or focus is in a text field) ✅
 
 
 ---
@@ -79,6 +85,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
 - Separate Tours tab with independent layout
+- Suggest mode for waypoints, waypoint description, tours, tour description and tour stop narration
 
 ## Maintenance reminders
 - **Backup before onboarding new collaborators** — visit /api/data and 
@@ -157,6 +164,11 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning.
 - **Waypoint content must be context-free.** A waypoint's description/notes should make sense regardless of which tour (or no tour) brought a reader to it. Tour-specific transition narrative ("now that you've seen X, let's look at Y") does not belong in waypoint notes — it contaminates the waypoint for every other entry point. For now, if a transition insight is worth keeping, prefer rephrasing it as a standalone true fact about the waypoint itself, or hold it in the tour's own description field as a stopgap. 
 - **Tours as markdown.** Using live-render for a tour's markdown versus archived snapshot and the markodwn view is toggled from the tour bar.
+-  **Markdown view is read-focused, no waypoint selection.** Unlike graph 
+  view, clicking a stop in markdown view doesn't select the waypoint or 
+  populate the right panel. Left as-is for now (July 6) — could be added 
+  later if markdown view needs to support inspection/editing, not just 
+  reading.
 
 ---
 

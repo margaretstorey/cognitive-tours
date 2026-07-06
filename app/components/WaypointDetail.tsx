@@ -1,20 +1,44 @@
 'use client';
 
 import { useState } from 'react';
-import type { Waypoint } from '@/app/lib/types';
+import type { Tour, Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 
 interface WaypointDetailProps {
   waypoint: Waypoint | null;
   onEdit: (waypoint: Waypoint) => void;
   onDelete: (id: string) => void;
+  hasActiveTour: boolean;
+  tours: Tour[];
 }
 
-export default function WaypointDetail({ waypoint, onEdit, onDelete }: WaypointDetailProps) {
+export default function WaypointDetail({ waypoint, onEdit, onDelete, hasActiveTour, tours }: WaypointDetailProps) {
   if (!waypoint) {
+    if (hasActiveTour) {
+      return (
+        <div className="flex h-full items-center justify-center p-6 text-center text-gray-400 text-sm">
+          Select a waypoint to see its details.
+        </div>
+      );
+    }
+
+    const suggestedTour = tours.find(t => /start here/i.test(t.name));
+
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center text-gray-400 text-sm">
-        Select a waypoint to see its details.
+      <div className="h-full overflow-y-auto p-6 flex flex-col gap-3 text-sm text-gray-600">
+        <h2 className="text-base font-semibold text-gray-800">Getting oriented</h2>
+        <p>
+          A <span className="font-medium text-gray-700">waypoint</span> is a single point of
+          understanding — a goal, feature, decision, or piece of code worth remembering. A{' '}
+          <span className="font-medium text-gray-700">tour</span> strings waypoints together into
+          a guided path through intent and implementation.
+        </p>
+        <p>Select a tour above to begin, or create a new one.</p>
+        {suggestedTour && (
+          <p className="text-gray-500">
+            New here? Try the <span className="font-medium text-gray-700">“{suggestedTour.name}”</span> tour.
+          </p>
+        )}
       </div>
     );
   }
