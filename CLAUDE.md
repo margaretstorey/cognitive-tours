@@ -27,7 +27,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ---
 
-## Current technical state (June 2026)
+## Current technical state
 
 ### What is built and working
 - Next.js 16 + TypeScript + Tailwind + React Flow (@xyflow/react 12)
@@ -210,17 +210,16 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
- 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation.
+ 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation. (also mentioned above)
   
 2. **Edge management panel** — show edge details in right panel, delete 
-   button there.
+   button there. Right now this works ok... double click to delete (not intuitive though)
 
 3. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. 
 
-4. ## Tour entry UX — design direction (not yet built)
+4. **Tour entry UX — design direction (not yet built)**
 
 Current tour now has a brief title shown on the top.  But the UI leaves much to be desired.
-
 Inspiration from recipe and travel/itinerary apps, both of which solve 
 "guide someone through sequential steps with context":
 
