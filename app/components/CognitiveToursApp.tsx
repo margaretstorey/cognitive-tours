@@ -398,6 +398,14 @@ export default function CognitiveToursApp() {
         markdownViewOpen={markdownViewOpen}
         onToggleMarkdownView={onToggleMarkdownView}
       />
+      {!markdownViewOpen && activeTour && (
+        <div data-testid="tour-header" className="px-4 py-2 border-b border-gray-200 bg-white shrink-0">
+          <h2 className="text-sm font-semibold text-gray-800">{activeTour.name}</h2>
+          {activeTour.description?.trim() && (
+            <p className="text-sm text-gray-500 mt-0.5">{activeTour.description}</p>
+          )}
+        </div>
+      )}
       {!markdownViewOpen && currentNarrative && (
         <div data-testid="docent-narrative-bar" className="bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
           {currentNarrative}
