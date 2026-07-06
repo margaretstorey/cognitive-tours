@@ -414,7 +414,7 @@ export default function CognitiveToursApp() {
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 relative overflow-hidden">
           {markdownViewOpen && activeTour ? (
-            <TourMarkdownView tour={activeTour} waypoints={waypoints} />
+            <TourMarkdownView tour={activeTour} waypoints={waypoints} activeStepIndex={activeTourStep} />
           ) : (
             <WaypointGraph
               waypoints={waypoints}

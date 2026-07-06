@@ -5,9 +5,10 @@ import type { Tour, Waypoint } from '@/app/lib/types';
 interface TourMarkdownViewProps {
   tour: Tour;
   waypoints: Waypoint[];
+  activeStepIndex?: number;
 }
 
-export default function TourMarkdownView({ tour, waypoints }: TourMarkdownViewProps) {
+export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: TourMarkdownViewProps) {
   const waypointMap = new Map(waypoints.map(w => [w.id, w]));
 
   return (
@@ -28,9 +29,15 @@ export default function TourMarkdownView({ tour, waypoints }: TourMarkdownViewPr
             {tour.stops.map((stop, index) => {
               const wp = waypointMap.get(stop.waypointId);
               if (!wp) return null;
+              const isActive = index === activeStepIndex;
               return (
-                <div key={`${stop.waypointId}-${index}`} className="border-l-2 border-gray-200 pl-4">
-                  <h2 className="text-base font-semibold text-gray-800 mb-1">
+                <div
+                  key={`${stop.waypointId}-${index}`}
+                  className={`border-l-2 pl-4 ${
+                    isActive ? 'active-stop border-blue-500 bg-blue-50' : 'border-gray-200'
+                  }`}
+                >
+                  <h2 id={`stop-${index}`} className="text-base font-semibold text-gray-800 mb-1">
                     <span className="text-gray-400 font-normal text-sm mr-2">{index + 1}.</span>
                     {wp.label}
                   </h2>

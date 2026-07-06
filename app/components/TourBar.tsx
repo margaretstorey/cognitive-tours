@@ -54,6 +54,20 @@ export default function TourBar({
 
   const isLast = activeTourLength > 0 && activeTourStep === activeTourLength - 1;
 
+  const scrollToStop = (index: number) => {
+    document.getElementById(`stop-${index}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handlePrev = () => {
+    if (markdownViewOpen && activeTourStep > 0) scrollToStop(activeTourStep - 1);
+    onPrev();
+  };
+
+  const handleNext = () => {
+    if (markdownViewOpen && !isLast) scrollToStop(activeTourStep + 1);
+    onNext();
+  };
+
   const openCreate = () =>
     setEditor({ open: true, mode: 'create', name: '', description: '', stops: [] });
 
@@ -130,7 +144,7 @@ export default function TourBar({
         {activeTourId ? (
           <div className="flex items-center gap-2">
             <button
-              onClick={onPrev}
+              onClick={handlePrev}
               disabled={activeTourStep === 0}
               className="px-2 py-1 text-sm border rounded disabled:opacity-40 hover:bg-gray-50"
             >
@@ -140,7 +154,7 @@ export default function TourBar({
               Step {activeTourStep + 1} of {activeTourLength}
             </span>
             <button
-              onClick={onNext}
+              onClick={handleNext}
               className="px-2 py-1 text-sm border rounded hover:bg-gray-50"
             >
               {isLast ? 'Finish' : 'Next →'}
