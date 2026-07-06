@@ -63,7 +63,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - End-to-end docent feature tour ("Building Docent Mode — From Need to Test") ✅
 - Playwright test isolation fixed (June 30) — Root cause was db.ts and prisma.config.ts both defaulting to Turso whenever TURSO_DATABASE_URL was present in the environment, regardless of NODE_ENV, meaning local dev and test runs were silently writing to production. Fixed both files to key off NODE_ENV === 'production' explicitly. Added .env.test and a Playwright webServer config pointing to an isolated prisma/test.db. Added afterEach teardown hooks so tests clean up what they create. Confirmed across multiple runs: test.db stays stable in size, dev.db and Turso are both untouched by test runs. ✅ 
 - Tour title + tour.description now render as a visible heading + preamble 
-  above the amber narrative bar (fixed July [X]) ✅
+  above the amber narrative bar (fixed July 6 2026) ✅
 - Prev/Next in markdown view now scrolls to the corresponding stop heading instead of re-rendering single-stop content ✅
 - Active stop highlighted in markdown view (border + background tint, consistent with graph view highlight) — updates on Prev/Next clicks, not scroll position ✅
 - Tour edit modal now scrolls internally with fixed header/footer — previously Save/Cancel/Quit buttons became unreachable when a tour had many stops; also did the same fix for the waypoint model edit window ✅
@@ -203,7 +203,7 @@ Full constitution: .specify/memory/constitution.md
 2. **Edge management panel** — show edge details in right panel, delete 
    button there.
 
-3. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. Also fix tour.description not appearing in markdown view/export — should render as preamble paragraph before the first stop.
+3. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. 
 
 4. ## Tour entry UX — design direction (not yet built)
 
@@ -225,14 +225,13 @@ Rough direction for Cognitive Tours:
    + a "Begin Tour" button — shown before the graph/narrative view loads.
 - During tour: keep step counter, consider progress dots/mini stop-list 
    instead of/alongside plain "Step X of Y" text.
-0 Graph stays secondary/background context, not competing for attention 
+- Graph stays secondary/background context, not competing for attention 
  with the current step's content.
 
 This is a candidate for the planned tours-tab / Dagre-layout redesign — 
 not necessarily separate work. Immediate stopgap (this week, before 
 sharing): add tour name as a visible title above the narrative bar, since 
 current placement (dropdown only) is easy to miss. Full redesign deferred.
-Want me to trim this down, or is this about the right level of detail? I can also fold the immediate "add title above narrative bar" stopgap into item #3 on your "what to work on next" list instead of burying it in this new section — your call on where it reads more naturally.
 
 
 ---
