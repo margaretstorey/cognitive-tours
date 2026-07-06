@@ -64,6 +64,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Playwright test isolation fixed (June 30) — Root cause was db.ts and prisma.config.ts both defaulting to Turso whenever TURSO_DATABASE_URL was present in the environment, regardless of NODE_ENV, meaning local dev and test runs were silently writing to production. Fixed both files to key off NODE_ENV === 'production' explicitly. Added .env.test and a Playwright webServer config pointing to an isolated prisma/test.db. Added afterEach teardown hooks so tests clean up what they create. Confirmed across multiple runs: test.db stays stable in size, dev.db and Turso are both untouched by test runs. ✅ 
 - Tour title + tour.description now render as a visible heading + preamble 
   above the amber narrative bar (fixed July [X]) ✅
+- Prev/Next in markdown view now scrolls to the corresponding stop heading instead of re-rendering single-stop content ✅
+- Active stop highlighted in markdown view (border + background tint, consistent with graph view highlight) — updates on Prev/Next clicks, not scroll position ✅
+- Tour edit modal now scrolls internally with fixed header/footer — previously Save/Cancel/Quit buttons became unreachable when a tour had many stops; also did the same fix for the waypoint model edit window ✅
+
 
 ---
 
@@ -78,9 +82,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ## Maintenance reminders
 - **Backup before onboarding new collaborators** — visit /api/data and 
-  save the JSON before giving anyone else access to the live app. Last backup June 29, 2026.
+  save the JSON before giving anyone else access to the live app. Last backup Jul 6, 2026.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session.
+
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
@@ -92,7 +97,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Small improvements (quality of life)
 
-- **Simplify tour bar in markdown mode** — Prev/Next buttons and step counter are redundant when the full tour is visible as a document. Hide them when markdownViewOpen is true, keep only the tour selector, markdown toggle, and export button. Still pending - not sure how I want to address this - not broken just a bit confusing for now. 
+- ~~Simplify tour bar in markdown mode~~ — resolved differently: Prev/Next now scroll to stop headings within the document rather than being hidden. Step counter still only updates on click, not free-scroll (acceptable for now).
 
 
 ---
@@ -210,7 +215,7 @@ Inspiration from recipe and travel/itinerary apps, both of which solve
 - **Recipe apps**: intro screen shows the "finished result" (title + 
   description) before committing to Start; steps are large/unmissable, 
   not competing with a busy background; progress shown as a bar/dots, 
-  not just "Step X of Y" text.
+  not just "Step X of Y" text.1
 - **Travel apps**: an overview/timeline of the whole journey is visible 
   before or alongside step-by-step detail, so the user always knows 
   where they are in the whole arc, not just the current stop.

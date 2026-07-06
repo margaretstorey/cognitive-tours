@@ -198,10 +198,11 @@ export default function TourBar({
 
       {editor.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 flex flex-col gap-4">
-            <h2 className="text-base font-semibold">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
+            <h2 className="text-base font-semibold px-6 pt-6 pb-4 shrink-0">
               {editor.mode === 'create' ? 'New Tour' : 'Edit Tour'}
             </h2>
+            <div className="flex flex-col gap-4 px-6 pb-4 overflow-y-auto">
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Name *</label>
               <input
@@ -261,7 +262,8 @@ export default function TourBar({
                 ))}
               </select>
             </div>
-            <div className="flex gap-2 items-center border-t pt-3">
+            </div>
+            <div className="flex gap-2 items-center border-t px-6 py-4 shrink-0">
               {editor.mode === 'edit' && editor.tourId && (
                 <button
                   onClick={() => { onDeleteTour(editor.tourId!); closeEditor(); }}

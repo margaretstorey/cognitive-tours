@@ -27,11 +27,12 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 flex flex-col gap-4">
-        <h2 className="text-base font-semibold">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden">
+        <h2 className="text-base font-semibold px-6 pt-6 pb-4 shrink-0">
           {mode === 'create' ? 'Add Waypoint' : 'Edit Waypoint'}
         </h2>
 
+        <div className="flex flex-col gap-4 px-6 pb-4 overflow-y-auto">
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">Title *</label>
           <input
@@ -88,8 +89,9 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
             placeholder="e.g. src/components/MyComponent.tsx"
           />
         </div>
+        </div>
 
-        <div className="flex gap-2 justify-end border-t pt-3">
+        <div className="flex gap-2 justify-end border-t px-6 py-4 shrink-0">
           <button onClick={onCancel} className="px-4 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50">
             Cancel
           </button>
