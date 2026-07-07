@@ -210,14 +210,18 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
- 1. **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation. (also mentioned above)
+
+ 1. **Waypoint panel visibility (added for Session 12):**
+The waypoint panel (node detail, edges in/out, narrative) is a graph-view-only concept — it doesn't apply in markdown view mode. Markdown view (spec 007) is a flattened, linear export of the whole tour; there's no "current node" to show a panel for. The panel should be hidden whenever viewMode === 'markdown' (adjust to match the actual flag name in the codebase). This isn't a bug fix so much as removing a leftover assumption from before markdown view existed — the two view modes serve different reading patterns (node-by-node exploration vs. whole-document read) and shouldn't share UI elements that only make sense in one of them.
+ 
+2.  **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation. (also mentioned above). Pushing this back - it may interfere with pedagogical goals!  If students auto generate waypoints/tours/descriptions do they understand what they are doing or will their tours become slop?
   
-2. **Edge management panel** — show edge details in right panel, delete 
+3. **Edge management panel** — show edge details in right panel, delete 
    button there. Right now this works ok... double click to delete (not intuitive though)
 
-3. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. 
+4. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. 
 
-4. **Tour entry UX — design direction (not yet built)**
+5. **Tour entry UX — design direction (not yet built)**
 
 Current tour now has a brief title shown on the top.  But the UI leaves much to be desired.
 Inspiration from recipe and travel/itinerary apps, both of which solve 
@@ -243,6 +247,8 @@ This is a candidate for the planned tours-tab / Dagre-layout redesign —
 not necessarily separate work. Immediate stopgap (this week, before 
 sharing): add tour name as a visible title above the narrative bar, since 
 current placement (dropdown only) is easy to miss. Full redesign deferred.
+
+5. **Multi-tenant version** Big change... won't tackle for now.
 
 
 ---
