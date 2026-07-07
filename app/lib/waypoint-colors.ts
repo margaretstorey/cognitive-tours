@@ -10,4 +10,5 @@ export const WAYPOINT_COLORS: Record<WaypointType, string> = {
   'Risk':            'bg-red-100 border-red-300 text-red-900',
   'AI Instruction':  'bg-orange-100 border-orange-300 text-orange-900',
   'Open Question':   'bg-gray-100 border-gray-300 text-gray-900',
+  'Deprecated':      'bg-black border-gray-700 text-white',
 };

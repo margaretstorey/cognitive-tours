@@ -13,6 +13,7 @@ interface WaypointDetailProps {
   onAddWaypointClick: () => void;
   filterState: FilterState;
   onFilterChange: (type: WaypointType, visible: boolean) => void;
+  onCollapse?: () => void;
 }
 
 export default function WaypointDetail({
@@ -23,6 +24,7 @@ export default function WaypointDetail({
   onAddWaypointClick,
   filterState,
   onFilterChange,
+  onCollapse,
 }: WaypointDetailProps) {
   const [copied, setCopied] = useState(false);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
@@ -30,7 +32,18 @@ export default function WaypointDetail({
 
   const header = (
     <div className="p-4 border-b border-gray-200 flex flex-col gap-2">
-      <h2 className="text-sm font-bold text-gray-900">Waypoint panel</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-bold text-gray-900">Waypoint panel</h2>
+        {onCollapse && (
+          <button
+            onClick={onCollapse}
+            title="Collapse waypoint panel"
+            className="text-gray-400 hover:text-gray-700 text-sm px-1"
+          >
+            »
+          </button>
+        )}
+      </div>
       <div className="flex items-center gap-2">
         <button
           onClick={onAddWaypointClick}

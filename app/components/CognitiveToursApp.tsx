@@ -47,6 +47,7 @@ export default function CognitiveToursApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [markdownViewOpen, setMarkdownViewOpen] = useState(false);
   const [tourEditorOpen, setTourEditorOpen] = useState(false);
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
   // Per-node debounce map for position changes (onNodesChange fires on every drag frame).
   const positionDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -448,17 +449,30 @@ export default function CognitiveToursApp() {
           )}
         </div>
         {!showingMarkdown && (
-          <div className="w-80 border-l border-gray-200 bg-white overflow-hidden">
-            <WaypointDetail
-              waypoint={selectedWaypoint}
-              onEdit={openEditForm}
-              onDelete={deleteWaypoint}
-              hasActiveTour={!!activeTour}
-              onAddWaypointClick={openCreateForm}
-              filterState={filterState}
-              onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
-            />
-          </div>
+          panelCollapsed ? (
+            <div className="w-8 border-l border-gray-200 bg-white shrink-0 flex flex-col items-center pt-3">
+              <button
+                onClick={() => setPanelCollapsed(false)}
+                title="Expand waypoint panel"
+                className="text-gray-400 hover:text-gray-700 text-sm"
+              >
+                «
+              </button>
+            </div>
+          ) : (
+            <div className="w-80 border-l border-gray-200 bg-white overflow-hidden shrink-0">
+              <WaypointDetail
+                waypoint={selectedWaypoint}
+                onEdit={openEditForm}
+                onDelete={deleteWaypoint}
+                hasActiveTour={!!activeTour}
+                onAddWaypointClick={openCreateForm}
+                filterState={filterState}
+                onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
+                onCollapse={() => setPanelCollapsed(true)}
+              />
+            </div>
+          )
         )}
       </div>
       {form.open && (
