@@ -204,125 +204,132 @@ function Graph({
     [onDeleteEdge]
   );
 
+  const tourHeader = tourName && (
+    <div data-testid="tour-header" className="shrink-0 bg-white border-b border-gray-200 px-4 py-3 text-center">
+      <h2 className="text-2xl font-bold text-gray-900">{tourName}</h2>
+      {tourDescription?.trim() && (
+        <p className="text-lg text-gray-600 mt-1">
+          <span className="font-bold">Tour Description: </span>
+          {tourDescription}
+        </p>
+      )}
+    </div>
+  );
+
   if (waypoints.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center text-gray-400 flex-col gap-3">
-        <p>No waypoints yet.</p>
-        <button
-          onClick={onAddWaypointClick}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-        >
-          Add first waypoint
-        </button>
+      <div className="h-full w-full flex flex-col">
+        {tourHeader}
+        <div className="flex-1 min-h-0 flex items-center justify-center text-gray-400 flex-col gap-3">
+          <p>No waypoints yet.</p>
+          <button
+            onClick={onAddWaypointClick}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+          >
+            Add first waypoint
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={rfEdges}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={handleConnect}
-      onNodeClick={onNodeClick}
-      onPaneClick={onPaneClick}
-      onEdgeDoubleClick={onEdgeDoubleClick}
-      fitView
-      fitViewOptions={{ padding: 0.2 }}
-      deleteKeyCode={null}
-    >
-      <Background />
-      <Controls />
-      <div className="absolute top-3 left-3 right-3 z-10 flex flex-col items-start gap-2">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onAddWaypointClick}
-            className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
-          >
-            + Add Waypoint
-          </button>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => onSearchChange(e.target.value)}
-            placeholder="Search…"
-            className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
-          />
-          <div ref={filterPanelRef} className="relative">
+    <div className="h-full w-full flex flex-col">
+      {tourHeader}
+      <div className="flex-1 min-h-0 relative">
+        <ReactFlow
+          nodes={nodes}
+          edges={rfEdges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={handleConnect}
+          onNodeClick={onNodeClick}
+          onPaneClick={onPaneClick}
+          onEdgeDoubleClick={onEdgeDoubleClick}
+          fitView
+          fitViewOptions={{ padding: 0.2 }}
+          deleteKeyCode={null}
+        >
+          <Background />
+          <Controls />
+          <div className="absolute top-3 left-3 right-3 z-10 flex items-center gap-2">
             <button
-              onClick={() => setFilterPanelOpen(o => !o)}
+              onClick={onAddWaypointClick}
               className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
             >
-              {hiddenCount > 0 ? `Filter (${hiddenCount} hidden)` : 'Filter'}
+              + Add Waypoint
             </button>
-            {filterPanelOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px]">
-                {WAYPOINT_TYPES.map(type => (
-                  <label
-                    key={type}
-                    className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={filterState[type]}
-                      onChange={e => onFilterChange(type, e.target.checked)}
-                      className="rounded"
-                    />
-                    <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
-                    <span>{type}</span>
-                  </label>
-                ))}
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => onSearchChange(e.target.value)}
+              placeholder="Search…"
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
+            />
+            <div ref={filterPanelRef} className="relative">
+              <button
+                onClick={() => setFilterPanelOpen(o => !o)}
+                className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
+              >
+                {hiddenCount > 0 ? `Filter (${hiddenCount} hidden)` : 'Filter'}
+              </button>
+              {filterPanelOpen && (
+                <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px]">
+                  {WAYPOINT_TYPES.map(type => (
+                    <label
+                      key={type}
+                      className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={filterState[type]}
+                        onChange={e => onFilterChange(type, e.target.checked)}
+                        className="rounded"
+                      />
+                      <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
+                      <span>{type}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+            {narrative?.trim() && (
+              <div data-testid="docent-narrative-bar" className="flex-1 min-w-0 bg-amber-50 border-l-4 border-amber-400 text-xs text-amber-900 px-3 py-2 rounded shadow-sm">
+                <span className="font-bold">Where to next: </span>
+                {narrative}
               </div>
             )}
           </div>
-          {narrative?.trim() && (
-            <div data-testid="docent-narrative-bar" className="flex-1 min-w-0 bg-amber-50 border-l-4 border-amber-400 text-xs text-amber-900 px-3 py-2 rounded shadow-sm">
-              <span className="font-bold">Where to next: </span>
-              {narrative}
+          {pendingConnection && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">
+              <div className="bg-white rounded-xl shadow-xl p-5 flex flex-col gap-3 w-72">
+                <p className="text-sm font-medium text-gray-800">Add a label to this connection</p>
+                <input
+                  autoFocus
+                  className="border border-gray-300 rounded px-3 py-1.5 text-sm"
+                  value={pendingLabel}
+                  onChange={e => setPendingLabel(e.target.value)}
+                  placeholder="e.g. depends on, implements… (optional)"
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') confirmConnect();
+                    if (e.key === 'Escape') cancelConnect();
+                  }}
+                />
+                <div className="flex gap-2 justify-end">
+                  <button onClick={cancelConnect} className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50">
+                    Cancel
+                  </button>
+                  <button onClick={confirmConnect} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Add Connection
+                  </button>
+                </div>
+              </div>
             </div>
           )}
-        </div>
-        {tourName && (
-          <div data-testid="tour-header" className="w-full text-center">
-            <h2 className="text-2xl font-bold text-gray-900">{tourName}</h2>
-            {tourDescription?.trim() && (
-              <p className="text-lg text-gray-600 mt-1">
-                <span className="font-bold">Tour Description: </span>
-                {tourDescription}
-              </p>
-            )}
-          </div>
-        )}
+        </ReactFlow>
       </div>
-      {pendingConnection && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">
-          <div className="bg-white rounded-xl shadow-xl p-5 flex flex-col gap-3 w-72">
-            <p className="text-sm font-medium text-gray-800">Add a label to this connection</p>
-            <input
-              autoFocus
-              className="border border-gray-300 rounded px-3 py-1.5 text-sm"
-              value={pendingLabel}
-              onChange={e => setPendingLabel(e.target.value)}
-              placeholder="e.g. depends on, implements… (optional)"
-              onKeyDown={e => {
-                if (e.key === 'Enter') confirmConnect();
-                if (e.key === 'Escape') cancelConnect();
-              }}
-            />
-            <div className="flex gap-2 justify-end">
-              <button onClick={cancelConnect} className="px-3 py-1.5 text-sm border rounded hover:bg-gray-50">
-                Cancel
-              </button>
-              <button onClick={confirmConnect} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
-                Add Connection
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </ReactFlow>
+    </div>
   );
 }
 

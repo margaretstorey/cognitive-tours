@@ -176,10 +176,9 @@ export default function TourBar({
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
-            <span className="text-sm text-gray-400">or</span>
             <button
               onClick={openCreate}
-              className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 shadow-sm"
+              className="px-2.5 py-1 text-xs font-medium border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 shadow-sm"
             >
               + New Tour
             </button>
@@ -215,16 +214,16 @@ export default function TourBar({
               Edit tour
             </button>
             <button
+              onClick={openCreate}
+              className="px-2.5 py-1 text-xs font-medium border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 shadow-sm"
+            >
+              + New Tour
+            </button>
+            <button
               onClick={onToggleMarkdownView}
               className="px-2.5 py-1 text-xs font-medium border border-blue-400 bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
             >
               {markdownViewOpen ? 'Graph View' : 'Markdown View'}
-            </button>
-            <button
-              onClick={handleExport}
-              className="px-2.5 py-1 text-xs font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
-            >
-              Export ↓
             </button>
           </div>
         ) : null}
@@ -232,10 +231,10 @@ export default function TourBar({
         {activeTourId && (
           <div className="ml-auto flex gap-2">
             <button
-              onClick={openCreate}
-              className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 shadow-sm"
+              onClick={handleExport}
+              className="px-2.5 py-1 text-sm font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
             >
-              + New Tour
+              Export ↓
             </button>
           </div>
         )}
