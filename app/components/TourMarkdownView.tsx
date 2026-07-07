@@ -68,7 +68,7 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                   )}
                   {stop.narrative?.trim() && (
                     <div className="mt-2 border-l-2 border-amber-300 pl-3">
-                      <p className="text-sm font-bold text-amber-900">Where to next:</p>
+                      <p className="text-sm font-bold text-amber-900">Next up:</p>
                       <p className="text-sm text-amber-800 italic">{stop.narrative}</p>
                     </div>
                   )}

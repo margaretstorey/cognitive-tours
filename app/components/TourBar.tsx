@@ -19,6 +19,7 @@ interface TourBarProps {
   markdownViewOpen: boolean;
   onToggleMarkdownView: () => void;
   onEditorOpenChange?: (open: boolean) => void;
+  narrative?: string;
 }
 
 interface TourEditorState {
@@ -45,6 +46,7 @@ export default function TourBar({
   markdownViewOpen,
   onToggleMarkdownView,
   onEditorOpenChange,
+  narrative,
 }: TourBarProps) {
   const [editor, setEditor] = useState<TourEditorState>({
     open: false,
@@ -241,6 +243,13 @@ export default function TourBar({
 
 
       </div>
+
+      {!markdownViewOpen && narrative?.trim() && (
+        <div data-testid="docent-narrative-bar" className="bg-amber-50 border-b-2 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
+          <span className="font-bold">Next up: </span>
+          {narrative}
+        </div>
+      )}
 
       {editor.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">

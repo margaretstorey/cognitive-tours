@@ -54,6 +54,7 @@ export default function CognitiveToursApp() {
   const activeTour = tours.find(t => t.id === activeTourId) ?? null;
   const activeTourLength = activeTour?.stops.length ?? 0;
   const currentNarrative = activeTour?.stops[activeTourStep]?.narrative?.trim() ?? '';
+  const showingMarkdown = markdownViewOpen && !!activeTour;
 
   // T015: Startup fetch — load all persisted data on mount.
   useEffect(() => {
@@ -289,7 +290,9 @@ export default function CognitiveToursApp() {
     (id: string | null) => {
       setActiveTourId(id);
       setActiveTourStepRaw(0);
-      setMarkdownViewOpen(!!id);
+      if (!id) {
+        setMarkdownViewOpen(false);
+      }
       if (id) {
         const tour = tours.find(t => t.id === id);
         setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
@@ -418,10 +421,11 @@ export default function CognitiveToursApp() {
         markdownViewOpen={markdownViewOpen}
         onToggleMarkdownView={onToggleMarkdownView}
         onEditorOpenChange={setTourEditorOpen}
+        narrative={currentNarrative}
       />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 relative overflow-hidden">
-          {markdownViewOpen && activeTour ? (
+          {showingMarkdown ? (
             <TourMarkdownView tour={activeTour} waypoints={waypoints} activeStepIndex={activeTourStep} />
           ) : (
             <WaypointGraph
@@ -436,23 +440,23 @@ export default function CognitiveToursApp() {
               onNodePositionChange={onNodePositionChange}
               onAddWaypointClick={openCreateForm}
               filterState={filterState}
-              onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               tourName={activeTour?.name}
               tourDescription={activeTour?.description}
-              narrative={currentNarrative}
             />
           )}
         </div>
-        {!markdownViewOpen && (
-          <div className="w-80 border-l border-gray-200 overflow-y-auto bg-white">
+        {!showingMarkdown && (
+          <div className="w-80 border-l border-gray-200 bg-white overflow-hidden">
             <WaypointDetail
               waypoint={selectedWaypoint}
               onEdit={openEditForm}
               onDelete={deleteWaypoint}
               hasActiveTour={!!activeTour}
-              tours={tours}
+              onAddWaypointClick={openCreateForm}
+              filterState={filterState}
+              onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
             />
           </div>
         )}

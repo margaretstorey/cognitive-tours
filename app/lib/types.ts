@@ -7,7 +7,8 @@ export type WaypointType =
   | 'Test'
   | 'Risk'
   | 'AI Instruction'
-  | 'Open Question';
+  | 'Open Question'
+  | 'Deprecated';
 
 export const WAYPOINT_TYPES: WaypointType[] = [
   'Goal',
@@ -19,6 +20,7 @@ export const WAYPOINT_TYPES: WaypointType[] = [
   'Risk',
   'AI Instruction',
   'Open Question',
+  'Deprecated',
 ];
 
 export type FilterState = Record<WaypointType, boolean>;
