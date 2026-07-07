@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Tour, TourStop, Waypoint } from '@/app/lib/types';
 import { generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
 
@@ -53,6 +53,11 @@ export default function TourBar({
     description: '',
     stops: [],
   });
+
+  const sortedTours = useMemo(
+    () => [...tours].sort((a, b) => a.name.localeCompare(b.name)),
+    [tours]
+  );
 
   useEffect(() => {
     onEditorOpenChange?.(editor.open);
@@ -154,8 +159,8 @@ export default function TourBar({
             value={activeTourId ?? ''}
             onChange={e => onSelectTour(e.target.value || null)}
           >
-            <option value="">No tour selected</option>
-            {tours.map(t => (
+            <option value="">Return to viewing the full map</option>
+            {sortedTours.map(t => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}
           </select>
@@ -166,8 +171,8 @@ export default function TourBar({
               value={activeTourId ?? ''}
               onChange={e => onSelectTour(e.target.value || null)}
             >
-              <option value="">No tour selected</option>
-              {tours.map(t => (
+              <option value="">No tour selected (the full map is displayed)</option>
+              {sortedTours.map(t => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
@@ -182,7 +187,7 @@ export default function TourBar({
         )}
 
         {!activeTourId && (
-          <span className="text-sm text-gray-600">Select a tour to begin, or create a new one</span>
+          <span className="text-sm text-gray-600 font-semibold">Select a tour to begin, or create a new one</span>
         )}
 
         {activeTourId ? (

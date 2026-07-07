@@ -59,6 +59,9 @@ interface WaypointGraphProps {
   onFilterChange: (type: WaypointType, visible: boolean) => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
+  tourName?: string;
+  tourDescription?: string;
+  narrative?: string;
 }
 
 function Graph({
@@ -75,6 +78,9 @@ function Graph({
   onFilterChange,
   searchQuery,
   onSearchChange,
+  tourName,
+  tourDescription,
+  narrative,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
@@ -229,47 +235,66 @@ function Graph({
     >
       <Background />
       <Controls />
-      <div className="absolute top-3 left-3 z-10 flex gap-2">
-        <button
-          onClick={onAddWaypointClick}
-          className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
-        >
-          + Add Waypoint
-        </button>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={e => onSearchChange(e.target.value)}
-          placeholder="Search…"
-          className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
-        />
-        <div ref={filterPanelRef} className="relative">
+      <div className="absolute top-3 left-3 right-3 z-10 flex flex-col items-start gap-2">
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => setFilterPanelOpen(o => !o)}
+            onClick={onAddWaypointClick}
             className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
           >
-            {hiddenCount > 0 ? `Filter (${hiddenCount} hidden)` : 'Filter'}
+            + Add Waypoint
           </button>
-          {filterPanelOpen && (
-            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px]">
-              {WAYPOINT_TYPES.map(type => (
-                <label
-                  key={type}
-                  className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={filterState[type]}
-                    onChange={e => onFilterChange(type, e.target.checked)}
-                    className="rounded"
-                  />
-                  <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
-                  <span>{type}</span>
-                </label>
-              ))}
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => onSearchChange(e.target.value)}
+            placeholder="Search…"
+            className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
+          />
+          <div ref={filterPanelRef} className="relative">
+            <button
+              onClick={() => setFilterPanelOpen(o => !o)}
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
+            >
+              {hiddenCount > 0 ? `Filter (${hiddenCount} hidden)` : 'Filter'}
+            </button>
+            {filterPanelOpen && (
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px]">
+                {WAYPOINT_TYPES.map(type => (
+                  <label
+                    key={type}
+                    className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filterState[type]}
+                      onChange={e => onFilterChange(type, e.target.checked)}
+                      className="rounded"
+                    />
+                    <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
+                    <span>{type}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+          {narrative?.trim() && (
+            <div data-testid="docent-narrative-bar" className="bg-amber-50 border-l-4 border-amber-400 text-xs text-amber-900 px-3 py-2 rounded shadow-sm max-w-md">
+              <span className="font-bold">Where to next: </span>
+              {narrative}
             </div>
           )}
         </div>
+        {tourName && (
+          <div data-testid="tour-header" className="w-full text-center">
+            <h2 className="text-2xl font-bold text-gray-900">{tourName}</h2>
+            {tourDescription?.trim() && (
+              <p className="text-lg text-gray-600 mt-1">
+                <span className="font-bold">Tour Description: </span>
+                {tourDescription}
+              </p>
+            )}
+          </div>
+        )}
       </div>
       {pendingConnection && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">

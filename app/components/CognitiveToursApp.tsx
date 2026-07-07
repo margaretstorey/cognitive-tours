@@ -289,7 +289,7 @@ export default function CognitiveToursApp() {
     (id: string | null) => {
       setActiveTourId(id);
       setActiveTourStepRaw(0);
-      setMarkdownViewOpen(false);
+      setMarkdownViewOpen(!!id);
       if (id) {
         const tour = tours.find(t => t.id === id);
         setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
@@ -393,9 +393,9 @@ export default function CognitiveToursApp() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-200 bg-white shrink-0 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Cognitive Tours</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Cognitive Scaffolding for Building and Navigating Understanding</p>
+      <div className="px-4 py-4 border-b border-gray-200 bg-black shrink-0 text-center">
+        <h1 className="text-4xl font-bold text-white">Cognitive Tours</h1>
+        <p className="text-lg font-bold text-gray-200 mt-1">"HandCrafted" Scaffolding for Building and Sharing Understanding</p>
       </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (
@@ -419,19 +419,6 @@ export default function CognitiveToursApp() {
         onToggleMarkdownView={onToggleMarkdownView}
         onEditorOpenChange={setTourEditorOpen}
       />
-      {!markdownViewOpen && activeTour && (
-        <div data-testid="tour-header" className="px-4 py-3 border-b border-gray-200 bg-white shrink-0">
-          <h2 className="text-lg font-bold text-gray-900">{activeTour.name}</h2>
-          {activeTour.description?.trim() && (
-            <p className="text-sm text-gray-500 mt-0.5">{activeTour.description}</p>
-          )}
-        </div>
-      )}
-      {!markdownViewOpen && currentNarrative && (
-        <div data-testid="docent-narrative-bar" className="bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
-          {currentNarrative}
-        </div>
-      )}
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 relative overflow-hidden">
           {markdownViewOpen && activeTour ? (
@@ -452,18 +439,23 @@ export default function CognitiveToursApp() {
               onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              tourName={activeTour?.name}
+              tourDescription={activeTour?.description}
+              narrative={currentNarrative}
             />
           )}
         </div>
-        <div className="w-80 border-l border-gray-200 overflow-y-auto bg-white">
-          <WaypointDetail
-            waypoint={selectedWaypoint}
-            onEdit={openEditForm}
-            onDelete={deleteWaypoint}
-            hasActiveTour={!!activeTour}
-            tours={tours}
-          />
-        </div>
+        {!markdownViewOpen && (
+          <div className="w-80 border-l border-gray-200 overflow-y-auto bg-white">
+            <WaypointDetail
+              waypoint={selectedWaypoint}
+              onEdit={openEditForm}
+              onDelete={deleteWaypoint}
+              hasActiveTour={!!activeTour}
+              tours={tours}
+            />
+          </div>
+        )}
       </div>
       {form.open && (
         <WaypointForm

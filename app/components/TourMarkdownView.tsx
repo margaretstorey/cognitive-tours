@@ -16,7 +16,10 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{tour.name}</h1>
         {tour.description?.trim() && (
-          <p className="text-gray-600 mb-3">{tour.description}</p>
+          <p className="text-gray-600 mb-3">
+            <span className="font-bold">Tour Description: </span>
+            {tour.description}
+          </p>
         )}
         <p className="text-xs text-gray-400 mb-6">
           {tour.stops.length} stop{tour.stops.length === 1 ? '' : 's'}
@@ -42,10 +45,16 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                     {wp.label}
                   </h2>
                   {wp.description?.trim() && (
-                    <p className="text-sm text-gray-700 mb-2">{wp.description}</p>
+                    <div className="mb-2">
+                      <p className="text-sm font-bold text-gray-800">What this is:</p>
+                      <p className="text-sm text-gray-700">{wp.description}</p>
+                    </div>
                   )}
                   {wp.notes?.trim() && (
-                    <p className="text-sm text-gray-600 mb-2">{wp.notes}</p>
+                    <div className="mb-2">
+                      <p className="text-sm font-bold text-gray-800">Notes:</p>
+                      <p className="text-sm text-gray-600">{wp.notes}</p>
+                    </div>
                   )}
                   {wp.filePath?.trim() && (
                     <a
@@ -59,6 +68,7 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                   )}
                   {stop.narrative?.trim() && (
                     <div className="mt-2 border-l-2 border-amber-300 pl-3">
+                      <p className="text-sm font-bold text-amber-900">Where to next:</p>
                       <p className="text-sm text-amber-800 italic">{stop.narrative}</p>
                     </div>
                   )}
