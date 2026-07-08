@@ -43,7 +43,8 @@ test.describe('delete a waypoint', () => {
 
 test('tour navigation increments step counter', async ({ page }) => {
   await page.goto('/');
-  await page.locator('select').filter({ hasText: 'No tour selected' }).selectOption({ index: 1 });
+  await page.locator('select').filter({ hasText: 'No tour selected' })
+    .selectOption({ label: 'New Developer Orientation' });
   await expect(page.getByText(/Step 1 of/)).toBeVisible();
   await page.getByRole('button', { name: 'Next →' }).click();
   await expect(page.getByText(/Step 2 of/)).toBeVisible();
