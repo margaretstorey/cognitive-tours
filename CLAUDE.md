@@ -124,6 +124,16 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   button relabeled "Export tour" for clarity. Reuses/extends 
   tour-markdown.ts rather than duplicating export logic. Could serve as a 
   manual backup alongside /api/data, though not yet relied on for that. ✅
+  - Layer filter presets — Intent Layer, Technical Layer, and Other buttons 
+  added to the waypoint type filter panel, alongside Select all/Select 
+  none. Intent Layer: Goal, User Need, Feature, ADR, Test, AI Instruction. 
+  Technical Layer: ADR, Code Component, Test, Risk. Other: Open Question, 
+  Deprecated. ADR and Test are intentionally dual-layer. Resolves the 
+  open question of whether waypoint types map to Triple Debt layers by 
+  subject or function ✅
+- Filter panel resets on tour load — waypoint type filters clear back to 
+  default when switching to a new tour, rather than carrying over a 
+  filter state that may not make sense for the newly selected tour ✅
 
 ---
 
@@ -192,6 +202,9 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 - Feature → implemented by → Code Component
 - Code Component → decomposes into → Code Component
 - ADR → leads to → Code Component
+- ADR → leads to → Feature (in addition to Code Component, when the ADR's 
+  primary motivation is a user-facing capability rather than an 
+  implementation detail)
 - Test → validates → Feature
 - Risk → threatens → Feature or ADR
 
@@ -201,6 +214,12 @@ Margaret-Anne's intended ontology — not fully implemented yet:
   added June 29. Reference: Team Topologies post by Vanessa Formicola. May not do this.
 
 **Note from tour review (June 16):** not every true relationship needs a graph edge. Some relationships are better expressed in a waypoint's own description/notes than as a separate edge — especially when an edge would point backward through an otherwise linear tour sequence and create a confusing visual knot. Edges are for the map; not every map fact needs to become a tour beat.
+
+**Note on dual-layer types (Session 13 July 7):** ADR and Test both legitimately 
+belong to more than one Triple Debt layer (Intent and Technical). This 
+isn't an inconsistency, it reflects that these two types sit at the seam 
+between why something was built and how it was built. See Layer filter 
+presets in "What is built and working" for the concrete implementation.
 
 **Caution:** any file resolving TURSO_DATABASE_URL vs DATABASE_URL must check NODE_ENV explicitly, never just "if Turso var is present," since that variable is always present in .env.
 ---
