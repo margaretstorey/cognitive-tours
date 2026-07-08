@@ -101,7 +101,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   makes it fast to isolate a single type (e.g. clear all, then check just 
   "Feature" to see the feature map) instead of toggling 7 checkboxes 
   individually. ✅
-
+  - Seed-from-backup script (scripts/seed-from-backup.ts) — refreshes 
+  dev.db from a production /api/data backup JSON, clearing and replacing 
+  existing local waypoints/edges/tours rather than appending. Guarded the 
+  same way db.ts/prisma.config.ts are (explicit NODE_ENV check) — never 
+  targets test.db or Turso. Run manually, periodically, not part of the 
+  automated test flow. ✅
 
 ---
 
@@ -197,6 +202,16 @@ Margaret-Anne's intended ontology — not fully implemented yet:
   populate the right panel. Left as-is for now (July 6) — could be added 
   later if markdown view needs to support inspection/editing, not just 
   reading.
+  - **Seed script and audit skill are kept separate, not merged.** The 
+  seed-from-backup script (scripts/seed-from-backup.ts) is a destructive 
+  write operation — it wipes and replaces dev.db from a production 
+  backup. The audit-waypoints skill is strictly read-only by design (see 
+  above). Merging them would mean one command sometimes writes and 
+  sometimes only reads, which undermines the "always safe to run" trust 
+  the audit skill was specifically redesigned to earn. Workflow: run the 
+  seed script first (deliberately, when dev.db needs to catch up to 
+  production), then run the audit skill separately afterward to check 
+  freshness against whatever's now local.
 
 ---
 
