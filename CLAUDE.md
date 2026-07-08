@@ -73,6 +73,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Landing state ("No tour selected") now shows a clear call-to-action prompting the user to select or create a tour, with dropdown and "+ New Tour" visually grouped ✅
 - Right panel now shows onboarding content (what a waypoint/tour is, suggested starting tour) when nothing is selected and no tour is active — replaces the old passive "Select a waypoint to see its details" placeholder ✅
 - Escape key exits the active tour — correctly yields to modal-close and text-input-blur first (doesn't exit tour if a modal is open or focus is in a text field) ✅
+- Changed the waypoint panel to have the buttons for add waypoint and filter; added a new waypoint type of deprecated; made the waypoint collapsible but made it visible by default in full map mode. ✅
+- Added a full map mode and changed the button labels to help the UI tell a story of how to use it.  Updated the screen when. you first show up.  Changed the look and feel and added an app title and tagline. ✅
+- Made some usability improvements - e.g., graph mode/markdown by default and placement of narrative, search and other buttons. ✅
+
 
 
 ---
