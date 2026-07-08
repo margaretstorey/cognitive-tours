@@ -91,9 +91,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - "+ New Tour" ungrouped from the tour dropdown; toolbar button order 
   tidied (Edit tour → New Tour → Markdown View, Export moved far right) ✅
 - Markdown view field labels added: "What this is:", "Notes:", "Tour 
-  Description:", "Where to next:"/"Next up:" — note: differs from "Bridge" 
-  terminology discussed in planning session; reconcile naming if desired 
-  before manual tour rewrite pass ✅
+  Description:", "Where to next:"/"Next up:"  ✅
 - Simplified empty-panel onboarding text ✅
 - Bigger/bolder app title and tagline on black header ✅
 - New waypoint type: Deprecated (black background, white text) ✅
@@ -107,6 +105,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   same way db.ts/prisma.config.ts are (explicit NODE_ENV check) — never 
   targets test.db or Turso. Run manually, periodically, not part of the 
   automated test flow. ✅
+  - SETUP.md written — instructions for cloning to a separate repo and running an independent instance against your own database/project, so a collaborator can explore freely without touching production ✅
 
 ---
 
@@ -125,6 +124,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   save the JSON before giving anyone else access to the live app. Last backup Jul 6, 2026.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session.
+- **Refresh dev.db before auditing.** The audit-waypoints skill only 
+  reads local prisma/dev.db, never production/Turso. Before running the 
+  skill if you want it checking current production state: (1) visit 
+  /api/data on the live app and save the JSON to backups/backup-YYYY-MM-DD.json, 
+  (2) run `npx tsx scripts/seed-from-backup.ts backups/backup-YYYY-MM-DD.json` 
+  to refresh dev.db, (3) then run /audit-waypoints. Otherwise findings 
+  may reflect stale local data, not what's actually live.
+  - **Rotate any credential immediately if it's ever pasted into chat, docs, commit messages, or committed by mistake** — treat exposure to any external system (including this chat) as equivalent to a real leak. Sequence: generate new → invalidate all → generate final → update Vercel → update local `.env` → redeploy. See known issue below re: confirming redeploy actually triggers.
 
 
 ### Known issues
@@ -134,6 +141,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - **No undo and no multi-user conflict protection** — the app has no undo 
   and no locking. With multiple users, concurrent edits can overwrite each 
   other silently. Back up /api/data before collaborative sessions.
+  - **Redeploy button doesn't always trigger a build.** Manually clicking "Redeploy" from the Deployments list may not produce a new deployment. Try Redeploy from inside a specific deployment's detail page instead; if that also fails, a trivial no-op commit (even via GitHub's web editor) reliably forces a fresh build.
 
 ### Small improvements (quality of life)
 
@@ -172,7 +180,7 @@ Margaret-Anne's intended ontology — not fully implemented yet:
 **Not done**
 - **SDR as waypoint type** — Social Decision Records (team/social decisions, 
   analogous to ADRs) may warrant their own type. See Open Question waypoint 
-  added June 29. Reference: Team Topologies post by Vanessa Formicola.
+  added June 29. Reference: Team Topologies post by Vanessa Formicola. May not do this.
 
 **Note from tour review (June 16):** not every true relationship needs a graph edge. Some relationships are better expressed in a waypoint's own description/notes than as a separate edge — especially when an edge would point backward through an otherwise linear tour sequence and create a confusing visual knot. Edges are for the map; not every map fact needs to become a tour beat.
 
@@ -250,56 +258,50 @@ Full constitution: .specify/memory/constitution.md
 
 ---
 
-
   ## What to work on next (in priority order)
 
 1. **Compass icon** — small ring + needle SVG, add next to app title. 
    Markup ready (see session notes); needs Claude Code to place it and 
    decide favicon vs. header-only vs. both.
 
-2. **Bridge terminology reconciliation** — markdown view currently uses 
-   "Where to next:"/"Next up:" for the narrative field; planning session 
-   settled on "Bridge" as the preferred label (chosen over "Segue" for 
-   plain-language clarity, and over "Why we're here" for capturing both 
-   backward/forward transition in one word). Decide whether to rename.
-
-3. **Manual tour rewrite pass** — existing tours' narrative fields mostly 
+2. **Manual tour rewrite pass** — existing tours' narrative fields mostly 
    restate the waypoint's own description rather than bridging between 
    stops. Two tours ("Choosing a Database", "Building Docent Mode") 
    already do this well and can serve as the template. Rewriting the rest 
    is a manual, hands-on pass (not delegated) — intentional, to build the 
-   habit.
+   habit. [not a code task but update to DB only]
 
-4. **AI suggest feature** — "Suggest" button on waypoint description and 
+3. **AI suggest feature** — "Suggest" button on waypoint description and 
    tour stop narrative fields. Deferred — may interfere with pedagogical 
    goals for Fall course; unresolved question of whether AI-generated 
    waypoints/narratives undermine the understanding-building the tool 
-   exists to support.
+   exists to support. [use speckit]
 
-5. **Edge management panel** — show edge details in right panel, delete 
-   button there. Currently double-click to delete (not intuitive).
+4. **Edge management panel** — show edge details in right panel, delete 
+   button there. Currently double-click to delete (not intuitive). [use speckit]
 
-6. **Tour metadata** — add author (manual text field) and updatedAt 
+5. **Tour metadata** — add author (manual text field) and updatedAt 
    (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in 
-   markdown view and export header.
+   markdown view and export header. [probably don't need speckit]
 
-7. **Tour entry UX — design direction (not yet built)** — [keep existing 
-   text as-is]
+6. **Tour entry UX — design direction (not yet built)** — [keep existing 
+   text as-is] - but better home page needed and product page
 
-8. **Multi-team support for Startup Studio (Fall 2026)** — see spec 009 
+7. **Multi-team support for Startup Studio (Fall 2026)** — see spec 009 
    draft. One link per team (no login), self-reported authorName via 
    localStorage, instructor overview page. Estimated 5-6 sessions, 
    targeted for August. Not urgent yet but has a real external deadline 
-   (course starts September).
+   (course starts September). [use speckit]
 
 
 ---
 
 ## What Margaret-Anne is confused about
 
-- How to keep waypoints and tours in sync as the code evolves
+- How to keep waypoints and tours in sync as the code evolves (partially solved with the backup script/audit skill)
 - How the cognitive layer (this document + the app's waypoints) connects to
-  the intent layer (Spec Kit) and technical layer (code) in a sustainable way
+  the intent layer (Spec Kit) and technical layer (code) in a sustainable way (partially addressed but still requires a lot of manual work but then it is tool such as speckit agnostic)
+- See also open questions in the Cognitive Tours db! 
 
 ---
 

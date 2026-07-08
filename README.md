@@ -48,6 +48,9 @@ Tours link waypoints according to a goal (name of the tour)
 
 ---
 
+## Running your own instance
+See [SETUP.md](./SETUP.md) for instructions on cloning this to run against your own database and project.
+
 ## Running locally
 
 ```bash
