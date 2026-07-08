@@ -201,10 +201,23 @@ function Graph({
     </div>
   );
 
+  const searchBar = (
+    <div className="shrink-0 flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-white">
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={e => onSearchChange(e.target.value)}
+        placeholder="Search…"
+        className="ml-auto px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
+      />
+    </div>
+  );
+
   if (waypoints.length === 0) {
     return (
       <div className="h-full w-full flex flex-col">
         {tourHeader}
+        {searchBar}
         <div className="flex-1 min-h-0 flex items-center justify-center text-gray-400 flex-col gap-3">
           <p>No waypoints yet.</p>
           <button
@@ -221,6 +234,7 @@ function Graph({
   return (
     <div className="h-full w-full flex flex-col">
       {tourHeader}
+      {searchBar}
       <div className="flex-1 min-h-0 relative">
         <ReactFlow
           nodes={nodes}
@@ -238,15 +252,6 @@ function Graph({
         >
           <Background />
           <Controls />
-          <div className="absolute top-3 left-3 right-3 z-10 flex items-center gap-2">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => onSearchChange(e.target.value)}
-              placeholder="Search…"
-              className="ml-auto px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
-            />
-          </div>
           {pendingConnection && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">
               <div className="bg-white rounded-xl shadow-xl p-5 flex flex-col gap-3 w-72">
