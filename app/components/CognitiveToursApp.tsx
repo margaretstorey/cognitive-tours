@@ -291,6 +291,7 @@ export default function CognitiveToursApp() {
     (id: string | null) => {
       setActiveTourId(id);
       setActiveTourStepRaw(0);
+      setPanelCollapsed(false);
       if (!id) {
         setMarkdownViewOpen(false);
       }

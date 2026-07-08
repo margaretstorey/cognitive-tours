@@ -167,9 +167,9 @@ export default function TourBar({
             ))}
           </select>
         ) : (
-          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-2 py-1">
+          <>
             <select
-              className="text-sm border-0 focus:ring-0 bg-transparent"
+              className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
               value={activeTourId ?? ''}
               onChange={e => onSelectTour(e.target.value || null)}
             >
@@ -184,7 +184,7 @@ export default function TourBar({
             >
               + New Tour
             </button>
-          </div>
+          </>
         )}
 
         {!activeTourId && (
