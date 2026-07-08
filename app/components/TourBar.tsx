@@ -308,11 +308,16 @@ export default function TourBar({
                   return (
                     <li key={`${stop.waypointId}-${idx}`} className="flex flex-col gap-1 text-sm">
                       <div className="flex items-center gap-2">
-                        <span className="flex-1 truncate">{wp?.label ?? stop.waypointId}</span>
+                        <span className="flex-1 truncate">
+                          <span className="text-gray-400 font-normal">Stop {idx + 1}: </span>
+                          {wp?.label ?? stop.waypointId}
+                          {wp && <span className="text-gray-400 font-normal"> ({wp.type})</span>}
+                        </span>
                         <button onClick={() => moveWaypoint(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↑</button>
                         <button onClick={() => moveWaypoint(idx, 1)} disabled={idx === editor.stops.length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↓</button>
                         <button onClick={() => removeWaypointFromTour(idx)} className="text-red-400 hover:text-red-600">✕</button>
                       </div>
+                      <span className="text-xs font-bold text-gray-700">Next up narration:</span>
                       <textarea
                         rows={2}
                         className="text-sm border border-gray-200 rounded px-2 py-1 w-full resize-none"
