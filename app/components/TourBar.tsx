@@ -198,7 +198,7 @@ export default function TourBar({
         )}
 
         {!activeTourId && (
-          <span className="text-sm text-gray-600 font-semibold">Select a tour to begin, or create a new one</span>
+          <span className="text-sm text-gray-600 font-semibold">Select a tour to begin understanding, or create a new one</span>
         )}
 
         {!activeTourId && (

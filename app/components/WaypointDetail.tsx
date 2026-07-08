@@ -5,6 +5,12 @@ import type { FilterState, Waypoint, WaypointType } from '@/app/lib/types';
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 
+const FILTER_PRESETS: { label: string; types: WaypointType[] }[] = [
+  { label: 'Intent Layer', types: ['Goal', 'User Need', 'Feature', 'ADR', 'Test', 'AI Instruction'] },
+  { label: 'Technical Layer', types: ['ADR', 'Code Component', 'Test', 'Risk'] },
+  { label: 'Other', types: ['Open Question', 'Deprecated'] },
+];
+
 interface WaypointDetailProps {
   waypoint: Waypoint | null;
   onEdit: (waypoint: Waypoint) => void;
@@ -85,6 +91,19 @@ export default function WaypointDetail({
                 >
                   Select none
                 </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
+                {FILTER_PRESETS.map(preset => (
+                  <button
+                    key={preset.label}
+                    onClick={() =>
+                      WAYPOINT_TYPES.forEach(type => onFilterChange(type, preset.types.includes(type)))
+                    }
+                    className="text-xs font-medium text-gray-600 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-50"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
               </div>
               {WAYPOINT_TYPES.map(type => (
                 <label

@@ -400,7 +400,7 @@ export default function CognitiveToursApp() {
     <div className="flex flex-col h-screen overflow-hidden">
       <div className="px-4 py-4 border-b border-gray-200 bg-black shrink-0 text-center">
         <h1 className="text-4xl font-bold text-white">Cognitive Tours</h1>
-        <p className="text-lg font-bold text-gray-200 mt-1">Handcrafted Scaffolding for Shared Understanding</p>
+        <p className="text-lg font-bold text-gray-200 mt-1">"Handcrafted" Scaffolding for Shared Understanding</p>
       </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (
