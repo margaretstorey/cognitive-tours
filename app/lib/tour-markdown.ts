@@ -28,7 +28,7 @@ export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[]): string 
 
     lines.push('---');
     lines.push('');
-    lines.push(`## Stop ${index + 1}: ${wp.label}`);
+    lines.push(`## Stop ${index + 1}: ${wp.label} (${wp.type})`);
     lines.push('');
 
     if (wp.description?.trim()) {

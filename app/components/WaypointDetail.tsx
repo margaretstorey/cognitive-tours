@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FilterState, Waypoint, WaypointType } from '@/app/lib/types';
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
@@ -28,7 +28,19 @@ export default function WaypointDetail({
 }: WaypointDetailProps) {
   const [copied, setCopied] = useState(false);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const filterPanelRef = useRef<HTMLDivElement>(null);
   const hiddenCount = WAYPOINT_TYPES.filter(t => !filterState[t]).length;
+
+  useEffect(() => {
+    if (!filterPanelOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
+        setFilterPanelOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [filterPanelOpen]);
 
   const header = (
     <div className="p-4 border-b border-gray-200 flex flex-col gap-2">
@@ -51,7 +63,7 @@ export default function WaypointDetail({
         >
           + Add Waypoint
         </button>
-        <div className="relative">
+        <div className="relative" ref={filterPanelRef}>
           <button
             onClick={() => setFilterPanelOpen(o => !o)}
             className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"

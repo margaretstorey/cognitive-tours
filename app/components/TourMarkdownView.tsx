@@ -41,8 +41,9 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                   }`}
                 >
                   <h2 id={`stop-${index}`} className="text-base font-semibold text-gray-800 mb-1">
-                    <span className="text-gray-400 font-normal text-sm mr-2">{index + 1}.</span>
+                    <span className="text-gray-400 font-normal text-sm mr-2">Step {index + 1}:</span>
                     {wp.label}
+                    <span className="text-gray-400 font-normal text-sm ml-2">({wp.type})</span>
                   </h2>
                   {wp.description?.trim() && (
                     <div className="mb-2">

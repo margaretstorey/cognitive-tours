@@ -106,6 +106,13 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   targets test.db or Turso. Run manually, periodically, not part of the 
   automated test flow. ✅
   - SETUP.md written — instructions for cloning to a separate repo and running an independent instance against your own database/project, so a collaborator can explore freely without touching production ✅
+  - Filter panel closes on click-away — clicking outside the panel (e.g. 
+  onto blank canvas space) does not currently dismiss it; decided this is 
+  fine as-is, since staying open while working the graph with active 
+  filters is arguably the better default. Click-away closing may still 
+  apply elsewhere (e.g. clicking a different UI element or in the waypoint panel) — worth 
+  confirming exact behavior before considering this fully resolved. In progress... but partially done!
+  \\\
 
 ---
 
@@ -259,6 +266,20 @@ Full constitution: .specify/memory/constitution.md
 ---
 
   ## What to work on next (in priority order)
+
+  0. **Export full map** — new "Export full map" button, top-right, visible 
+   only in full map view (mirrors the tour view's export button). Existing 
+   generic "Export" button in tour view should be relabeled "Export tour" 
+   for clarity now that two distinct exports exist.
+   
+   Full map export produces a markdown document of all waypoints, grouped 
+   by type, alphabetical within each group. No narratives (full map isn't 
+   a sequence) and no stop numbers — but include each waypoint's ID/number 
+   for reference. Could double as a manual backup alongside /api/data, 
+   though not yet decided whether it's meant to be reliable enough to 
+   depend on for that, or just a nice-to-have side benefit.
+   
+   [probably don't need speckit]
 
 1. **Compass icon** — small ring + needle SVG, add next to app title. 
    Markup ready (see session notes); needs Claude Code to place it and 
