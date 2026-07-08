@@ -173,7 +173,9 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Small improvements (quality of life)
 
-- nothing in here right now :) 
+- Docent narrative bar hard to see in graph view — contrast/visibility 
+  issue noted Session 13, needs investigation (color? size? overlap with 
+  graph elements?). Need to play around with this.
 
 
 ---
