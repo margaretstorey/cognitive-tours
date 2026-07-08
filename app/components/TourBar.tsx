@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import type { Tour, TourStop, Waypoint } from '@/app/lib/types';
-import { generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
+import { generateFullMapMarkdown, generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
 
 interface TourBarProps {
   tours: Tour[];
@@ -138,11 +138,7 @@ export default function TourBar({
     });
   };
 
-  const handleExport = () => {
-    const tour = tours.find(t => t.id === activeTourId);
-    if (!tour) return;
-    const markdown = generateTourMarkdown(tour, waypoints);
-    const filename = `${tourSlug(tour.name)}-${new Date().toISOString().slice(0, 10)}.md`;
+  const downloadMarkdown = (markdown: string, filename: string) => {
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -150,6 +146,20 @@ export default function TourBar({
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleExport = () => {
+    const tour = tours.find(t => t.id === activeTourId);
+    if (!tour) return;
+    const markdown = generateTourMarkdown(tour, waypoints);
+    const filename = `${tourSlug(tour.name)}-${new Date().toISOString().slice(0, 10)}.md`;
+    downloadMarkdown(markdown, filename);
+  };
+
+  const handleExportFullMap = () => {
+    const markdown = generateFullMapMarkdown(waypoints);
+    const filename = `full-map-${new Date().toISOString().slice(0, 10)}.md`;
+    downloadMarkdown(markdown, filename);
   };
 
   return (
@@ -189,6 +199,17 @@ export default function TourBar({
 
         {!activeTourId && (
           <span className="text-sm text-gray-600 font-semibold">Select a tour to begin, or create a new one</span>
+        )}
+
+        {!activeTourId && (
+          <div className="ml-auto flex gap-2">
+            <button
+              onClick={handleExportFullMap}
+              className="px-2.5 py-1 text-sm font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
+            >
+              Export full map ↓
+            </button>
+          </div>
         )}
 
         {activeTourId ? (
@@ -236,7 +257,7 @@ export default function TourBar({
               onClick={handleExport}
               className="px-2.5 py-1 text-sm font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
             >
-              Export ↓
+              Export tour ↓
             </button>
           </div>
         )}
