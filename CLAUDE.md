@@ -97,6 +97,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Simplified empty-panel onboarding text ✅
 - Bigger/bolder app title and tagline on black header ✅
 - New waypoint type: Deprecated (black background, white text) ✅
+- Select all / Select none buttons added to the waypoint type filter panel — 
+  makes it fast to isolate a single type (e.g. clear all, then check just 
+  "Feature" to see the feature map) instead of toggling 7 checkboxes 
+  individually. ✅
 
 
 ---

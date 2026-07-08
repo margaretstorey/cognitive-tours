@@ -60,6 +60,20 @@ export default function WaypointDetail({
           </button>
           {filterPanelOpen && (
             <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px] z-10">
+              <div className="flex gap-2 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
+                <button
+                  onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, true))}
+                  className="text-xs font-medium text-blue-600 hover:underline"
+                >
+                  Select all
+                </button>
+                <button
+                  onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, false))}
+                  className="text-xs font-medium text-blue-600 hover:underline"
+                >
+                  Select none
+                </button>
+              </div>
               {WAYPOINT_TYPES.map(type => (
                 <label
                   key={type}
