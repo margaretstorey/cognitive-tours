@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: July 6 2026
+Last updated: July 7 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -34,7 +34,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - SQLite + Prisma persistence — data survives page refresh
 - Three-panel layout: graph (left), waypoint detail (right), tour bar (top)
 - 8 waypoint types with colour coding
-- Tours with Next/Prev navigation and tour focus mode (non-tour nodes dim — approach under reconsideration, see Key Decisions)
+- Tours with Next/Prev navigation and tour focus mode 
 - Edge dimming fixed — both endpoints must be outside the active tour for an edge/label to dim ✅
 - Edge labels showing relationships between waypoints
 - filePath field on waypoints with clipboard copy and VS Code link
@@ -54,29 +54,49 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Docent mode — per-step narrative on tour stops, displayed in amber bar below tour bar ✅
 - Markdown view for tours (toggle from tour bar) + dated snapshot export to tours/ folder (well manually) ✅
 - Optional waypoint description — missing description currently shows an error; should fail gracefully (show nothing) ✅
-- Suppress amber narrative bar in markdown mode — narrative already appears as blockquote in markdown view; amber bar is redundant when markdownViewOpen is true ✅
 - VS Code links in markdown view — filePath should render as a clickable vscode://file/... link in TourMarkdownView, matching the behaviour in the detail panel ✅
 - Search/filter bar on graph — graph is getting dense; need a way to find nodes quickly by name so added this, also has a filter by type! ✅
 - Alphabetical ordering in tour waypoint picker — make it easier to find waypoints when adding stops to a tour ✅
-- Tour markdown view and export — toggle from tour bar; export downloads a dated .md snapshot. ✅
 - Playwright test for docent mode amber bar ✅
 - End-to-end docent feature tour ("Building Docent Mode — From Need to Test") ✅
 - Playwright test isolation fixed (June 30) — Root cause was db.ts and prisma.config.ts both defaulting to Turso whenever TURSO_DATABASE_URL was present in the environment, regardless of NODE_ENV, meaning local dev and test runs were silently writing to production. Fixed both files to key off NODE_ENV === 'production' explicitly. Added .env.test and a Playwright webServer config pointing to an isolated prisma/test.db. Added afterEach teardown hooks so tests clean up what they create. Confirmed across multiple runs: test.db stays stable in size, dev.db and Turso are both untouched by test runs. ✅ 
-- Tour title + tour.description now render as a visible heading + preamble 
-  above the amber narrative bar (fixed July 6 2026) ✅
-- Prev/Next in markdown view now scrolls to the corresponding stop heading instead of re-rendering single-stop content ✅
-- Active stop highlighted in markdown view (border + background tint, consistent with graph view highlight) — updates on Prev/Next clicks, not scroll position ✅
-- Tour edit modal now scrolls internally with fixed header/footer — previously Save/Cancel/Quit buttons became unreachable when a tour had many stops; also did the same fix for the waypoint model edit window ✅
-- App title "Cognitive Tours" and tagline "Cognitive Scaffolding for Building and Navigating Understanding" added — centered, bold, persistent above the tour control bar across both landing and active tour states ✅
-- Tour control bar (Edit tour / Markdown View / Export / New Tour buttons) given stronger visual contrast — previously read as faint/disabled-looking ✅
-- Markdown toggle relabeled "Markdown View" and paired with a "Graph View" button for clearer, symmetric view-switching ✅
-- Landing state ("No tour selected") now shows a clear call-to-action prompting the user to select or create a tour, with dropdown and "+ New Tour" visually grouped ✅
-- Right panel now shows onboarding content (what a waypoint/tour is, suggested starting tour) when nothing is selected and no tour is active — replaces the old passive "Select a waypoint to see its details" placeholder ✅
-- Escape key exits the active tour — correctly yields to modal-close and text-input-blur first (doesn't exit tour if a modal is open or focus is in a text field) ✅
-- Changed the waypoint panel to have the buttons for add waypoint and filter; added a new waypoint type of deprecated; made the waypoint collapsible but made it visible by default in full map mode. ✅
-- Added a full map mode and changed the button labels to help the UI tell a story of how to use it.  Updated the screen when. you first show up.  Changed the look and feel and added an app title and tagline. ✅
-- Made some usability improvements - e.g., graph mode/markdown by default and placement of narrative, search and other buttons. ✅
-
+- Full map mode added — a view of the entire graph (not scoped to a single 
+  tour), using existing type filters; button labels reworked to help the 
+  UI tell a clearer story of graph vs. tour vs. full map ✅
+- UI polish pass (Sessions 11-12) — app title/tagline added above tour bar; 
+  tour control bar contrast improved; markdown/graph view toggle relabeled 
+  and made symmetric; landing state and empty right-panel onboarding 
+  content added; modal scrolling fixed (tour edit + waypoint edit); 
+  markdown view active-stop highlighting and Prev/Next scroll-to-heading; 
+  escape key exits tour (yields to modal/input focus first) ✅
+- Waypoint panel restructured — Add Waypoint and Filter controls moved into 
+  a fixed header inside the panel; panel is now collapsible with an 
+  always-visible expand tab, auto-re-expands when switching tours. 
+  Resolves the "hide in markdown view" concern differently than planned: 
+  rather than force-hiding based on view mode, the user can collapse it 
+  themselves when it's not useful, and it comes back automatically when 
+  likely needed (tour switch). ✅
+- Fixed a bug where the waypoint panel wrongly stayed hidden when 
+  returning to full map ✅
+- Graph view is now the default (not markdown); persists across tour 
+  switches, resets to graph view when returning to full map ✅
+- Tour zoom/fit — selecting a tour zooms/pans to fit just that tour's 
+  nodes near the top of the screen; returning to full map re-fits to show 
+  everything (fixed a min-zoom clamping bug that was clipping nodes) ✅
+- Tour title/description given their own non-overlapping row above the 
+  graph ✅
+- "Next up" narrative (renamed from "Where to next") moved into TourBar as 
+  a second row, graph-view only ✅
+- Search box moved to a compact top-right overlay on the canvas ✅
+- "+ New Tour" ungrouped from the tour dropdown; toolbar button order 
+  tidied (Edit tour → New Tour → Markdown View, Export moved far right) ✅
+- Markdown view field labels added: "What this is:", "Notes:", "Tour 
+  Description:", "Where to next:"/"Next up:" — note: differs from "Bridge" 
+  terminology discussed in planning session; reconcile naming if desired 
+  before manual tour rewrite pass ✅
+- Simplified empty-panel onboarding text ✅
+- Bigger/bolder app title and tagline on black header ✅
+- New waypoint type: Deprecated (black background, white text) ✅
 
 
 ---
@@ -214,45 +234,44 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
+1. **Compass icon** — small ring + needle SVG, add next to app title. 
+   Markup ready (see session notes); needs Claude Code to place it and 
+   decide favicon vs. header-only vs. both.
 
- 1. **Waypoint panel visibility (added for Session 12):**
-The waypoint panel (node detail, edges in/out, narrative) is a graph-view-only concept — it doesn't apply in markdown view mode. Markdown view (spec 007) is a flattened, linear export of the whole tour; there's no "current node" to show a panel for. The panel should be hidden whenever viewMode === 'markdown' (adjust to match the actual flag name in the codebase). This isn't a bug fix so much as removing a leftover assumption from before markdown view existed — the two view modes serve different reading patterns (node-by-node exploration vs. whole-document read) and shouldn't share UI elements that only make sense in one of them.
- 
-2.  **AI suggest feature** — "Suggest" button on waypoint description and tour stop narrative fields. Calls Anthropic API server-side to draft suggestions based on waypoint context (label, type, connected nodes, tour sequence). New dependency: @anthropic-ai/sdk. Needs Spec Kit spec (008-ai-suggest) before implementation. (also mentioned above). Pushing this back - it may interfere with pedagogical goals!  If students auto generate waypoints/tours/descriptions do they understand what they are doing or will their tours become slop?
-  
-3. **Edge management panel** — show edge details in right panel, delete 
-   button there. Right now this works ok... double click to delete (not intuitive though)
+2. **Bridge terminology reconciliation** — markdown view currently uses 
+   "Where to next:"/"Next up:" for the narrative field; planning session 
+   settled on "Bridge" as the preferred label (chosen over "Segue" for 
+   plain-language clarity, and over "Why we're here" for capturing both 
+   backward/forward transition in one word). Decide whether to rename.
 
-4. **Tour metadata** — add author (optional text field, manually filled) and updatedAt (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in markdown view and export header. 
+3. **Manual tour rewrite pass** — existing tours' narrative fields mostly 
+   restate the waypoint's own description rather than bridging between 
+   stops. Two tours ("Choosing a Database", "Building Docent Mode") 
+   already do this well and can serve as the template. Rewriting the rest 
+   is a manual, hands-on pass (not delegated) — intentional, to build the 
+   habit.
 
-5. **Tour entry UX — design direction (not yet built)**
+4. **AI suggest feature** — "Suggest" button on waypoint description and 
+   tour stop narrative fields. Deferred — may interfere with pedagogical 
+   goals for Fall course; unresolved question of whether AI-generated 
+   waypoints/narratives undermine the understanding-building the tool 
+   exists to support.
 
-Current tour now has a brief title shown on the top.  But the UI leaves much to be desired.
-Inspiration from recipe and travel/itinerary apps, both of which solve 
-"guide someone through sequential steps with context":
+5. **Edge management panel** — show edge details in right panel, delete 
+   button there. Currently double-click to delete (not intuitive).
 
-- **Recipe apps**: intro screen shows the "finished result" (title + 
-  description) before committing to Start; steps are large/unmissable, 
-  not competing with a busy background; progress shown as a bar/dots, 
-  not just "Step X of Y" text.1
-- **Travel apps**: an overview/timeline of the whole journey is visible 
-  before or alongside step-by-step detail, so the user always knows 
-  where they are in the whole arc, not just the current stop.
+6. **Tour metadata** — add author (manual text field) and updatedAt 
+   (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in 
+   markdown view and export header.
 
-Rough direction for Cognitive Tours:
-- Entry screen: tour name (real heading, not dropdown) + tour.description 
-   + a "Begin Tour" button — shown before the graph/narrative view loads.
-- During tour: keep step counter, consider progress dots/mini stop-list 
-   instead of/alongside plain "Step X of Y" text.
-- Graph stays secondary/background context, not competing for attention 
- with the current step's content.
+7. **Tour entry UX — design direction (not yet built)** — [keep existing 
+   text as-is]
 
-This is a candidate for the planned tours-tab / Dagre-layout redesign — 
-not necessarily separate work. Immediate stopgap (this week, before 
-sharing): add tour name as a visible title above the narrative bar, since 
-current placement (dropdown only) is easy to miss. Full redesign deferred.
-
-5. **Multi-tenant version** Big change... won't tackle for now.
+8. **Multi-team support for Startup Studio (Fall 2026)** — see spec 009 
+   draft. One link per team (no login), self-reported authorName via 
+   localStorage, instructor overview page. Estimated 5-6 sessions, 
+   targeted for August. Not urgent yet but has a real external deadline 
+   (course starts September).
 
 
 ---

@@ -115,25 +115,33 @@ function Graph({
   const tourKey = activeTourWaypointIds.join(',');
 
   useEffect(() => {
-    if (!tourKey) return;
-
     // Wait a couple of frames so the tour header (whose height varies with
-    // description length) has finished resizing the canvas before we measure
-    // it — otherwise fitView can compute against the pre-resize dimensions
-    // and clip the top node under the header.
+    // description length, and disappears entirely in full-map mode) has
+    // finished resizing the canvas before we measure it — otherwise fitView
+    // can compute against the pre-resize dimensions and clip nodes.
     let raf2 = 0;
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
-        const idSet = new Set(tourKey.split(','));
-        const tourNodes = nodesRef.current.filter(n => idSet.has(n.id));
-        if (tourNodes.length === 0) return;
-        fitView({
-          nodes: tourNodes,
-          padding: { top: '10%', bottom: '30%' },
-          minZoom: 0.05,
-          maxZoom: 1.5,
-          duration: 400,
-        });
+        if (tourKey) {
+          const idSet = new Set(tourKey.split(','));
+          const tourNodes = nodesRef.current.filter(n => idSet.has(n.id));
+          if (tourNodes.length === 0) return;
+          fitView({
+            nodes: tourNodes,
+            padding: { top: '10%', bottom: '30%' },
+            minZoom: 0.05,
+            maxZoom: 1.5,
+            duration: 400,
+          });
+        } else {
+          if (nodesRef.current.length === 0) return;
+          fitView({
+            padding: 0.2,
+            minZoom: 0.05,
+            maxZoom: 1.5,
+            duration: 400,
+          });
+        }
       });
     });
 
