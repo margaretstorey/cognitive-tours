@@ -7,7 +7,7 @@ export const WAYPOINT_COLORS: Record<WaypointType, string> = {
   'ADR':             'bg-yellow-100 border-yellow-300 text-yellow-900',
   'Code Component':  'bg-purple-100 border-purple-300 text-purple-900',
   'Test':            'bg-pink-100 border-pink-300 text-pink-900',
-  'Risk':            'bg-red-500 border-red-700 text-white',
+  'Risk':            'bg-red-100 border-red-300 text-red-900 border-dotted',
   'AI Instruction':  'bg-orange-100 border-orange-300 text-orange-900',
   'Open Question':   'bg-gray-100 border-gray-300 text-gray-900',
   'Deprecated':      'bg-black border-gray-700 text-white',
