@@ -112,7 +112,18 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   filters is arguably the better default. Click-away closing may still 
   apply elsewhere (e.g. clicking a different UI element or in the waypoint panel) — worth 
   confirming exact behavior before considering this fully resolved. In progress... but partially done!
-  \\\
+  - Stop numbers and waypoint type badges added to markdown view/export — 
+  the Edit Tour view now shows each stop's position number (updates live 
+  on reorder), and TourMarkdownView/tour-markdown.ts now render each 
+  stop's waypoint type alongside label/description, matching what the 
+  graph's detail panel already showed ✅
+  - Export full map — new "Export full map" button (top-right, full map view 
+  only) exports all waypoints as markdown, grouped by type and alphabetical 
+  within each group, with waypoint IDs for reference. No narratives or 
+  stop numbers, since full map isn't a sequence. Existing tour export 
+  button relabeled "Export tour" for clarity. Reuses/extends 
+  tour-markdown.ts rather than duplicating export logic. Could serve as a 
+  manual backup alongside /api/data, though not yet relied on for that. ✅
 
 ---
 
@@ -152,7 +163,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Small improvements (quality of life)
 
-- ~~Simplify tour bar in markdown mode~~ — resolved differently: Prev/Next now scroll to stop headings within the document rather than being hidden. Step counter still only updates on click, not free-scroll (acceptable for now).
+- nothing in here right now :) 
 
 
 ---
