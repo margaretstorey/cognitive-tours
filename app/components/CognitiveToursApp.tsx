@@ -298,6 +298,7 @@ export default function CognitiveToursApp() {
       if (id) {
         const tour = tours.find(t => t.id === id);
         setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
+        setFilterState(DEFAULT_FILTER_STATE);
       }
     },
     [tours],
