@@ -151,7 +151,7 @@ function Graph({
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
     };
-  }, [tourKey, getNodesBounds, setViewport]);
+  }, [tourKey, filterState, getNodesBounds, setViewport]);
 
   const rfEdges: Edge[] = useMemo(
     () =>
