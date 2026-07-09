@@ -183,7 +183,7 @@ export default function TourBar({
               value={activeTourId ?? ''}
               onChange={e => onSelectTour(e.target.value || null)}
             >
-              <option value="">Full Map -- all waypoints and connections displays</option>
+              <option value="">Full Map -- all waypoints and connections displayed</option>
               {sortedTours.map(t => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
