@@ -59,6 +59,7 @@ interface WaypointGraphProps {
   onSearchChange: (q: string) => void;
   tourName?: string;
   tourDescription?: string;
+  panelCollapsed?: boolean;
 }
 
 function Graph({
@@ -76,6 +77,7 @@ function Graph({
   onSearchChange,
   tourName,
   tourDescription,
+  panelCollapsed,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const { getNodesBounds, setViewport } = useReactFlow();
@@ -151,7 +153,7 @@ function Graph({
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
     };
-  }, [tourKey, filterState, getNodesBounds, setViewport]);
+  }, [tourKey, filterState, panelCollapsed, getNodesBounds, setViewport]);
 
   const rfEdges: Edge[] = useMemo(
     () =>
@@ -236,10 +238,10 @@ function Graph({
   );
 
   const tourHeader = tourName && (
-    <div data-testid="tour-header" className="shrink-0 bg-white border-b border-gray-200 px-4 py-3 text-left">
-      <h2 className="text-lg font-bold text-gray-900">{tourName}</h2>
+    <div data-testid="tour-header" className="shrink-0 bg-white border-b border-gray-200 px-4 py-3 text-center">
+      <h2 className="text-2xl font-bold text-gray-900">{tourName}</h2>
       {tourDescription?.trim() && (
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-gray-600 mt-1">
           <span className="font-bold">Tour Description: </span>
           {tourDescription}
         </p>

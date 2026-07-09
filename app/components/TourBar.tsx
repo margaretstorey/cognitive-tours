@@ -183,7 +183,7 @@ export default function TourBar({
               value={activeTourId ?? ''}
               onChange={e => onSelectTour(e.target.value || null)}
             >
-              <option value="">No tour selected (the full map is displayed)</option>
+              <option value="">Full Map -- all waypoints and connections displays</option>
               {sortedTours.map(t => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
@@ -198,7 +198,7 @@ export default function TourBar({
         )}
 
         {!activeTourId && (
-          <span className="text-sm text-gray-600 font-semibold">Select a tour to begin understanding, or create a new one</span>
+          <span className="text-base text-red-700 font-bold">Select a tour to begin understanding, or create a new one</span>
         )}
 
         {!activeTourId && (
@@ -226,7 +226,9 @@ export default function TourBar({
             </span>
             <button
               onClick={handleNext}
-              className="px-3 py-1.5 text-sm font-semibold bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-sm"
+              className={`px-3 py-1.5 text-sm font-semibold text-white rounded-md shadow-sm ${
+                isLast ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+              }`}
             >
               {isLast ? 'Finish' : 'Next →'}
             </button>
@@ -266,8 +268,8 @@ export default function TourBar({
       </div>
 
       {!markdownViewOpen && narrative?.trim() && (
-        <div data-testid="docent-narrative-bar" className="bg-amber-50 border-b-2 border-amber-400 text-sm text-amber-900 px-4 py-2 shrink-0">
-          <span className="font-bold">Next up: </span>
+        <div data-testid="docent-narrative-bar" className="bg-red-50 border-b-2 border-red-400 text-base text-red-800 px-4 py-3 shrink-0">
+          <span className="font-bold">Next: </span>
           {narrative}
         </div>
       )}
@@ -317,7 +319,7 @@ export default function TourBar({
                         <button onClick={() => moveWaypoint(idx, 1)} disabled={idx === editor.stops.length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↓</button>
                         <button onClick={() => removeWaypointFromTour(idx)} className="text-red-400 hover:text-red-600">✕</button>
                       </div>
-                      <span className="text-xs font-bold text-gray-700">Next up narration:</span>
+                      <span className="text-xs font-bold text-gray-700">Next stop commentary:</span>
                       <textarea
                         rows={2}
                         className="text-sm border border-gray-200 rounded px-2 py-1 w-full resize-none"

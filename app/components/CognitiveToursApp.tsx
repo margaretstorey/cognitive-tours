@@ -452,6 +452,7 @@ export default function CognitiveToursApp() {
               onSearchChange={setSearchQuery}
               tourName={activeTour?.name}
               tourDescription={activeTour?.description}
+              panelCollapsed={panelCollapsed}
             />
           )}
         </div>
