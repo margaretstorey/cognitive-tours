@@ -48,6 +48,7 @@ export default function CognitiveToursApp() {
   const [markdownViewOpen, setMarkdownViewOpen] = useState(false);
   const [tourEditorOpen, setTourEditorOpen] = useState(false);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const [controlPanelCollapsed, setControlPanelCollapsed] = useState(false);
   // Per-node debounce map for position changes (onNodesChange fires on every drag frame).
   const positionDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -342,6 +343,25 @@ export default function CognitiveToursApp() {
     setSelectedWaypointId(activeTour.stops[prev].waypointId);
   }, [activeTour, activeTourStep]);
 
+  const isLastTourStep = activeTourLength > 0 && activeTourStep === activeTourLength - 1;
+
+  const scrollToStop = (index: number) => {
+    document.getElementById(`stop-${index}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // The markdown-scroll behavior only matters if this panel is ever visible
+  // while markdown view is open; today the panel is hidden whenever
+  // showingMarkdown is true, so these branches are currently unreachable.
+  const handlePrev = () => {
+    if (markdownViewOpen && activeTourStep > 0) scrollToStop(activeTourStep - 1);
+    onPrev();
+  };
+
+  const handleNext = () => {
+    if (markdownViewOpen && !isLastTourStep) scrollToStop(activeTourStep + 1);
+    onNext();
+  };
+
   // T020 — debounced per node ID: onNodesChange fires on every drag frame.
   const onNodePositionChange = useCallback(
     (id: string, position: { x: number; y: number }) => {
@@ -417,11 +437,7 @@ export default function CognitiveToursApp() {
       <TourBar
         tours={tours}
         activeTourId={activeTourId}
-        activeTourStep={activeTourStep}
-        activeTourLength={activeTourLength}
         onSelectTour={selectTour}
-        onNext={onNext}
-        onPrev={onPrev}
         onCreateTour={createTour}
         onUpdateTour={updateTour}
         onDeleteTour={deleteTour}
@@ -429,7 +445,6 @@ export default function CognitiveToursApp() {
         markdownViewOpen={markdownViewOpen}
         onToggleMarkdownView={onToggleMarkdownView}
         onEditorOpenChange={setTourEditorOpen}
-        narrative={currentNarrative}
         filterState={filterState}
         onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
       />
@@ -479,6 +494,65 @@ export default function CognitiveToursApp() {
                 onAddWaypointClick={openCreateForm}
                 onCollapse={() => setPanelCollapsed(true)}
               />
+            </div>
+          )
+        )}
+        {activeTour && !showingMarkdown && (
+          controlPanelCollapsed ? (
+            <div className="w-8 border-l border-gray-200 bg-white shrink-0 flex flex-col items-center pt-3">
+              <button
+                onClick={() => setControlPanelCollapsed(false)}
+                title="Expand tour controls panel"
+                className="text-gray-400 hover:text-gray-700 text-sm"
+              >
+                «
+              </button>
+            </div>
+          ) : (
+            <div className="w-80 border-l border-gray-200 bg-white overflow-hidden shrink-0">
+              <div className="flex flex-col h-full">
+                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                  <h2 className="text-xs font-bold text-gray-900">Tour Controls</h2>
+                  <button
+                    onClick={() => setControlPanelCollapsed(true)}
+                    title="Collapse tour controls panel"
+                    className="text-gray-400 hover:text-gray-700 text-xs px-1"
+                  >
+                    »
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handlePrev}
+                      disabled={activeTourStep === 0}
+                      className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded-md disabled:opacity-40 hover:bg-gray-100 text-gray-700"
+                    >
+                      ← Prev
+                    </button>
+                    <button
+                      onClick={handleNext}
+                      className={`px-3 py-1.5 text-sm font-semibold text-white rounded-md shadow-sm ${
+                        isLastTourStep ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+                      }`}
+                    >
+                      {isLastTourStep ? 'Finish' : 'Next →'}
+                    </button>
+                  </div>
+                  <span className="text-xs font-medium text-gray-700 tabular-nums">
+                    Step {activeTourStep + 1} of {activeTourLength}
+                  </span>
+                  {currentNarrative && (
+                    <div
+                      data-testid="docent-narrative-bar"
+                      className="text-xs text-red-800 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+                    >
+                      <div className="font-bold mb-0.5">Next</div>
+                      {currentNarrative}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )
         )}
