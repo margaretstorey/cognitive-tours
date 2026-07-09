@@ -86,7 +86,12 @@ export default function CognitiveToursApp() {
   const createWaypoint = useCallback(
     (data: Omit<Waypoint, 'id' | 'position'>) => {
       const id = `w-${Date.now()}`;
-      const position = { x: 200 + Math.random() * 400, y: 200 + Math.random() * 300 };
+      // Place near the top-right, next to the "+ Add Waypoint" button, so a
+      // newly created node is easy to spot instead of landing in the middle
+      // of the graph among everything else.
+      const maxX = waypoints.length > 0 ? Math.max(...waypoints.map(w => w.position.x)) : 400;
+      const minY = waypoints.length > 0 ? Math.min(...waypoints.map(w => w.position.y)) : 100;
+      const position = { x: maxX + 150, y: minY };
       const newWaypoint: Waypoint = { id, position, ...data };
       setWaypoints(prev => [...prev, newWaypoint]);
       void (async () => {
@@ -103,7 +108,7 @@ export default function CognitiveToursApp() {
         }
       })();
     },
-    [clearErrorAfterDelay],
+    [waypoints, clearErrorAfterDelay],
   );
 
   // T019
