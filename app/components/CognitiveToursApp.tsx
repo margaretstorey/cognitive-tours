@@ -50,6 +50,7 @@ export default function CognitiveToursApp() {
   const [tourEditorOpen, setTourEditorOpen] = useState(false);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [controlPanelCollapsed, setControlPanelCollapsed] = useState(false);
+  const [tourSuspended, setTourSuspended] = useState(false);
   const [stopTextExpanded, setStopTextExpanded] = useState(false);
   const [stopDescriptionOverflowing, setStopDescriptionOverflowing] = useState(false);
   const [stopNotesOverflowing, setStopNotesOverflowing] = useState(false);
@@ -110,9 +111,27 @@ export default function CognitiveToursApp() {
     setStopNotesOverflowing(!!el && el.scrollHeight > el.clientHeight + 1);
   }, [currentStopWaypoint?.notes, stopTextExpanded, stopDescriptionOverflowing]);
 
-  const selectWaypoint = useCallback((id: string | null) => {
-    setSelectedWaypointId(id);
-  }, []);
+  const selectWaypoint = useCallback(
+    (id: string | null) => {
+      setSelectedWaypointId(id);
+      // Clicking an off-tour node suspends the tour rather than ending it:
+      // Tour Controls collapses (its existing collapse affordance) and the
+      // Waypoint panel opens to show the clicked node.
+      if (activeTour && id !== null && id !== currentStopWaypointId) {
+        setTourSuspended(true);
+        setControlPanelCollapsed(true);
+        setPanelCollapsed(false);
+      }
+    },
+    [activeTour, currentStopWaypointId],
+  );
+
+  const resumeTour = useCallback(() => {
+    setTourSuspended(false);
+    setControlPanelCollapsed(false);
+    setPanelCollapsed(true);
+    setSelectedWaypointId(currentStopWaypointId);
+  }, [currentStopWaypointId]);
 
   // T018
   const createWaypoint = useCallback(
@@ -329,8 +348,11 @@ export default function CognitiveToursApp() {
       setActiveTourId(id);
       setActiveTourStepRaw(0);
       setPanelCollapsed(!!id);
+      setControlPanelCollapsed(false);
+      setTourSuspended(false);
       if (!id) {
         setMarkdownViewOpen(false);
+        setSelectedWaypointId(null);
       }
       if (id) {
         const tour = tours.find(t => t.id === id);
@@ -524,6 +546,8 @@ export default function CognitiveToursApp() {
                 hasActiveTour={!!activeTour}
                 onAddWaypointClick={openCreateForm}
                 onCollapse={() => setPanelCollapsed(true)}
+                tourSuspended={tourSuspended}
+                onResumeTour={resumeTour}
               />
             </div>
           )

@@ -255,10 +255,6 @@ export default function TourBar({
         )}
 
         {!activeTourId && (
-          <span className="text-base text-red-700 font-bold">Select a tour to begin understanding, or create a new one</span>
-        )}
-
-        {!activeTourId && (
           <div className="ml-auto flex gap-2">
             <button
               onClick={handleExportFullMap}

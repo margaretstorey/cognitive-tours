@@ -11,6 +11,8 @@ interface WaypointDetailProps {
   hasActiveTour: boolean;
   onAddWaypointClick: () => void;
   onCollapse?: () => void;
+  tourSuspended?: boolean;
+  onResumeTour?: () => void;
 }
 
 export default function WaypointDetail({
@@ -20,6 +22,8 @@ export default function WaypointDetail({
   hasActiveTour,
   onAddWaypointClick,
   onCollapse,
+  tourSuspended,
+  onResumeTour,
 }: WaypointDetailProps) {
   const [copied, setCopied] = useState(false);
 
@@ -38,6 +42,17 @@ export default function WaypointDetail({
     </div>
   );
 
+  const resumeTourBanner = tourSuspended && onResumeTour && (
+    <div className="p-4 border-b border-gray-200 shrink-0">
+      <button
+        onClick={onResumeTour}
+        className="w-full px-3 py-1.5 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700"
+      >
+        ↩ Resume tour
+      </button>
+    </div>
+  );
+
   const addWaypointButton = (
     <button
       onClick={onAddWaypointClick}
@@ -52,6 +67,7 @@ export default function WaypointDetail({
       return (
         <div className="flex flex-col h-full">
           {header}
+          {resumeTourBanner}
           <div className="flex gap-2 p-4 border-b border-gray-200 shrink-0">{addWaypointButton}</div>
           <div className="flex flex-1 items-center justify-center p-6 text-center text-gray-400 text-xs">
             Select a waypoint to see its details.
@@ -63,8 +79,12 @@ export default function WaypointDetail({
     return (
       <div className="flex flex-col h-full">
         {header}
+        {resumeTourBanner}
         <div className="flex gap-2 p-4 border-b border-gray-200 shrink-0">{addWaypointButton}</div>
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3 text-xs text-gray-600">
+          <p className="text-base text-red-700 font-bold">
+            Select a tour to begin understanding, or create a new one
+          </p>
           <h2 className="text-sm font-semibold text-gray-800">Getting oriented</h2>
           <p>
             A <span className="font-medium text-gray-700">waypoint</span> is a single point of
@@ -83,6 +103,7 @@ export default function WaypointDetail({
   return (
     <div className="flex flex-col h-full">
       {header}
+      {resumeTourBanner}
       <div className="flex gap-2 p-4 border-b border-gray-200 shrink-0">
         <button
           onClick={() => onEdit(waypoint)}
