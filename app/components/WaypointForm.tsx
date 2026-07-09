@@ -92,7 +92,7 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium">File Path <span className="text-gray-400 font-normal">(optional)</span></label>
+          <label className="text-sm font-medium">Linked artifact <span className="text-gray-400 font-normal">(optional)</span></label>
           <input
             className="border border-gray-300 rounded px-3 py-1.5 text-sm font-mono"
             value={filePath}
