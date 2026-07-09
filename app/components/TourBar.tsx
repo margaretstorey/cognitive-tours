@@ -1,8 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import type { Tour, TourStop, Waypoint } from '@/app/lib/types';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { FilterState, Tour, TourStop, Waypoint, WaypointType } from '@/app/lib/types';
+import { WAYPOINT_TYPES } from '@/app/lib/types';
+import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { generateFullMapMarkdown, generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
+
+const FILTER_PRESETS: { label: string; types: WaypointType[] }[] = [
+  { label: 'Intent Layer', types: ['Goal', 'User Need', 'Feature', 'ADR', 'Test', 'AI Instruction'] },
+  { label: 'Technical Layer', types: ['ADR', 'Code Component', 'Test', 'Risk'] },
+  { label: 'Other', types: ['Open Question', 'Deprecated'] },
+];
 
 interface TourBarProps {
   tours: Tour[];
@@ -20,6 +28,8 @@ interface TourBarProps {
   onToggleMarkdownView: () => void;
   onEditorOpenChange?: (open: boolean) => void;
   narrative?: string;
+  filterState: FilterState;
+  onFilterChange: (type: WaypointType, visible: boolean) => void;
 }
 
 interface TourEditorState {
@@ -47,6 +57,8 @@ export default function TourBar({
   onToggleMarkdownView,
   onEditorOpenChange,
   narrative,
+  filterState,
+  onFilterChange,
 }: TourBarProps) {
   const [editor, setEditor] = useState<TourEditorState>({
     open: false,
@@ -55,11 +67,25 @@ export default function TourBar({
     description: '',
     stops: [],
   });
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const filterPanelRef = useRef<HTMLDivElement>(null);
+  const hiddenCount = WAYPOINT_TYPES.filter(t => !filterState[t]).length;
 
   const sortedTours = useMemo(
     () => [...tours].sort((a, b) => a.name.localeCompare(b.name)),
     [tours]
   );
+
+  useEffect(() => {
+    if (!filterPanelOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
+        setFilterPanelOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [filterPanelOpen]);
 
   useEffect(() => {
     onEditorOpenChange?.(editor.open);
@@ -183,7 +209,7 @@ export default function TourBar({
               value={activeTourId ?? ''}
               onChange={e => onSelectTour(e.target.value || null)}
             >
-              <option value="">Full Map -- all waypoints and connections displayed</option>
+              <option value="">Full Map -- all waypoints displayed</option>
               {sortedTours.map(t => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
@@ -195,6 +221,63 @@ export default function TourBar({
               + New Tour
             </button>
           </>
+        )}
+
+        {!markdownViewOpen && (
+          <div className="relative" ref={filterPanelRef}>
+            <button
+              onClick={() => setFilterPanelOpen(o => !o)}
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
+            >
+              {hiddenCount > 0 ? `Filter (${hiddenCount} hidden)` : 'Filter'}
+            </button>
+            {filterPanelOpen && (
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px] z-10">
+                <div className="flex gap-2 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
+                  <button
+                    onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, true))}
+                    className="text-xs font-medium text-blue-600 hover:underline"
+                  >
+                    Select all
+                  </button>
+                  <button
+                    onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, false))}
+                    className="text-xs font-medium text-blue-600 hover:underline"
+                  >
+                    Select none
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
+                  {FILTER_PRESETS.map(preset => (
+                    <button
+                      key={preset.label}
+                      onClick={() =>
+                        WAYPOINT_TYPES.forEach(type => onFilterChange(type, preset.types.includes(type)))
+                      }
+                      className="text-xs font-medium text-gray-600 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-50"
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+                {WAYPOINT_TYPES.map(type => (
+                  <label
+                    key={type}
+                    className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filterState[type]}
+                      onChange={e => onFilterChange(type, e.target.checked)}
+                      className="rounded"
+                    />
+                    <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
+                    <span>{type}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         {!activeTourId && (

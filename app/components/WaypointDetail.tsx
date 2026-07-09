@@ -1,15 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import type { FilterState, Waypoint, WaypointType } from '@/app/lib/types';
-import { WAYPOINT_TYPES } from '@/app/lib/types';
+import { useState } from 'react';
+import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
-
-const FILTER_PRESETS: { label: string; types: WaypointType[] }[] = [
-  { label: 'Intent Layer', types: ['Goal', 'User Need', 'Feature', 'ADR', 'Test', 'AI Instruction'] },
-  { label: 'Technical Layer', types: ['ADR', 'Code Component', 'Test', 'Risk'] },
-  { label: 'Other', types: ['Open Question', 'Deprecated'] },
-];
 
 interface WaypointDetailProps {
   waypoint: Waypoint | null;
@@ -17,8 +10,6 @@ interface WaypointDetailProps {
   onDelete: (id: string) => void;
   hasActiveTour: boolean;
   onAddWaypointClick: () => void;
-  filterState: FilterState;
-  onFilterChange: (type: WaypointType, visible: boolean) => void;
   onCollapse?: () => void;
 }
 
@@ -28,103 +19,34 @@ export default function WaypointDetail({
   onDelete,
   hasActiveTour,
   onAddWaypointClick,
-  filterState,
-  onFilterChange,
   onCollapse,
 }: WaypointDetailProps) {
   const [copied, setCopied] = useState(false);
-  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
-  const filterPanelRef = useRef<HTMLDivElement>(null);
-  const hiddenCount = WAYPOINT_TYPES.filter(t => !filterState[t]).length;
-
-  useEffect(() => {
-    if (!filterPanelOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
-        setFilterPanelOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [filterPanelOpen]);
 
   const header = (
     <div className="p-4 border-b border-gray-200 flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-gray-900">Waypoint panel</h2>
+        <h2 className="text-xs font-bold text-gray-900">Waypoint panel</h2>
         {onCollapse && (
           <button
             onClick={onCollapse}
             title="Collapse waypoint panel"
-            className="text-gray-400 hover:text-gray-700 text-sm px-1"
+            className="text-gray-400 hover:text-gray-700 text-xs px-1"
           >
             »
           </button>
         )}
       </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={onAddWaypointClick}
-          className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
-        >
-          + Add Waypoint
-        </button>
-        <div className="relative" ref={filterPanelRef}>
-          <button
-            onClick={() => setFilterPanelOpen(o => !o)}
-            className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
-          >
-            {hiddenCount > 0 ? `Filter (${hiddenCount} hidden)` : 'Filter'}
-          </button>
-          {filterPanelOpen && (
-            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px] z-10">
-              <div className="flex gap-2 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
-                <button
-                  onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, true))}
-                  className="text-xs font-medium text-blue-600 hover:underline"
-                >
-                  Select all
-                </button>
-                <button
-                  onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, false))}
-                  className="text-xs font-medium text-blue-600 hover:underline"
-                >
-                  Select none
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-1.5 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
-                {FILTER_PRESETS.map(preset => (
-                  <button
-                    key={preset.label}
-                    onClick={() =>
-                      WAYPOINT_TYPES.forEach(type => onFilterChange(type, preset.types.includes(type)))
-                    }
-                    className="text-xs font-medium text-gray-600 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-50"
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
-              {WAYPOINT_TYPES.map(type => (
-                <label
-                  key={type}
-                  className="flex items-center gap-2 text-sm px-2 py-1 rounded hover:bg-gray-50 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={filterState[type]}
-                    onChange={e => onFilterChange(type, e.target.checked)}
-                    className="rounded"
-                  />
-                  <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
-                  <span>{type}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
     </div>
+  );
+
+  const addWaypointButton = (
+    <button
+      onClick={onAddWaypointClick}
+      className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs shadow-sm hover:bg-gray-50"
+    >
+      + Add Waypoint
+    </button>
   );
 
   if (!waypoint) {
@@ -132,9 +54,10 @@ export default function WaypointDetail({
       return (
         <div className="flex flex-col h-full">
           {header}
-          <div className="flex flex-1 items-center justify-center p-6 text-center text-gray-400 text-sm">
+          <div className="flex flex-1 items-center justify-center p-6 text-center text-gray-400 text-xs">
             Select a waypoint to see its details.
           </div>
+          <div className="flex gap-2 p-4 border-t border-gray-200 shrink-0">{addWaypointButton}</div>
         </div>
       );
     }
@@ -142,8 +65,8 @@ export default function WaypointDetail({
     return (
       <div className="flex flex-col h-full">
         {header}
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3 text-sm text-gray-600">
-          <h2 className="text-base font-semibold text-gray-800">Getting oriented</h2>
+        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3 text-xs text-gray-600">
+          <h2 className="text-sm font-semibold text-gray-800">Getting oriented</h2>
           <p>
             A <span className="font-medium text-gray-700">waypoint</span> is a single point of
             understanding — a goal, feature, decision, or piece of code worth remembering. A{' '}
@@ -152,6 +75,7 @@ export default function WaypointDetail({
           </p>
           <p>Select a waypoint to see its details or create a new waypoint.</p>
         </div>
+        <div className="flex gap-2 p-4 border-t border-gray-200 shrink-0">{addWaypointButton}</div>
       </div>
     );
   }
@@ -165,19 +89,19 @@ export default function WaypointDetail({
         <span className={`inline-block self-start px-2 py-0.5 rounded text-xs font-medium border ${colorClass}`}>
           {waypoint.type}
         </span>
-        <h2 className="text-base font-semibold text-gray-900 leading-snug">{waypoint.label}</h2>
+        <h2 className="text-sm font-semibold text-gray-900 leading-snug">{waypoint.label}</h2>
         {waypoint.description && (
-          <p className="text-sm text-gray-700 leading-relaxed">{waypoint.description}</p>
+          <p className="text-xs text-gray-700 leading-relaxed">{waypoint.description}</p>
         )}
         {waypoint.notes && (
-          <div className="text-sm text-gray-500 border-t pt-3">
+          <div className="text-xs text-gray-500 border-t pt-3">
             <div className="font-medium text-gray-600 mb-1">Notes</div>
             <p className="leading-relaxed">{waypoint.notes}</p>
           </div>
         )}
         {waypoint.filePath && (
-          <div className="text-sm text-gray-500 border-t pt-3">
-            <div className="font-medium text-gray-600 mb-1">File Path</div>
+          <div className="text-xs text-gray-500 border-t pt-3">
+            <div className="font-medium text-gray-600 mb-1">Linked artifact</div>
             <p className="font-mono text-xs text-gray-700 break-all mb-2">{waypoint.filePath}</p>
             <div className="flex gap-2">
               <button
@@ -201,20 +125,21 @@ export default function WaypointDetail({
             </div>
           </div>
         )}
-        <div className="flex gap-2 border-t pt-3">
-          <button
-            onClick={() => onEdit(waypoint)}
-            className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => onDelete(waypoint.id)}
-            className="flex-1 px-3 py-1.5 text-sm border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
-          >
-            Delete
-          </button>
-        </div>
+      </div>
+      <div className="flex gap-2 p-4 border-t border-gray-200 shrink-0">
+        <button
+          onClick={() => onEdit(waypoint)}
+          className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => onDelete(waypoint.id)}
+          className="flex-1 px-3 py-1.5 text-xs border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
+        >
+          Delete
+        </button>
+        {addWaypointButton}
       </div>
     </div>
   );

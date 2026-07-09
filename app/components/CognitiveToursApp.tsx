@@ -430,6 +430,8 @@ export default function CognitiveToursApp() {
         onToggleMarkdownView={onToggleMarkdownView}
         onEditorOpenChange={setTourEditorOpen}
         narrative={currentNarrative}
+        filterState={filterState}
+        onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
       />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 relative overflow-hidden">
@@ -475,8 +477,6 @@ export default function CognitiveToursApp() {
                 onDelete={deleteWaypoint}
                 hasActiveTour={!!activeTour}
                 onAddWaypointClick={openCreateForm}
-                filterState={filterState}
-                onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
                 onCollapse={() => setPanelCollapsed(true)}
               />
             </div>
