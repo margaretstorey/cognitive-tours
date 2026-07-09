@@ -134,6 +134,13 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Filter panel resets on tour load — waypoint type filters clear back to 
   default when switching to a new tour, rather than carrying over a 
   filter state that may not make sense for the newly selected tour ✅
+   Tour Controls panel (Phase 1 & 2, Session 14) — new right-hand panel, 
+  active only in tour mode (hidden in full map and markdown view), 
+  collapsible independently from the waypoint panel. Prev/Next buttons, 
+  step indicator, and next-stop commentary moved out of TourBar into this 
+  panel. Tour selector, filter, New Tour, Edit tour, Export buttons remain 
+  in TourBar. Exit-tour still via Escape or selecting a new tour from the 
+  dropdown — no dedicated exit button added. ✅
 
 ---
 
@@ -176,6 +183,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Docent narrative bar hard to see in graph view — contrast/visibility 
   issue noted Session 13, needs investigation (color? size? overlap with 
   graph elements?). Need to play around with this.
+  - Rename "Next" button to "Continue tour" in the Tour Controls panel 
+  (Session 14, drafted from ChatGPT mockup inspiration, not yet done).
 
 
 ---
@@ -259,6 +268,9 @@ presets in "What is built and working" for the concrete implementation.
   seed script first (deliberately, when dev.db needs to catch up to 
   production), then run the audit skill separately afterward to check 
   freshness against whatever's now local.
+  - **"Bridge" vs "Next" terminology still unresolved** (open since Session 
+  11, resurfaced Session 14). Decide before touching more surfaces that 
+  reference next-stop commentary.
 
 ---
 
@@ -299,7 +311,16 @@ Full constitution: .specify/memory/constitution.md
 
   ## What to work on next (in priority order)
 
-  0. **Export full map** — new "Export full map" button, top-right, visible 
+  1. **Merge Waypoint panel + Tour Controls panel into one** — a ChatGPT 
+    mockup (Session 14) showed a single consolidated right panel (tour 
+    context, current stop, commentary, "what to notice" bullets, linked 
+    artifacts as chips) rather than two side-by-side panels. Open 
+    decision: merge now, or keep developing Tour Controls separately a 
+    while longer first. If pursuing "what to notice" bullets, decide 
+    whether this needs a new data model field on waypoints/tour stops, 
+    or is just an authoring convention on existing fields.
+
+  2. **Export full map** — new "Export full map" button, top-right, visible 
    only in full map view (mirrors the tour view's export button). Existing 
    generic "Export" button in tour view should be relabeled "Export tour" 
    for clarity now that two distinct exports exist.
@@ -313,34 +334,34 @@ Full constitution: .specify/memory/constitution.md
    
    [probably don't need speckit]
 
-1. **Compass icon** — small ring + needle SVG, add next to app title. 
+3. **Compass icon** — small ring + needle SVG, add next to app title. 
    Markup ready (see session notes); needs Claude Code to place it and 
    decide favicon vs. header-only vs. both.
 
-2. **Manual tour rewrite pass** — existing tours' narrative fields mostly 
+4. **Manual tour rewrite pass** — existing tours' narrative fields mostly 
    restate the waypoint's own description rather than bridging between 
    stops. Two tours ("Choosing a Database", "Building Docent Mode") 
    already do this well and can serve as the template. Rewriting the rest 
    is a manual, hands-on pass (not delegated) — intentional, to build the 
    habit. [not a code task but update to DB only]
 
-3. **AI suggest feature** — "Suggest" button on waypoint description and 
+5. **AI suggest feature** — "Suggest" button on waypoint description and 
    tour stop narrative fields. Deferred — may interfere with pedagogical 
    goals for Fall course; unresolved question of whether AI-generated 
    waypoints/narratives undermine the understanding-building the tool 
    exists to support. [use speckit]
 
-4. **Edge management panel** — show edge details in right panel, delete 
+6. **Edge management panel** — show edge details in right panel, delete 
    button there. Currently double-click to delete (not intuitive). [use speckit]
 
-5. **Tour metadata** — add author (manual text field) and updatedAt 
+7. **Tour metadata** — add author (manual text field) and updatedAt 
    (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in 
    markdown view and export header. [probably don't need speckit]
 
-6. **Tour entry UX — design direction (not yet built)** — [keep existing 
+8. **Tour entry UX — design direction (not yet built)** — [keep existing 
    text as-is] - but better home page needed and product page
 
-7. **Multi-team support for Startup Studio (Fall 2026)** — see spec 009 
+9. **Multi-team support for Startup Studio (Fall 2026)** — see spec 009 
    draft. One link per team (no login), self-reported authorName via 
    localStorage, instructor overview page. Estimated 5-6 sessions, 
    targeted for August. Not urgent yet but has a real external deadline 

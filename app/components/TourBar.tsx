@@ -15,11 +15,7 @@ const FILTER_PRESETS: { label: string; types: WaypointType[] }[] = [
 interface TourBarProps {
   tours: Tour[];
   activeTourId: string | null;
-  activeTourStep: number;
-  activeTourLength: number;
   onSelectTour: (id: string | null) => void;
-  onNext: () => void;
-  onPrev: () => void;
   onCreateTour: (data: Omit<Tour, 'id'>) => void;
   onUpdateTour: (id: string, data: Partial<Omit<Tour, 'id'>>) => void;
   onDeleteTour: (id: string) => void;
@@ -27,7 +23,6 @@ interface TourBarProps {
   markdownViewOpen: boolean;
   onToggleMarkdownView: () => void;
   onEditorOpenChange?: (open: boolean) => void;
-  narrative?: string;
   filterState: FilterState;
   onFilterChange: (type: WaypointType, visible: boolean) => void;
 }
@@ -44,11 +39,7 @@ interface TourEditorState {
 export default function TourBar({
   tours,
   activeTourId,
-  activeTourStep,
-  activeTourLength,
   onSelectTour,
-  onNext,
-  onPrev,
   onCreateTour,
   onUpdateTour,
   onDeleteTour,
@@ -56,7 +47,6 @@ export default function TourBar({
   markdownViewOpen,
   onToggleMarkdownView,
   onEditorOpenChange,
-  narrative,
   filterState,
   onFilterChange,
 }: TourBarProps) {
@@ -102,22 +92,6 @@ export default function TourBar({
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [editor.open]);
-
-  const isLast = activeTourLength > 0 && activeTourStep === activeTourLength - 1;
-
-  const scrollToStop = (index: number) => {
-    document.getElementById(`stop-${index}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const handlePrev = () => {
-    if (markdownViewOpen && activeTourStep > 0) scrollToStop(activeTourStep - 1);
-    onPrev();
-  };
-
-  const handleNext = () => {
-    if (markdownViewOpen && !isLast) scrollToStop(activeTourStep + 1);
-    onNext();
-  };
 
   const openCreate = () =>
     setEditor({ open: true, mode: 'create', name: '', description: '', stops: [] });
@@ -281,10 +255,6 @@ export default function TourBar({
         )}
 
         {!activeTourId && (
-          <span className="text-base text-red-700 font-bold">Select a tour to begin understanding, or create a new one</span>
-        )}
-
-        {!activeTourId && (
           <div className="ml-auto flex gap-2">
             <button
               onClick={handleExportFullMap}
@@ -297,24 +267,6 @@ export default function TourBar({
 
         {activeTourId ? (
           <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrev}
-              disabled={activeTourStep === 0}
-              className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded-md disabled:opacity-40 hover:bg-gray-100 text-gray-700"
-            >
-              ← Prev
-            </button>
-            <span className="text-sm font-medium text-gray-700 tabular-nums">
-              Step {activeTourStep + 1} of {activeTourLength}
-            </span>
-            <button
-              onClick={handleNext}
-              className={`px-3 py-1.5 text-sm font-semibold text-white rounded-md shadow-sm ${
-                isLast ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
-              }`}
-            >
-              {isLast ? 'Finish' : 'Next →'}
-            </button>
             <button
               onClick={openEdit}
               className="ml-1 px-2.5 py-1 text-xs font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
@@ -349,13 +301,6 @@ export default function TourBar({
 
 
       </div>
-
-      {!markdownViewOpen && narrative?.trim() && (
-        <div data-testid="docent-narrative-bar" className="bg-red-50 border-b-2 border-red-400 text-base text-red-800 px-4 py-3 shrink-0">
-          <span className="font-bold">Next: </span>
-          {narrative}
-        </div>
-      )}
 
       {editor.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
