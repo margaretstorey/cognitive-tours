@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: July 7 2026
+Last updated: July 9 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -141,6 +141,44 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   panel. Tour selector, filter, New Tour, Edit tour, Export buttons remain 
   in TourBar. Exit-tour still via Escape or selecting a new tour from the 
   dropdown — no dedicated exit button added. ✅
+  - Tour Controls panel completed (Session 14) — linked artifact block added 
+  (matches Waypoint panel behavior); description truncates to ~10 lines 
+  with "More" (only shown when content actually overflows), notes shown 
+  below if space allows, both collapse on stop change; Prev/Next, step 
+  indicator, and Exit tour pinned at the top (Exit tour styled red, Next 
+  grays out on last stop instead of "Finish"); "Next stop" commentary 
+  section restyled amber (was red), moved to bottom of scrollable content; 
+  panel widened and title font increased to match Waypoint panel. ✅
+- Waypoint panel consistency pass (Session 14) — Edit/Delete/Add Waypoint 
+  buttons moved to a pinned row at the top (was bottom); title font size 
+  increased to match Tour Controls; "Select a tour to begin understanding, 
+  or create a new one" text moved here from TourBar, shown in the 
+  "Getting oriented" empty state. ✅
+- Tour suspend/resume (Session 14) — selecting a graph node that isn't the 
+  current tour stop while a tour is active now suspends the tour (Tour 
+  Controls closes gracefully, Waypoint panel opens showing the clicked 
+  node) rather than desyncing Tour Controls. A "Resume tour" button in the 
+  Waypoint panel returns to the exact stop left off. Exit tour still fully 
+  ends the tour during suspension. ✅
+- Full map mode cleanup (Session 14) — returning to full map now clears 
+  the selected waypoint (shows "Getting oriented" empty state instead of 
+  a stale selection). ✅
+- Markdown view next-stop commentary recolored red → amber, matching 
+  graph view. ✅
+- TourBar scope reduced (Session 14) — now handles only tour 
+  selector/switcher, + New Tour, waypoint-type Filter, Edit tour, 
+  Markdown/Graph toggle, and Export buttons, plus the tour editor popup. 
+  Navigation (Prev/Next, step count) and the docent narrative bar moved 
+  out into the Tour Controls panel earlier this session; the "select a 
+  tour" prompt moved into the Waypoint panel. Waypoint renamed from "TourBar 
+  — tour navigation" to "TourBar" to reflect this. ✅
+  - TourBar scope reduced (Session 14) — now handles only tour 
+  selector/switcher, + New Tour, waypoint-type Filter, Edit tour, 
+  Markdown/Graph toggle, and Export buttons, plus the tour editor popup. 
+  Navigation (Prev/Next, step count) and the docent narrative bar moved 
+  out into the Tour Controls panel earlier this session; the "select a 
+  tour" prompt moved into the Waypoint panel. Waypoint renamed from "TourBar 
+  — tour navigation" to "TourBar" to reflect this. ✅
 
 ---
 
@@ -250,7 +288,7 @@ presets in "What is built and working" for the concrete implementation.
   link is provided as a convenience but the tool doesn't require VS Code.
 - **Single user for now** — no auth, no multi-project, no collaboration yet.
 - **Turso for cloud, SQLite locally** — Vercel deployment live; Turso provides persistent SQLite across deploys.
-- **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning.
+- **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning. But - a counterpoint is that "preserving the users' mental map" is also key... so not working on this for now!
 - **Waypoint content must be context-free.** A waypoint's description/notes should make sense regardless of which tour (or no tour) brought a reader to it. Tour-specific transition narrative ("now that you've seen X, let's look at Y") does not belong in waypoint notes — it contaminates the waypoint for every other entry point. For now, if a transition insight is worth keeping, prefer rephrasing it as a standalone true fact about the waypoint itself, or hold it in the tour's own description field as a stopgap. 
 - **Tours as markdown.** Using live-render for a tour's markdown versus archived snapshot and the markodwn view is toggled from the tour bar.
 -  **Markdown view is read-focused, no waypoint selection.** Unlike graph 
@@ -271,6 +309,8 @@ presets in "What is built and working" for the concrete implementation.
   - **"Bridge" vs "Next" terminology still unresolved** (open since Session 
   11, resurfaced Session 14). Decide before touching more surfaces that 
   reference next-stop commentary.
+  - **"Bridge" vs "Next" terminology still unresolved** (open since Session 
+  11, resurfaced Session 14). Decide before touching more surfaces.
 
 ---
 
@@ -310,6 +350,54 @@ Full constitution: .specify/memory/constitution.md
 ---
 
   ## What to work on next (in priority order)
+
+  - Architecture tour missing a stop for Tour Control Panel (Session 14) — 
+  needs a stop covering it, likely inserted after CognitiveToursApp or 
+  after TourBar, once audit-tours (or a manual pass) confirms full scope.
+
+  - **`audit-tours` skill (new, not yet built)** — Session 14 surfaced that 
+  `audit-waypoints` (per-node accuracy) has no counterpart for tour-level 
+  coherence. When a component moves or is restructured (e.g. today's move 
+  of docent's amber bar from TourBar into Tour Control Panel), tour 
+  bridges and edges can go stale silently — nothing currently flags this, 
+  a human has to happen to re-read the tour and notice. Concretely hit 
+  tonight: a stale "implemented by" edge, a bridge still referencing a 
+  component's old location, and a missing stop for a component that had 
+  grown significantly (Tour Control Panel absent from the Architecture 
+  tour despite being a first-class piece of CognitiveToursApp.tsx now).
+
+  Scope for a first version, read-only like audit-waypoints, one finding 
+  at a time:
+    - Flag bridge text that references a specific UI location/component 
+      by name, cross-check against where that thing's waypoint says it 
+      currently lives.
+    - Flag edges that create redundant paths to the same waypoint (e.g. 
+      two different ancestors both leading to the same node via 
+      "contains", when one is now transitive through the other).
+    - Flag bridges that closely duplicate their own target waypoint's 
+      description (a heuristic that the bridge isn't actually bridging).
+    - Possibly: flag components with substantial recent changes (many 
+      new sub-features, moved responsibilities) that don't yet appear as 
+      a stop in any tour that should logically include them — likely the 
+      hardest to automate well, may stay a manual check.
+
+  Rewriting bridge prose and deciding a tour's shape stays a human task 
+  either way — this tool would only be for surfacing drift, not fixing 
+  it, consistent with audit-waypoints' philosophy of factual drift 
+  reporting, not auto-correction.
+
+  - Turso ADR tour ("Choosing a Database That Works in Production") has a 
+  stale/incorrect bridge on the db.ts stop — was describing the old, 
+  buggy TURSO_DATABASE_URL-presence check rather than the current 
+  NODE_ENV check. Fixed Session 14. Stops 2-4 still have heavy 
+  redundancy (description + aside + bridge repeating the same fact 
+  3-4 times) — cosmetic, worth a cleanup pass, not urgent.
+- Noticed several tours (Docent Mode, Turso ADR) with layered, repetitive 
+  content in descriptions (multiple "Note:"/"History:"/"Update:" asides 
+  saying the same thing) — unclear if from manual editing over multiple 
+  sessions or something else. Worth keeping an eye on whether content 
+  appears in waypoints without having been manually written — flagged 
+  Session 14, unresolved.
 
   1. **Merge Waypoint panel + Tour Controls panel into one** — a ChatGPT 
     mockup (Session 14) showed a single consolidated right panel (tour 
@@ -366,6 +454,24 @@ Full constitution: .specify/memory/constitution.md
    localStorage, instructor overview page. Estimated 5-6 sessions, 
    targeted for August. Not urgent yet but has a real external deadline 
    (course starts September). [use speckit]
+
+10. **Persistent tours-list panel** (Session 14, inspired by ChatGPT mockup) 
+  — replace the tour-selector dropdown with a dedicated left-side panel 
+  listing all tours (mirrors the mockup's TOURS list), with a separate 
+  "Full Map" control rather than folding full map into the same dropdown. 
+  Open questions: collapsible or always visible; does it coexist with the 
+  dropdown during transition or replace it outright; layout impact of a 
+  third panel (graph now flanked left and right).
+
+11. **Tour-specific auto-layout** (Session 14) — tours currently reuse each 
+  waypoint's manually-set full-map position, which can make a tour's path 
+  visually incoherent since stops may be scattered wherever they landed 
+  in the full map. Consider Dagre auto-layout (left-to-right or 
+  top-to-bottom) applied only as a temporary view-time rearrangement when 
+  viewing a tour, without overwriting the stored manual positions — 
+  preserves the curated full-map mental map while giving tours a cleaner 
+  path. Ties into the existing "Tours will move to their own tab" idea 
+  already in Key Decisions.
 
 
 ---
