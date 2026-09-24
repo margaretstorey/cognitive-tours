@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: July 9 2026
+Last updated: September 24 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -172,21 +172,13 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   out into the Tour Controls panel earlier this session; the "select a 
   tour" prompt moved into the Waypoint panel. Waypoint renamed from "TourBar 
   — tour navigation" to "TourBar" to reflect this. ✅
-  - TourBar scope reduced (Session 14) — now handles only tour 
-  selector/switcher, + New Tour, waypoint-type Filter, Edit tour, 
-  Markdown/Graph toggle, and Export buttons, plus the tour editor popup. 
-  Navigation (Prev/Next, step count) and the docent narrative bar moved 
-  out into the Tour Controls panel earlier this session; the "select a 
-  tour" prompt moved into the Waypoint panel. Waypoint renamed from "TourBar 
-  — tour navigation" to "TourBar" to reflect this. ✅
 
 ---
 
 ### What is NOT yet built
 - File content preview in detail panel
 - AI-guided waypoint creation
-- Export to JSON or Markdown
-- Playwright automated tests
+- Export to JSON (a tour/map export format; `/api/data` is only a raw backup)
 - Edge deletion via UI (keyboard delete unreliable on Mac)
 - Edge detail/edit panel
 - Separate Tours tab with independent layout
@@ -309,8 +301,6 @@ presets in "What is built and working" for the concrete implementation.
   - **"Bridge" vs "Next" terminology still unresolved** (open since Session 
   11, resurfaced Session 14). Decide before touching more surfaces that 
   reference next-stop commentary.
-  - **"Bridge" vs "Next" terminology still unresolved** (open since Session 
-  11, resurfaced Session 14). Decide before touching more surfaces.
 
 ---
 
@@ -408,20 +398,6 @@ Full constitution: .specify/memory/constitution.md
     whether this needs a new data model field on waypoints/tour stops, 
     or is just an authoring convention on existing fields.
 
-  2. **Export full map** — new "Export full map" button, top-right, visible 
-   only in full map view (mirrors the tour view's export button). Existing 
-   generic "Export" button in tour view should be relabeled "Export tour" 
-   for clarity now that two distinct exports exist.
-   
-   Full map export produces a markdown document of all waypoints, grouped 
-   by type, alphabetical within each group. No narratives (full map isn't 
-   a sequence) and no stop numbers — but include each waypoint's ID/number 
-   for reference. Could double as a manual backup alongside /api/data, 
-   though not yet decided whether it's meant to be reliable enough to 
-   depend on for that, or just a nice-to-have side benefit.
-   
-   [probably don't need speckit]
-
 3. **Compass icon** — small ring + needle SVG, add next to app title. 
    Markup ready (see session notes); needs Claude Code to place it and 
    decide favicon vs. header-only vs. both.
@@ -442,9 +418,13 @@ Full constitution: .specify/memory/constitution.md
 6. **Edge management panel** — show edge details in right panel, delete 
    button there. Currently double-click to delete (not intuitive). [use speckit]
 
-7. **Tour metadata** — add author (manual text field) and updatedAt 
-   (auto-timestamp via Prisma @updatedAt) to the Tour model. Display in 
-   markdown view and export header. [probably don't need speckit]
+7. **Tour and waypoint metadata** — add author (manual text field) and 
+   updatedAt (auto-timestamp via Prisma @updatedAt) to both the Tour and 
+   Waypoint models. Display tour metadata in markdown view and export 
+   header; waypoint metadata in the detail panel. Coordinate with item 9: 
+   spec 009's self-reported authorName (localStorage) should populate this 
+   same author field rather than introducing a second one. 
+   [probably don't need speckit]
 
 8. **Tour entry UX — design direction (not yet built)** — [keep existing 
    text as-is] - but better home page needed and product page
