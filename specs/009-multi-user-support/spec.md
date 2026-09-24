@@ -15,6 +15,7 @@
 - Q: What is the access boundary for a team space? → A: Anyone holding the team's link can view and edit; the link is the only key, with no login and no secret. Links are **readable** (based on the team name). Random, non-guessable links were considered and deliberately not chosen.
 - Q: Can teams see each other's maps? → A: No. Because readable links can be guessed, this is a **class norm, not something the app enforces**: the app never lists or links to other teams' spaces, and teams are asked not to open each other's links. Q1 and Q2 were decided together, accepting this trade-off for a trusted classroom.
 - Q: Will student edits be used as research data? → A: No. Edit history exists only for recovery, and is deleted when its team space is deleted. No ethics approval is required.
+- **Update (2026-09-24, later the same session):** the research-data answer above is superseded. Research use **is intended**, pending ethics approval, which will be sought later. Until approval, edit history is recovery-only. The consent model (per-student consent or anonymised aggregate) will follow from the approval. Using the Fall 2026 cohort's data for research requires approval and a consent step before the course starts in September; otherwise research use applies only to later cohorts.
 
 ## Context
 
@@ -153,7 +154,7 @@ The instructor opens an overview that lists every team space with basic activity
 - **FR-017**: Restoring a deleted waypoint MUST restore its edges and its positions in tours that still exist.
 - **FR-018**: The system MUST keep earlier versions of waypoint descriptions and notes, tour descriptions, and stop narratives, with author and time, and let team members restore one.
 - **FR-019**: Edit history and recovery MUST be limited to the team's own space.
-- **FR-020**: Edit history MUST be kept only for recovery (FR-016–FR-018), MUST be deleted when its team space is deleted, and MUST NOT be exported or used as research data.
+- **FR-020**: Edit history MUST be used only for recovery (FR-016–FR-018) unless and until ethics approval for research use is granted. No research export or analysis may happen before approval. Each history entry MUST record the author, the time and the content of the change, so later approved research use needs no redesign.
 
 **Instructor overview (Story 5)**
 
@@ -166,12 +167,16 @@ The instructor opens an overview that lists every team space with basic activity
 - **FR-024**: All existing features (graph, full map, tours, docent mode, markdown view and export, filters, search) MUST work the same inside each team space.
 - **FR-025**: The existing self-documentation map and its tours MUST remain available and unchanged.
 
+**Research use (conditional)**
+
+- **FR-026**: If research use is approved, the system MUST support the consent model set by the approval (for example, recording each student's consent and excluding non-consenting students' changes from research exports), and MUST NOT include any change in research data unless it's covered by that model.
+
 ### Key Entities
 
 - **Team space**: a named, separate workspace belonging to one team. It has an access link (readable, based on the team name, replaceable), a created date, and optionally the starter map it was copied from. It contains all of that team's waypoints, edges and tours.
 - **Contributor**: a display name a person enters on a device. It isn't an account, and isn't guaranteed unique. It's recorded on every change.
 - **Waypoint, Edge, Tour, Tour stop** (existing): each now belongs to one team space and carries who created it, who last changed it and when, plus whether it's deleted (and when).
-- **Change record**: an earlier version of an item's text fields, with author and time. It supports restore only (see FR-020).
+- **Change record**: an earlier version of an item's text fields, with author and time. It supports restore, and research use only after ethics approval (FR-020, FR-026).
 - **Instructor**: the person who manages team spaces and can see all of them. There's one instructor role for this course.
 
 ## Success Criteria *(mandatory)*
@@ -193,7 +198,8 @@ The instructor opens an overview that lists every team space with basic activity
 - **Timeline**: needed by August 2026 for a September course start. Stories 1 and 2 must be ready by the start; Stories 3–5 should be.
 - **Setting**: a trusted classroom where students act in good faith. The app guards against accidents, not attacks. Keeping teams out of each other's spaces relies on a class norm (see Clarifications). The accepted risk is that a student could open or edit another team's space by guessing its readable link. Attribution (Story 3) shows who made any such change, and recovery (Story 4) can undo it.
 - **Names aren't verified**: attribution records what people type. That's enough for teamwork and instructor visibility; it's not proof of authorship for grading. If grading ever needs verified authorship, the access decision in Clarifications would need revisiting.
-- **Recovery period**: 30 days for deleted items. Edit history is kept for as long as the team space exists, and is deleted with it.
+- **Recovery period**: 30 days for deleted items. Edit history is kept for as long as the team space exists and is deleted with it, unless an approved research protocol sets a different retention.
+- **Ethics approval is a dependency for research use**: no research use without it. To use the Fall 2026 cohort's data, approval and a consent step must be in place before the course starts in September.
 - **Real-time co-editing is out of scope**: live cursors or seeing someone type aren't included. Changes appear after they're saved (SC-004).
 - **Separate storage vs shared storage is a planning decision**: whether team spaces are kept apart inside one store or in separate stores isn't a user-facing requirement. It's decided in `/speckit-plan`, subject to FR-006, FR-007 and SC-007.
 - **Instructor access**: the instructor has their own private way into the overview (for example, a separate instructor link). The exact mechanism is decided in planning.

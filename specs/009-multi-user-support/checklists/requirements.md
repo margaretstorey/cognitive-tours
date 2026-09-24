@@ -34,6 +34,6 @@
 - All items pass. The three open decisions were resolved on 2026-09-24 and recorded in the spec's Clarifications section:
   1. **Access boundary**: readable team-name links; anyone holding one can view and edit; no login.
   2. **Cross-team visibility**: none shown by the app. Not opening other teams' links is a class norm, not enforced. This risk is accepted, with attribution and recovery as the backstop.
-  3. **Research data**: none. Edit history is for recovery only and is deleted with the team space.
+  3. **Research data**: first answered "none". It was updated later the same day: research use is intended, pending ethics approval to be sought later. Until approval, history is recovery-only (FR-020), and FR-026 covers the approved consent model. No new open question: the consent model is conditional on the approval and phrased as "the approved model".
 - The isolation model (one store vs. separate stores) remains a planning decision (spec Assumptions).
 - Ready for `/speckit-plan`.
