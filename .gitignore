@@ -45,3 +45,8 @@ next-env.d.ts
 # prisma database files
 prisma/dev.db
 prisma/dev.db-journal
+
+# Bram (local agent tooling)
+resources/
+.claude/bram-conventions.md
+.claude/skills/loose-ends/

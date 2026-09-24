@@ -515,3 +515,7 @@ specs/                 — Spec Kit feature specs
 docs/adr/              — Architectural Decision Records 
 ```
 <!-- COGNITIVE LAYER END -->
+
+<!-- bram:start -->
+@.claude/bram-conventions.md
+<!-- bram:end -->
