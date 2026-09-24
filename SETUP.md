@@ -12,6 +12,8 @@ git clone https://github.com/margaretstorey/cognitive-tours.git
 cd cognitive-tours
 npm install
 
+**A note on Bram.** This repo is maintained using [Bram](https://github.com/judell/bram), a workspace that routes AI-agent changes through an approval Worklist. If you don't use Bram, ignore the Bram sections: the "driven through Bram" part of `AGENTS.md` and the `bram:start`/`bram:end` import at the end of `CLAUDE.md`. Nothing in the app depends on Bram. If your AI agent starts proposing "worklist items", tell it Bram isn't in use here, or delete those lines from your copy. To use Bram yourself, install it and run its Setup on your clone.
+
 ## 2. Set up your database
 
 **Local-only (simplest, good for trying it out):**
