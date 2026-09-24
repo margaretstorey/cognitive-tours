@@ -471,10 +471,11 @@ Full constitution: .specify/memory/constitution.md
 ```
 app/
   components/
-    CognitiveToursApp.tsx — root state, all mutation handlers
+    CognitiveToursApp.tsx — root state, all mutation handlers, Tour Controls panel
     WaypointGraph.tsx  — React Flow canvas (left panel)
     WaypointDetail.tsx — selected waypoint detail (right panel)
-    TourBar.tsx        — tour navigation + editor (top bar)
+    TourBar.tsx        — tour selector, New Tour, Filter, Edit tour, markdown/graph toggle, Export, tour editor (top bar)
+    TourMarkdownView.tsx — read-focused markdown rendering of a tour
     WaypointForm.tsx   — create/edit modal
   lib/
     types.ts           — TypeScript interfaces (source of truth)
@@ -489,6 +490,9 @@ app/
 prisma/
   schema.prisma        — DB schema (Waypoint, Edge, Tour, TourWaypoint)
   dev.db               — SQLite database (gitignored)
+tests/                 — Playwright tests (isolated prisma/test.db)
+scripts/
+  seed-from-backup.ts  — refresh dev.db from a production /api/data backup
 .specify/
   memory/constitution.md — 8 principles
 specs/                 — Spec Kit feature specs
