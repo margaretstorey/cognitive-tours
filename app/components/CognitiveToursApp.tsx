@@ -355,12 +355,16 @@ export default function CognitiveToursApp() {
         setSelectedWaypointId(null);
       }
       if (id) {
-        const tour = tours.find(t => t.id === id);
-        setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
+        // No point selecting a stop in markdown view — there's no Prev/Next
+        // there to act on it, and markdown view doesn't read selection anyway.
+        if (!markdownViewOpen) {
+          const tour = tours.find(t => t.id === id);
+          setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
+        }
         setFilterState(DEFAULT_FILTER_STATE);
       }
     },
-    [tours],
+    [tours, markdownViewOpen],
   );
 
   // Escape exits the active tour, unless a modal is open (which takes
@@ -477,9 +481,10 @@ export default function CognitiveToursApp() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <div className="px-4 py-4 border-b border-gray-200 bg-black shrink-0 text-center">
+      <div className="px-4 py-2 border-b border-gray-200 bg-black shrink-0 text-center">
         <h1 className="text-4xl font-bold text-white">Cognitive Tours</h1>
-        <p className="text-lg font-bold text-gray-200 mt-1">"Handcrafted" Scaffolding for Shared Understanding</p>
+        <p className="text-lg font-bold text-gray-200 mt-1">Understanding as a Deliverable</p>
+        <p className="text-sm italic text-gray-300 mt-0">A tool for understanding driven development</p>
       </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (

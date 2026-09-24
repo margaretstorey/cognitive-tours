@@ -143,7 +143,9 @@ function Graph({
         const bounds = getNodesBounds(ids);
         if (bounds.width === 0 && bounds.height === 0) return;
 
-        const padding = tourKey ? ({ top: '10%', bottom: '30%' } as const) : 0.2;
+        const padding = tourKey
+          ? ({ top: '10%', bottom: '30%', left: '5%', right: '5%' } as const)
+          : ({ top: '8%', bottom: '8%', left: '5%', right: '5%' } as const);
         const viewport = getViewportForBounds(bounds, width, height, 0.05, 1.5, padding);
         setViewport(viewport, { duration: 400 });
       });
