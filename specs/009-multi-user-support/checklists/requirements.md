@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,10 +31,9 @@
 
 ## Notes
 
-- **3 [NEEDS CLARIFICATION] markers remain, deliberately.** The approved plan (Worklist item `spec-009-multi-user-support`) left the open decisions for `/speckit-clarify` rather than deciding them in this step:
-  1. **Access boundary** (Story 2, scenario 3 / FR-010): link-only, link with a secret, or sign-in.
-  2. **Cross-team visibility** (Story 2, scenario 4 / FR-011): none, read-only, or opt-in sharing.
-  3. **Research-data use** (FR-020): recovery only, consented research, or anonymised aggregate. The last two need ethics approval.
-- The fourth open decision from issue #10, **isolation model** (one store vs. separate stores), was moved to Assumptions as a planning decision. It isn't user-facing, so it doesn't belong in the spec.
-- The validation pass found no other failures. Implementation terms were avoided throughout. The Context section describes current behaviour in user terms ("the later save silently replaces the earlier one"), not code.
-- Resolve the three markers with `/speckit-clarify` before `/speckit-plan`.
+- All items pass. The three open decisions were resolved on 2026-09-24 and recorded in the spec's Clarifications section:
+  1. **Access boundary**: readable team-name links; anyone holding one can view and edit; no login.
+  2. **Cross-team visibility**: none shown by the app. Not opening other teams' links is a class norm, not enforced. This risk is accepted, with attribution and recovery as the backstop.
+  3. **Research data**: none. Edit history is for recovery only and is deleted with the team space.
+- The isolation model (one store vs. separate stores) remains a planning decision (spec Assumptions).
+- Ready for `/speckit-plan`.

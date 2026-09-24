@@ -8,6 +8,14 @@
 
 **Input**: User description: "Multi-team support for the Startup Studio course (Fall 2026, course starts September; target August). Several student teams use Cognitive Tours at once. Each team works in its own space reached via one link per team, with no login. Contributors are attributed via a self-reported author name. Concurrent edits by teammates must never silently overwrite each other (today a tour save deletes and recreates all stops, so the second save wipes the first person's stops and narratives). Deleted or overwritten work is recoverable. An instructor can view all teams' maps and tours. Background and options: GitHub issue #10. Open decisions to mark for clarification rather than decide: isolation model, identity mechanism, cross-team visibility, research-data consent."
 
+## Clarifications
+
+### Session 2026-09-24
+
+- Q: What is the access boundary for a team space? → A: Anyone holding the team's link can view and edit; the link is the only key, with no login and no secret. Links are **readable** (based on the team name). Random, non-guessable links were considered and deliberately not chosen.
+- Q: Can teams see each other's maps? → A: No. Because readable links can be guessed, this is a **class norm, not something the app enforces**: the app never lists or links to other teams' spaces, and teams are asked not to open each other's links. Q1 and Q2 were decided together, accepting this trade-off for a trusted classroom.
+- Q: Will student edits be used as research data? → A: No. Edit history exists only for recovery, and is deleted when its team space is deleted. No ethics approval is required.
+
 ## Context
 
 Cognitive Tours is currently single-user: everyone who opens the app sees and edits one shared map, nothing records who made a change, and when two people edit the same item, the later save silently replaces the earlier one. In the worst case, saving a tour replaces its entire list of stops, so one teammate's save can erase another teammate's stops and narratives without either of them noticing. Issue #10 lays out the challenges and options in full.
@@ -44,8 +52,8 @@ The instructor creates a space for each team and hands out one link per team. St
 
 1. **Given** the instructor has created spaces for Team A and Team B, **When** a student opens Team A's link, **Then** they see only Team A's waypoints, edges and tours.
 2. **Given** a student is in Team A's space, **When** they create, edit or delete anything, **Then** Team B's space and the existing self-documentation map are unchanged.
-3. **Given** someone has a team's link, **When** they open it, **Then** they can use the space as described by [NEEDS CLARIFICATION: What is the access boundary for a team space? (a) anyone holding the link can view and edit (the link is the only key); (b) the link includes an unguessable secret, so it's practically private but still needs no login; or (c) people must sign in, and only team members can edit].
-4. **Given** a student in Team A, **When** they try to see another team's work, **Then** [NEEDS CLARIFICATION: Can teams see each other's maps? (a) no, never; (b) yes, read-only, e.g. for peer learning or critique; or (c) only when the instructor or a team chooses to share].
+3. **Given** someone has a team's link, **When** they open it, **Then** they can view and edit that team's space with no login and no further check.
+4. **Given** a student in Team A's space, **When** they look for other teams' work, **Then** the app shows no list of, or links to, other teams' spaces. Teams are asked not to open each other's links (a class norm); the app doesn't prevent someone who types another team's link from opening it.
 
 ---
 
@@ -107,6 +115,7 @@ The instructor opens an overview that lists every team space with basic activity
 - **No name set**: a person who declines to enter a name can view but not edit; the prompt must be easy to find again.
 - **Same name on two people**: two students both called "Alex". The app doesn't enforce unique names; attribution shows what people typed. The Assumptions section explains why.
 - **Lost or leaked link**: the instructor must be able to give a team a new link and invalidate the old one.
+- **A student opens another team's link**: links are readable, so this is possible. They can view and edit that space. Their display name is recorded on any change they make, and those changes can be undone through recovery (Story 4).
 - **The existing map**: the current Cognitive Tours self-documentation map must remain intact and reachable, unaffected by team spaces.
 - **Course end**: team spaces and their content must remain readable after the course (for grading and portfolios) until the instructor deletes them.
 
@@ -128,8 +137,8 @@ The instructor opens an overview that lists every team space with basic activity
 - **FR-007**: Actions in one team space MUST NOT change any other team space or the existing self-documentation map.
 - **FR-008**: The instructor MUST be able to replace a team's link, invalidating the old one.
 - **FR-009**: A new team space MUST start empty, with the option to start from a copy of a starter map chosen by the instructor.
-- **FR-010**: Access to a team space MUST follow the rule chosen for Story 2, acceptance scenario 3 (open question 1).
-- **FR-011**: Cross-team visibility MUST follow the rule chosen for Story 2, acceptance scenario 4 (open question 2).
+- **FR-010**: Each team space MUST have a readable link, based on the team's name, that gives whoever holds it full view and edit access to that space, with no login.
+- **FR-011**: The app MUST NOT list, search or link to other teams' spaces from within a team space. Not opening other teams' links is a class norm and isn't enforced.
 
 **Attribution (Story 3)**
 
@@ -144,7 +153,7 @@ The instructor opens an overview that lists every team space with basic activity
 - **FR-017**: Restoring a deleted waypoint MUST restore its edges and its positions in tours that still exist.
 - **FR-018**: The system MUST keep earlier versions of waypoint descriptions and notes, tour descriptions, and stop narratives, with author and time, and let team members restore one.
 - **FR-019**: Edit history and recovery MUST be limited to the team's own space.
-- **FR-020**: Recording and keeping edit history for any purpose beyond recovery MUST follow [NEEDS CLARIFICATION: Will student edits be used as research data? (a) no, history is for recovery only and is deleted with the space; (b) yes, with informed consent collected per student (and non-consenting students' data excluded from research use); or (c) yes, anonymised and aggregated only. (b) and (c) need ethics approval before the course starts].
+- **FR-020**: Edit history MUST be kept only for recovery (FR-016–FR-018), MUST be deleted when its team space is deleted, and MUST NOT be exported or used as research data.
 
 **Instructor overview (Story 5)**
 
@@ -159,10 +168,10 @@ The instructor opens an overview that lists every team space with basic activity
 
 ### Key Entities
 
-- **Team space**: a named, separate workspace belonging to one team. It has an access link (replaceable), a created date, and optionally the starter map it was copied from. It contains all of that team's waypoints, edges and tours.
+- **Team space**: a named, separate workspace belonging to one team. It has an access link (readable, based on the team name, replaceable), a created date, and optionally the starter map it was copied from. It contains all of that team's waypoints, edges and tours.
 - **Contributor**: a display name a person enters on a device. It isn't an account, and isn't guaranteed unique. It's recorded on every change.
 - **Waypoint, Edge, Tour, Tour stop** (existing): each now belongs to one team space and carries who created it, who last changed it and when, plus whether it's deleted (and when).
-- **Change record**: an earlier version of an item's text fields, with author and time. It supports restore (and research use, if approved; see FR-020).
+- **Change record**: an earlier version of an item's text fields, with author and time. It supports restore only (see FR-020).
 - **Instructor**: the person who manages team spaces and can see all of them. There's one instructor role for this course.
 
 ## Success Criteria *(mandatory)*
@@ -182,9 +191,9 @@ The instructor opens an overview that lists every team space with basic activity
 
 - **Scale**: up to about 12 teams of 3–6 students, each team building up to about 100 waypoints and 20 tours. There's one instructor.
 - **Timeline**: needed by August 2026 for a September course start. Stories 1 and 2 must be ready by the start; Stories 3–5 should be.
-- **Setting**: a classroom where students generally act in good faith. The app is guarding against accidents, not attacks; the access-boundary question (open question 1) decides how much more than that is needed.
-- **Names aren't verified**: attribution records what people type. That's enough for teamwork and instructor visibility; it's not proof of authorship for grading. If grading needs verified authorship, that changes open question 1.
-- **Recovery period**: 30 days for deleted items. Edit history is kept for as long as the team space exists, unless open question 3 says otherwise.
+- **Setting**: a trusted classroom where students act in good faith. The app guards against accidents, not attacks. Keeping teams out of each other's spaces relies on a class norm (see Clarifications). The accepted risk is that a student could open or edit another team's space by guessing its readable link. Attribution (Story 3) shows who made any such change, and recovery (Story 4) can undo it.
+- **Names aren't verified**: attribution records what people type. That's enough for teamwork and instructor visibility; it's not proof of authorship for grading. If grading ever needs verified authorship, the access decision in Clarifications would need revisiting.
+- **Recovery period**: 30 days for deleted items. Edit history is kept for as long as the team space exists, and is deleted with it.
 - **Real-time co-editing is out of scope**: live cursors or seeing someone type aren't included. Changes appear after they're saved (SC-004).
 - **Separate storage vs shared storage is a planning decision**: whether team spaces are kept apart inside one store or in separate stores isn't a user-facing requirement. It's decided in `/speckit-plan`, subject to FR-006, FR-007 and SC-007.
 - **Instructor access**: the instructor has their own private way into the overview (for example, a separate instructor link). The exact mechanism is decided in planning.
