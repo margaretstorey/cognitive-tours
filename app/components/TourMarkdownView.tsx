@@ -2,6 +2,7 @@
 
 import type { Tour, Waypoint } from '@/app/lib/types';
 import { tourByline } from '@/app/lib/tour-markdown';
+import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 
 interface TourMarkdownViewProps {
   tour: Tour;
@@ -10,6 +11,7 @@ interface TourMarkdownViewProps {
 }
 
 export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: TourMarkdownViewProps) {
+  const [codeFolder] = useCodeFolder();
   const waypointMap = new Map(waypoints.map(w => [w.id, w]));
 
   return (
@@ -63,16 +65,21 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                       <p className="text-sm text-gray-600">{wp.notes}</p>
                     </div>
                   )}
-                  {wp.filePath?.trim() && (
+                  {wp.filePath?.trim() && (codeFolder ? (
                     <a
-                      href={`vscode://file/Users/mstorey/shrimp-2/${wp.filePath}`}
+                      href={vscodeLink(codeFolder, wp.filePath) ?? undefined}
                       target="_blank"
                       rel="noreferrer"
                       className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 hover:bg-gray-200 block mb-2 font-mono break-all"
                     >
                       {wp.filePath}
                     </a>
-                  )}
+                  ) : (
+                    // No code folder set in this browser: show the path, not a broken link.
+                    <span className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 block mb-2 font-mono break-all">
+                      {wp.filePath}
+                    </span>
+                  ))}
                   {stop.narrative?.trim() && (
                     <div className="mt-2 border-l-2 border-amber-400 bg-amber-50 pl-3 py-2">
                       <p className="text-sm font-bold text-amber-900">Next stop commentary:</p>

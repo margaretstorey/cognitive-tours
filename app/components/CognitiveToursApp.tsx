@@ -10,6 +10,7 @@ import TourBar from './TourBar';
 import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
 import { PROJECT_NAME } from '@/app/lib/project';
+import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 
 type FormState =
   | { open: false }
@@ -53,6 +54,7 @@ export default function CognitiveToursApp() {
   const [controlPanelCollapsed, setControlPanelCollapsed] = useState(false);
   // During a tour the graph follows the current stop; overview fits every stop.
   const [tourOverview, setTourOverview] = useState(false);
+  const [codeFolder] = useCodeFolder();
   const [tourSuspended, setTourSuspended] = useState(false);
   const [stopTextExpanded, setStopTextExpanded] = useState(false);
   const [stopDescriptionOverflowing, setStopDescriptionOverflowing] = useState(false);
@@ -703,14 +705,16 @@ export default function CognitiveToursApp() {
                                 'Copy path'
                               )}
                             </button>
-                            <a
-                              href={`vscode://file/Users/mstorey/shrimp-2/${currentStopWaypoint.filePath}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
-                            >
-                              Open in VS Code
-                            </a>
+                            {codeFolder && (
+                              <a
+                                href={vscodeLink(codeFolder, currentStopWaypoint.filePath) ?? undefined}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                              >
+                                Open in VS Code
+                              </a>
+                            )}
                           </div>
                         </div>
                       )}

@@ -289,3 +289,37 @@ test.describe('project name', () => {
     expect(generateFullMapMarkdown([wp])).toMatch(/^# Full Map$/m);
   });
 });
+
+test.describe('code folder setting', () => {
+  const label = 'Code Folder Waypoint';
+
+  test.afterEach(async ({ request }) => {
+    const { waypoints } = await (await request.get('/api/data')).json();
+    const wp = waypoints.find((w: { label: string }) => w.label === label);
+    if (wp) await request.delete(`/api/waypoints/${wp.id}`);
+  });
+
+  test('Open in VS Code uses the folder set in this browser, and remembers it', async ({ page }) => {
+    await page.goto('/');
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(label);
+    await form.locator('select').selectOption('Code Component');
+    await form.getByPlaceholder('e.g. src/components/MyComponent.tsx').fill('app/page.tsx');
+    await form.getByRole('button', { name: 'Save' }).click();
+    await page.getByText(label).click();
+
+    // No folder yet: no broken link, just the prompt to set one.
+    await expect(page.getByRole('link', { name: 'Open in VS Code' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Set your code folder to open in VS Code' }).click();
+    await page.getByLabel('Your code folder').fill('/tmp/repo/');
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    const link = page.getByRole('link', { name: 'Open in VS Code' });
+    await expect(link).toHaveAttribute('href', 'vscode://file/tmp/repo/app/page.tsx');
+
+    await page.reload();
+    await page.getByText(label).click();
+    await expect(page.getByRole('link', { name: 'Open in VS Code' })).toHaveAttribute('href', 'vscode://file/tmp/repo/app/page.tsx');
+  });
+});

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
+import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 
 interface WaypointDetailProps {
   waypoint: Waypoint | null;
@@ -26,6 +27,14 @@ export default function WaypointDetail({
   onResumeTour,
 }: WaypointDetailProps) {
   const [copied, setCopied] = useState(false);
+  const [codeFolder, setCodeFolder] = useCodeFolder();
+  const [editingFolder, setEditingFolder] = useState(false);
+  const [folderDraft, setFolderDraft] = useState('');
+
+  const startEditingFolder = () => {
+    setFolderDraft(codeFolder ?? '');
+    setEditingFolder(true);
+  };
 
   const header = (
     <div className="p-4 border-b border-gray-200 flex items-center justify-between shrink-0">
@@ -148,15 +157,66 @@ export default function WaypointDetail({
               >
                 {copied ? <span className="text-green-600 font-medium">Copied!</span> : 'Copy path'}
               </button>
-              <a
-                href={`vscode://file/Users/mstorey/shrimp-2/${waypoint.filePath}`}
-                target="_blank"
-                rel="noreferrer"
-                className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
-              >
-                Open in VS Code
-              </a>
+              {codeFolder ? (
+                <a
+                  href={vscodeLink(codeFolder, waypoint.filePath) ?? undefined}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                >
+                  Open in VS Code
+                </a>
+              ) : (
+                !editingFolder && (
+                  <button
+                    onClick={startEditingFolder}
+                    className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                  >
+                    Set your code folder to open in VS Code
+                  </button>
+                )
+              )}
             </div>
+            {codeFolder && !editingFolder && (
+              <button
+                onClick={startEditingFolder}
+                className="mt-1.5 text-xs text-gray-400 hover:text-gray-600 hover:underline"
+              >
+                change folder ({codeFolder})
+              </button>
+            )}
+            {editingFolder && (
+              <div className="mt-2 flex flex-col gap-1.5">
+                <input
+                  type="text"
+                  aria-label="Your code folder"
+                  value={folderDraft}
+                  onChange={e => setFolderDraft(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') { setCodeFolder(folderDraft); setEditingFolder(false); }
+                    if (e.key === 'Escape') setEditingFolder(false);
+                  }}
+                  placeholder="e.g. /Users/you/code/your-repo"
+                  className="border border-gray-300 rounded px-2 py-1 text-xs font-mono"
+                  autoFocus
+                />
+                <p className="text-gray-400">Where your copy of the repo lives. Saved in this browser only.</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setCodeFolder(folderDraft); setEditingFolder(false); }}
+                    className="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 font-medium"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingFolder(false)}
+                    className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

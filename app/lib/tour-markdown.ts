@@ -20,7 +20,8 @@ function pushWaypointBody(lines: string[], wp: Waypoint): void {
   }
 
   if (wp.filePath?.trim()) {
-    lines.push(`[\`${wp.filePath}\`](vscode://file/Users/mstorey/shrimp-2/${wp.filePath})`);
+    // Exports are shared and committed, so no one's local folder belongs in them.
+    lines.push(`\`${wp.filePath}\``);
     lines.push('');
   }
 }
