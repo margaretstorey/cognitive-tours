@@ -201,10 +201,19 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `main`: (0) sign in to the Turso CLI with `turso auth login`, using 
   the **mastorey@gmail.com** account (not the UVic address), then 
   `turso db list` to get `<db-name>` (currently `cognitive-tours`); 
-  (1) back up /api/data to backups/backup-YYYY-MM-DD.json; 
-  (2) `turso db shell <db-name> < prisma/migrations/<new>/migration.sql`; 
-  (3) check with `turso db shell <db-name> ".schema Tour"` (or the 
-  affected table); (4) merge and push `main`. Apply the migration *before* 
+  (1) back up /api/data from **every site** (see "Team sites" below): 
+  yours to backups/backup-YYYY-MM-DD.json, teams' to 
+  backups/teams/<team>-YYYY-MM-DD.json; 
+  (2) run the migration on **every database** in the Team sites list, 
+  stopping at the first failure:
+  ```
+  for db in cognitive-tours ct-test ct-finito ct-vitalitree ct-evernear ct-elevate ct-poold; do
+    echo "== $db"; turso db shell "$db" < prisma/migrations/<new>/migration.sql || break
+  done
+  ```
+  (3) check each with the same loop running `turso db shell "$db" 
+  ".schema Tour"` (or the affected table); (4) merge and push `main`, 
+  which deploys all sites. Apply the migration *before* 
   the deploy, or the new code will query columns that don't exist yet. 
   Run only the new migration's SQL: production already has everything 
   earlier, including `TourWaypoint.narrative`, which was added by hand 
@@ -212,6 +221,30 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `prisma db push` on dev.db (it caused that drift); use 
   `npx prisma migrate dev`. test.db is synced with 
   `npx dotenv -e .env.test -- npx prisma db push`.
+  - **Team sites (Fall 2026 Startup Studio).** Each team has its own 
+  Vercel project and Turso database, all deploying from this repo's 
+  `main`; only the env vars differ. Your own site is untouched.
+
+  | Site | Vercel project (URL may differ; confirm after creation) | Turso database |
+  |---|---|---|
+  | Mine | cognitive-tours (cognitive-tours.vercel.app) | cognitive-tours |
+  | Test (what students see) | cognitive-tours-test | ct-test |
+  | Finito | cognitive-tours-finito | ct-finito |
+  | Vitalitree | cognitive-tours-vitalitree | ct-vitalitree |
+  | Evernear | cognitive-tours-evernear | ct-evernear |
+  | Elevate | cognitive-tours-elevate | ct-elevate |
+  | Poold | cognitive-tours-poold | ct-poold |
+
+  Team projects set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and 
+  `SEED_ON_EMPTY=false`, so a new team starts with an empty map instead 
+  of the self-documentation seed. **How changes reach every site:** 
+  code: one push to `main` deploys all of them; afterwards, check each 
+  project's Deployments tab for the new build (see the Vercel Git 
+  disconnect known issue). Schema: the migration loop above, never just 
+  `cognitive-tours`. Backups: each site's `/api/data`, with team 
+  backups in `backups/teams/` (gitignored, so student work never lands 
+  in the repo). **Adding a team:** add its database and site to this 
+  table *and* to the migration loop.
   - **Rotate any credential immediately if it's ever pasted into chat, docs, commit messages, or committed by mistake** — treat exposure to any external system (including this chat) as equivalent to a real leak. Sequence: generate new → invalidate all → generate final → update Vercel → update local `.env` → redeploy. See known issue below re: confirming redeploy actually triggers.
 
 

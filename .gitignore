@@ -50,3 +50,6 @@ prisma/dev.db-journal
 resources/
 .claude/bram-conventions.md
 .claude/skills/loose-ends/
+
+# Team site backups contain student work; keep them out of the repo
+backups/teams/

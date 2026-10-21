@@ -4,8 +4,11 @@ import { INITIAL_WAYPOINTS, INITIAL_EDGES, INITIAL_TOURS } from '@/app/lib/mock-
 
 export async function GET() {
   try {
+    // Team sites set SEED_ON_EMPTY=false so a new team's database starts empty
+    // instead of with the self-documentation map.
+    const seedOnEmpty = process.env.SEED_ON_EMPTY !== 'false';
     const count = await prisma.waypoint.count();
-    if (count === 0) {
+    if (seedOnEmpty && count === 0) {
       for (const w of INITIAL_WAYPOINTS) {
         await prisma.waypoint.create({
           data: {
