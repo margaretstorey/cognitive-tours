@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: September 24 2026
+Last updated: October 20 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -198,7 +198,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   may reflect stale local data, not what's actually live.
   - **Applying a schema migration to production (Turso).** Vercel builds 
   don't run migrations. Before merging a branch with a new migration to 
-  `main`: (1) back up /api/data to backups/backup-YYYY-MM-DD.json; 
+  `main`: (0) sign in to the Turso CLI with `turso auth login`, using 
+  the **mastorey@gmail.com** account (not the UVic address), then 
+  `turso db list` to get `<db-name>` (currently `cognitive-tours`); 
+  (1) back up /api/data to backups/backup-YYYY-MM-DD.json; 
   (2) `turso db shell <db-name> < prisma/migrations/<new>/migration.sql`; 
   (3) check with `turso db shell <db-name> ".schema Tour"` (or the 
   affected table); (4) merge and push `main`. Apply the migration *before* 
