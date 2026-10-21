@@ -75,6 +75,16 @@ export default function CognitiveToursApp() {
   const currentNarrative = activeTour?.stops[activeTourStep]?.narrative?.trim() ?? '';
   const showingMarkdown = markdownViewOpen && !!activeTour;
 
+  // Markdown view opens at the selected waypoint's stop when it's in this tour
+  // (e.g. another stop clicked while suspended), otherwise at the current stop.
+  const selectedStopIndex = activeTour?.stops.findIndex(s => s.waypointId === selectedWaypointId) ?? -1;
+  const markdownJumpIndex = selectedStopIndex >= 0 ? selectedStopIndex : activeTourStep;
+
+  useEffect(() => {
+    if (!showingMarkdown) return;
+    document.getElementById(`stop-${markdownJumpIndex}`)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }, [showingMarkdown, markdownJumpIndex]);
+
   // T015: Startup fetch — load all persisted data on mount.
   useEffect(() => {
     void (async () => {

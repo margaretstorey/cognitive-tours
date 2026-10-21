@@ -450,3 +450,31 @@ test.describe('download backup', () => {
     expect(Array.isArray(backup.tours)).toBe(true);
   });
 });
+
+test.describe('markdown view opens at the current stop', () => {
+  const tourName = 'Markdown Jump Tour';
+
+  test.afterEach(async ({ request }) => {
+    const { tours } = await (await request.get('/api/data')).json();
+    const tour = tours.find((t: { name: string }) => t.name === tourName);
+    if (tour) await request.delete(`/api/tours/${tour.id}`);
+  });
+
+  test('switching to Markdown View jumps to the stop you are on', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: '+ New Tour' }).click();
+    const modal = page.locator('.fixed.inset-0.z-50');
+    await modal.getByPlaceholder('Tour name').fill(tourName);
+    const picker = modal.locator('select').filter({ hasText: 'Add a waypoint' });
+    // Enough stops that the last one starts well below the fold.
+    for (let i = 1; i <= 10; i++) await picker.selectOption({ index: i });
+    await modal.getByRole('button', { name: 'Save' }).click();
+
+    await page.getByLabel('Tour:').selectOption({ label: tourName });
+    for (let i = 0; i < 9; i++) await page.getByRole('button', { name: 'Next →' }).click();
+    await page.getByRole('button', { name: 'Markdown View' }).click();
+
+    await expect(page.locator('#stop-9')).toBeInViewport();
+    await expect(page.locator('#stop-0')).not.toBeInViewport();
+  });
+});
