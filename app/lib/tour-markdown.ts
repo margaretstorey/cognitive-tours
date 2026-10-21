@@ -25,12 +25,37 @@ function pushWaypointBody(lines: string[], wp: Waypoint): void {
   }
 }
 
+/**
+ * One-line byline for a tour, e.g. "By Margaret-Anne · Updated 24 Sep 2026".
+ * "By …" is omitted when the tour has no author; returns '' if there is
+ * nothing to show.
+ */
+export function tourByline(tour: Tour): string {
+  const parts: string[] = [];
+  if (tour.author) parts.push(`By ${tour.author}`);
+  if (tour.updatedAt) {
+    const date = new Date(tour.updatedAt).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+    parts.push(`Updated ${date}`);
+  }
+  return parts.join(' · ');
+}
+
 export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[]): string {
   const waypointMap = new Map(waypoints.map(w => [w.id, w]));
   const lines: string[] = [];
 
   lines.push(`# ${tour.name}`);
   lines.push('');
+
+  const byline = tourByline(tour);
+  if (byline) {
+    lines.push(`*${byline}*`);
+    lines.push('');
+  }
 
   if (tour.description.trim()) {
     lines.push(tour.description);

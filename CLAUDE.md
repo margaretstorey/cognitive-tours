@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: September 24 2026
+Last updated: October 20 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -196,6 +196,22 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (2) run `npx tsx scripts/seed-from-backup.ts backups/backup-YYYY-MM-DD.json` 
   to refresh dev.db, (3) then run /audit-waypoints. Otherwise findings 
   may reflect stale local data, not what's actually live.
+  - **Applying a schema migration to production (Turso).** Vercel builds 
+  don't run migrations. Before merging a branch with a new migration to 
+  `main`: (0) sign in to the Turso CLI with `turso auth login`, using 
+  the **mastorey@gmail.com** account (not the UVic address), then 
+  `turso db list` to get `<db-name>` (currently `cognitive-tours`); 
+  (1) back up /api/data to backups/backup-YYYY-MM-DD.json; 
+  (2) `turso db shell <db-name> < prisma/migrations/<new>/migration.sql`; 
+  (3) check with `turso db shell <db-name> ".schema Tour"` (or the 
+  affected table); (4) merge and push `main`. Apply the migration *before* 
+  the deploy, or the new code will query columns that don't exist yet. 
+  Run only the new migration's SQL: production already has everything 
+  earlier, including `TourWaypoint.narrative`, which was added by hand 
+  and only backfilled as a migration file on Sep 24. Locally, never use 
+  `prisma db push` on dev.db (it caused that drift); use 
+  `npx prisma migrate dev`. test.db is synced with 
+  `npx dotenv -e .env.test -- npx prisma db push`.
   - **Rotate any credential immediately if it's ever pasted into chat, docs, commit messages, or committed by mistake** — treat exposure to any external system (including this chat) as equivalent to a real leak. Sequence: generate new → invalidate all → generate final → update Vercel → update local `.env` → redeploy. See known issue below re: confirming redeploy actually triggers.
 
 

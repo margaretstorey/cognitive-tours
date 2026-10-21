@@ -33,6 +33,7 @@ interface TourEditorState {
   tourId?: string;
   name: string;
   description: string;
+  author: string;
   stops: TourStop[];
 }
 
@@ -55,6 +56,7 @@ export default function TourBar({
     mode: 'create',
     name: '',
     description: '',
+    author: '',
     stops: [],
   });
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
@@ -94,7 +96,7 @@ export default function TourBar({
   }, [editor.open]);
 
   const openCreate = () =>
-    setEditor({ open: true, mode: 'create', name: '', description: '', stops: [] });
+    setEditor({ open: true, mode: 'create', name: '', description: '', author: '', stops: [] });
 
   const openEdit = () => {
     const tour = tours.find(t => t.id === activeTourId);
@@ -105,6 +107,7 @@ export default function TourBar({
       tourId: tour.id,
       name: tour.name,
       description: tour.description,
+      author: tour.author ?? '',
       stops: tour.stops.map(s => ({ ...s })),
     });
   };
@@ -112,7 +115,14 @@ export default function TourBar({
   const closeEditor = () => setEditor(e => ({ ...e, open: false }));
 
   const saveEditor = () => {
-    const data = { name: editor.name.trim(), description: editor.description.trim(), stops: editor.stops };
+    const data = {
+      name: editor.name.trim(),
+      description: editor.description.trim(),
+      author: editor.author.trim(),
+      stops: editor.stops,
+      // Optimistic value for display only; the server sets the real timestamp.
+      updatedAt: new Date().toISOString(),
+    };
     if (!data.name) return;
     if (editor.mode === 'create') {
       onCreateTour(data);
@@ -325,6 +335,16 @@ export default function TourBar({
                 value={editor.description}
                 onChange={e => setEditor(ed => ({ ...ed, description: e.target.value }))}
                 placeholder="One-line summary"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium" htmlFor="tour-author">Author</label>
+              <input
+                id="tour-author"
+                className="border border-gray-300 rounded px-3 py-1.5 text-sm"
+                value={editor.author}
+                onChange={e => setEditor(ed => ({ ...ed, author: e.target.value }))}
+                placeholder="Your name"
               />
             </div>
             <div className="flex flex-col gap-2">

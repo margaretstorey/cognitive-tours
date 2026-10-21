@@ -51,6 +51,9 @@ export interface Tour {
   id: string;
   name: string;
   description: string;
+  author?: string;
+  createdAt?: string; // ISO timestamp, set by the database
+  updatedAt?: string; // ISO timestamp, set by the database on every save
   stops: TourStop[];
 }
 

@@ -13,6 +13,7 @@ export async function POST(request: Request) {
         id: body.id,
         name: body.name,
         description: body.description ?? '',
+        author: body.author?.trim() || null,
         waypoints: {
           create: (body.stops ?? []).map((s, order) => ({
             waypointId: s.waypointId,
