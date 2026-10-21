@@ -216,7 +216,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (2) run the migration on **every database** in the Team sites list, 
   stopping at the first failure:
   ```
-  for db in cognitive-tours ct-test ct-finito ct-vitalitree ct-evernear ct-elevate ct-poold; do
+  for db in cognitive-tours ct-test ct-finito ct-vitalitree ct-evernear ct-elevate ct-poold ct-ciara; do
     echo "== $db"; turso db shell "$db" < prisma/migrations/<new>/migration.sql || break
   done
   ```
@@ -243,6 +243,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   | Evernear | cognitive-tours-evernear | ct-evernear | Evernear | (unset) |
   | Elevate | cognitive-tours-elevate | ct-elevate | Elevate | (unset) |
   | Poold | cognitive-tours-poold | ct-poold | Poold | (unset) |
+  | Ciara (trying it out) | cognitive-tours-ciara | ct-ciara | Ciara | (unset) |
 
   Team projects set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, 
   `SEED_ON_EMPTY=false` (a new team starts with an empty map instead of 
