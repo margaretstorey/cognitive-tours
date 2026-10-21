@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
-import { githubFileLink, normalizeGitHubRepo, SITE_REPO_URL, useRepoUrl } from '@/app/lib/repo';
+import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo, SITE_REPO_URL, useRepoUrl } from '@/app/lib/repo';
 
 interface WaypointDetailProps {
   waypoint: Waypoint | null;
@@ -143,6 +143,9 @@ export default function WaypointDetail({
   }
 
   const colorClass = WAYPOINT_COLORS[waypoint.type];
+  // A full https:// file path links straight to that page; no setup needed.
+  const isLink = !!waypoint.filePath && isLinkPath(waypoint.filePath);
+  const webLink = waypoint.filePath ? githubFileLink(repoUrl, waypoint.filePath) : null;
 
   return (
     <div className="flex flex-col h-full">
@@ -192,14 +195,14 @@ export default function WaypointDetail({
               >
                 {copied ? <span className="text-green-600 font-medium">Copied!</span> : 'Copy path'}
               </button>
-              {repoUrl ? (
+              {webLink ? (
                 <a
-                  href={githubFileLink(repoUrl, waypoint.filePath) ?? undefined}
+                  href={webLink}
                   target="_blank"
                   rel="noreferrer"
                   className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
                 >
-                  View on GitHub
+                  {linkLabel(webLink)}
                 </a>
               ) : (
                 !editingRepo && (
@@ -211,7 +214,7 @@ export default function WaypointDetail({
                   </button>
                 )
               )}
-              {codeFolder ? (
+              {isLink ? null : codeFolder ? (
                 <a
                   href={vscodeLink(codeFolder, waypoint.filePath) ?? undefined}
                   target="_blank"
@@ -231,7 +234,7 @@ export default function WaypointDetail({
                 )
               )}
             </div>
-            {codeFolder && !editingFolder && (
+            {!isLink && codeFolder && !editingFolder && (
               <button
                 onClick={startEditingFolder}
                 className="mt-1.5 text-xs text-gray-400 hover:text-gray-600 hover:underline"
@@ -271,7 +274,7 @@ export default function WaypointDetail({
                 </div>
               </div>
             )}
-            {repoUrl && !editingRepo && (
+            {!isLink && repoUrl && !editingRepo && (
               <button
                 onClick={startEditingRepo}
                 className="mt-1.5 block text-xs text-gray-400 hover:text-gray-600 hover:underline"

@@ -51,7 +51,8 @@ export function useCodeFolder(): [string | null, (folder: string | null) => void
 
 /** vscode://file link for a repo-relative path, or null when no folder is set. */
 export function vscodeLink(folder: string | null, filePath: string): string | null {
-  if (!folder) return null;
+  // A full http(s) link has no local copy to open.
+  if (!folder || /^https?:\/\//i.test(filePath.trim())) return null;
   const root = folder.replace(/\\/g, '/').replace(/\/+$/, '');
   const rel = filePath.replace(/\\/g, '/').replace(/^\/+/, '');
   return `vscode://file/${root.replace(/^\/+/, '')}/${rel}`;

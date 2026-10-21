@@ -3,7 +3,7 @@
 import type { Tour, Waypoint } from '@/app/lib/types';
 import { tourByline } from '@/app/lib/tour-markdown';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
-import { githubFileLink, useRepoUrl } from '@/app/lib/repo';
+import { githubFileLink, isLinkPath, linkLabel, useRepoUrl } from '@/app/lib/repo';
 
 interface TourMarkdownViewProps {
   tour: Tour;
@@ -67,7 +67,7 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                       <p className="text-sm text-gray-600">{wp.notes}</p>
                     </div>
                   )}
-                  {wp.filePath?.trim() && (codeFolder ? (
+                  {wp.filePath?.trim() && (codeFolder && !isLinkPath(wp.filePath) ? (
                     <a
                       href={vscodeLink(codeFolder, wp.filePath) ?? undefined}
                       target="_blank"
@@ -82,14 +82,14 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                       {wp.filePath}
                     </span>
                   ))}
-                  {wp.filePath?.trim() && repoUrl && (
+                  {wp.filePath?.trim() && githubFileLink(repoUrl, wp.filePath) && (
                     <a
                       href={githubFileLink(repoUrl, wp.filePath) ?? undefined}
                       target="_blank"
                       rel="noreferrer"
                       className="text-xs text-blue-700 hover:underline block mb-2"
                     >
-                      View on GitHub ↗
+                      {linkLabel(githubFileLink(repoUrl, wp.filePath)!)} ↗
                     </a>
                   )}
                   {stop.narrative?.trim() && (

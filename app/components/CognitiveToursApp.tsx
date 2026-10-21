@@ -11,7 +11,7 @@ import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
 import { PROJECT_NAME } from '@/app/lib/project';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
-import { githubFileLink, useRepoUrl } from '@/app/lib/repo';
+import { githubFileLink, linkLabel, useRepoUrl } from '@/app/lib/repo';
 
 type FormState =
   | { open: false }
@@ -723,17 +723,20 @@ export default function CognitiveToursApp() {
                                 'Copy path'
                               )}
                             </button>
-                            {repoUrl && (
-                              <a
-                                href={githubFileLink(repoUrl, currentStopWaypoint.filePath) ?? undefined}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
-                              >
-                                View on GitHub
-                              </a>
-                            )}
-                            {codeFolder && (
+                            {(() => {
+                              const webLink = githubFileLink(repoUrl, currentStopWaypoint.filePath);
+                              return webLink ? (
+                                <a
+                                  href={webLink}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                                >
+                                  {linkLabel(webLink)}
+                                </a>
+                              ) : null;
+                            })()}
+                            {vscodeLink(codeFolder, currentStopWaypoint.filePath) && (
                               <a
                                 href={vscodeLink(codeFolder, currentStopWaypoint.filePath) ?? undefined}
                                 target="_blank"

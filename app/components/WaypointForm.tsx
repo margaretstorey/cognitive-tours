@@ -97,7 +97,7 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
             className="border border-gray-300 rounded px-3 py-1.5 text-sm font-mono"
             value={filePath}
             onChange={e => setFilePath(e.target.value)}
-            placeholder="e.g. src/components/MyComponent.tsx"
+            placeholder="e.g. src/components/MyComponent.tsx, or a full https:// link"
           />
         </div>
         </div>

@@ -65,8 +65,25 @@ export function useRepoUrl(): {
   return { repoUrl: own ?? SITE_REPO_URL, setRepoUrl, isOwnSetting: own !== null };
 }
 
-/** Link to a repo-relative file on the default branch (HEAD), or null. */
+/**
+ * A filePath that is a full http(s) link (e.g. a file in another repo, or a
+ * customer-notes doc) is used as-is rather than resolved against the repo.
+ */
+export function isLinkPath(filePath: string): boolean {
+  return /^https?:\/\//i.test(filePath.trim());
+}
+
+/** "View on GitHub" for github.com links, "Open link" for anything else. */
+export function linkLabel(url: string): string {
+  return /^https?:\/\/(www\.)?github\.com\//i.test(url) ? 'View on GitHub' : 'Open link';
+}
+
+/**
+ * Link to a repo-relative file on the default branch (HEAD); a link path is
+ * returned as-is, even with no repo set. Null when there is nothing to link to.
+ */
 export function githubFileLink(repoUrl: string | null, filePath: string): string | null {
+  if (isLinkPath(filePath)) return filePath.trim();
   if (!repoUrl) return null;
   const rel = filePath.replace(/\\/g, '/').replace(/^\/+/, '');
   return `${repoUrl}/blob/HEAD/${rel}`;

@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { generateFullMapMarkdown, generateTourMarkdown } from '../app/lib/tour-markdown';
 import type { Tour, Waypoint } from '../app/lib/types';
-import { normalizeGitHubRepo } from '../app/lib/repo';
+import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo } from '../app/lib/repo';
+import { vscodeLink } from '../app/lib/code-folder';
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
@@ -306,7 +307,7 @@ test.describe('code folder setting', () => {
     const form = page.locator('.fixed.inset-0.z-50');
     await form.getByPlaceholder('Short descriptive title').fill(label);
     await form.locator('select').selectOption('Code Component');
-    await form.getByPlaceholder('e.g. src/components/MyComponent.tsx').fill('app/page.tsx');
+    await form.getByPlaceholder(/MyComponent\.tsx/).fill('app/page.tsx');
     await form.getByRole('button', { name: 'Save' }).click();
     await page.getByText(label).click();
 
@@ -360,7 +361,7 @@ test.describe('GitHub repo links', () => {
     const form = page.locator('.fixed.inset-0.z-50');
     await form.getByPlaceholder('Short descriptive title').fill(label);
     await form.locator('select').selectOption('Code Component');
-    await form.getByPlaceholder('e.g. src/components/MyComponent.tsx').fill('app/page.tsx');
+    await form.getByPlaceholder(/MyComponent\.tsx/).fill('app/page.tsx');
     await form.getByRole('button', { name: 'Save' }).click();
     await page.getByText(label).click();
 
@@ -386,5 +387,50 @@ test.describe('GitHub repo links', () => {
     await page.getByRole('button', { name: 'Remove my repo setting' }).click();
     await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: "Set your team's GitHub repo" })).toBeVisible();
+  });
+});
+
+test.describe('full links as file paths', () => {
+  const notes = 'https://github.com/finito-startup/customer-notes/blob/main/acme.md';
+  const doc = 'https://docs.example.com/interviews/acme';
+  const labels = ['GitHub Link Waypoint', 'Doc Link Waypoint'];
+
+  test.afterEach(async ({ request }) => {
+    const { waypoints } = await (await request.get('/api/data')).json();
+    for (const wp of waypoints.filter((w: { label: string }) => labels.includes(w.label))) {
+      await request.delete(`/api/waypoints/${wp.id}`);
+    }
+  });
+
+  test('link paths are used as-is, everywhere', () => {
+    expect(isLinkPath(notes)).toBe(true);
+    expect(isLinkPath('src/app.tsx')).toBe(false);
+    expect(githubFileLink(null, notes)).toBe(notes);
+    expect(githubFileLink('https://github.com/finito-startup/finito', notes)).toBe(notes);
+    expect(vscodeLink('/Users/you/repo', notes)).toBeNull();
+    expect(linkLabel(notes)).toBe('View on GitHub');
+    expect(linkLabel(doc)).toBe('Open link');
+    const wp: Waypoint = { id: 'w1', label: 'A', type: 'User Need', filePath: notes, position: { x: 0, y: 0 } };
+    expect(generateFullMapMarkdown([wp])).toContain(`[\`${notes}\`](${notes})`);
+  });
+
+  test('a waypoint linked to another repo or a doc needs no setup', async ({ page }) => {
+    await page.goto('/');
+    for (const [label, link] of [[labels[0], notes], [labels[1], doc]]) {
+      await page.getByTestId('canvas-add-waypoint').click();
+      const form = page.locator('.fixed.inset-0.z-50');
+      await form.getByPlaceholder('Short descriptive title').fill(label);
+      await form.locator('select').selectOption('User Need');
+      await form.getByPlaceholder(/MyComponent\.tsx/).fill(link);
+      await form.getByRole('button', { name: 'Save' }).click();
+    }
+
+    await page.getByText(labels[0]).click();
+    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute('href', notes);
+    await expect(page.getByRole('button', { name: "Set your team's GitHub repo" })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Set your code folder to open in VS Code' })).toHaveCount(0);
+
+    await page.getByText(labels[1]).click();
+    await expect(page.getByRole('link', { name: 'Open link' })).toHaveAttribute('href', doc);
   });
 });
