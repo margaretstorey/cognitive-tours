@@ -194,8 +194,13 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - Suggest mode for waypoints, waypoint description, tours, tour description and tour stop narration
 
 ## Maintenance reminders
-- **Backup before onboarding new collaborators** — visit /api/data and 
-  save the JSON before giving anyone else access to the live app. Last backup Jul 6, 2026.
+- **Back up every site** — run `npx tsx scripts/backup-all-sites.ts` 
+  before each class session, before any migration, and before giving 
+  anyone new access. It's read-only: it saves each site's /api/data to 
+  backups/backup-YYYY-MM-DD.json (yours, committed) or 
+  backups/teams/<team>-YYYY-MM-DD.json (gitignored). Turso's own 
+  point-in-time restore only reaches back 1 day on the current plan 
+  (10 on Developer), so these files are the longer-term safety net.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session.
 - **Refresh dev.db before auditing.** The audit-waypoints skill only 
@@ -210,9 +215,9 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `main`: (0) sign in to the Turso CLI with `turso auth login`, using 
   the **mastorey@gmail.com** account (not the UVic address), then 
   `turso db list` to get `<db-name>` (currently `cognitive-tours`); 
-  (1) back up /api/data from **every site** (see "Team sites" below): 
-  yours to backups/backup-YYYY-MM-DD.json, teams' to 
-  backups/teams/<team>-YYYY-MM-DD.json; 
+  (1) back up **every site** with `npx tsx scripts/backup-all-sites.ts` 
+  (yours to backups/backup-YYYY-MM-DD.json, teams' to 
+  backups/teams/<team>-YYYY-MM-DD.json); 
   (2) run the migration on **every database** in the Team sites list, 
   stopping at the first failure:
   ```
@@ -263,7 +268,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `cognitive-tours`. Backups: each site's `/api/data`, with team 
   backups in `backups/teams/` (gitignored, so student work never lands 
   in the repo). **Adding a team:** add its database and site to this 
-  table *and* to the migration loop.
+  table, to the migration loop *and* to `SITES` in 
+  `scripts/backup-all-sites.ts`.
   - **Rotate any credential immediately if it's ever pasted into chat, docs, commit messages, or committed by mistake** — treat exposure to any external system (including this chat) as equivalent to a real leak. Sequence: generate new → invalidate all → generate final → update Vercel → update local `.env` → redeploy. See known issue below re: confirming redeploy actually triggers.
 
 
