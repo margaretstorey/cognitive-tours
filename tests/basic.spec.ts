@@ -147,3 +147,29 @@ test.describe('add waypoint while a tour has collapsed the panel', () => {
     await expect(page.getByText(waypointLabel)).toBeAttached();
   });
 });
+
+test('filter panel closes when clicking the graph canvas', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /^Filter/ }).click();
+  const selectAll = page.getByRole('button', { name: 'Select all' });
+  await expect(selectAll).toBeVisible();
+
+  // Blank canvas, away from nodes and the top-right overlay.
+  const pane = page.locator('.react-flow__pane');
+  const box = await pane.boundingBox();
+  if (!box) throw new Error('graph pane not found');
+  // Find a point on the empty pane itself (not a node, edge or control).
+  const point = await page.evaluate(({ x, y, w, h }) => {
+    for (let fy = 0.1; fy < 0.9; fy += 0.1) {
+      for (let fx = 0.1; fx < 0.9; fx += 0.1) {
+        const px = x + w * fx, py = y + h * fy;
+        if (document.elementFromPoint(px, py)?.classList.contains('react-flow__pane')) return { px, py };
+      }
+    }
+    return null;
+  }, { x: box.x, y: box.y, w: box.width, h: box.height });
+  if (!point) throw new Error('no empty canvas point found');
+  await page.mouse.click(point.px, point.py);
+
+  await expect(selectAll).not.toBeVisible();
+});

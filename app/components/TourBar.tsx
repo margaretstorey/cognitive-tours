@@ -70,13 +70,15 @@ export default function TourBar({
 
   useEffect(() => {
     if (!filterPanelOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = (e: PointerEvent) => {
       if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) {
         setFilterPanelOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    // Capture phase: React Flow's pan/zoom stops mousedown from bubbling, so a
+    // bubbling listener never saw clicks on the graph canvas.
+    document.addEventListener('pointerdown', handleClickOutside, true);
+    return () => document.removeEventListener('pointerdown', handleClickOutside, true);
   }, [filterPanelOpen]);
 
   useEffect(() => {

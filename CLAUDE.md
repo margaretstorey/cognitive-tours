@@ -106,12 +106,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   targets test.db or Turso. Run manually, periodically, not part of the 
   automated test flow. ✅
   - SETUP.md written — instructions for cloning to a separate repo and running an independent instance against your own database/project, so a collaborator can explore freely without touching production ✅
-  - Filter panel closes on click-away — clicking outside the panel (e.g. 
-  onto blank canvas space) does not currently dismiss it; decided this is 
-  fine as-is, since staying open while working the graph with active 
-  filters is arguably the better default. Click-away closing may still 
-  apply elsewhere (e.g. clicking a different UI element or in the waypoint panel) — worth 
-  confirming exact behavior before considering this fully resolved. In progress... but partially done!
+  - Filter panel closes on click-away — any click outside the panel now 
+  dismisses it, including on the graph canvas, nodes and edges (Oct 20; 
+  reverses the earlier "fine as-is" call after testing as a student). 
+  The canvas case had silently failed because React Flow's pan/zoom stops 
+  `mousedown` bubbling; the listener in TourBar.tsx now uses a 
+  capture-phase `pointerdown`. Covered by a Playwright test ✅
   - Stop numbers and waypoint type badges added to markdown view/export — 
   the Edit Tour view now shows each stop's position number (updates live 
   on reorder), and TourMarkdownView/tour-markdown.ts now render each 
