@@ -20,6 +20,10 @@ import {
 } from '@xyflow/react';
 import type { Waypoint, WaypointEdge, FilterState } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
+import { PROJECT_NAME } from '@/app/lib/project';
+
+// Bram demo, test site only (to be reverted).
+const IS_DEMO = PROJECT_NAME === 'Test team';
 
 type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean };
 
@@ -314,6 +318,7 @@ function Graph({
           fitView
           fitViewOptions={{ padding: 0.2 }}
           deleteKeyCode={null}
+          style={IS_DEMO ? { background: '#fce7f3' } : undefined}
         >
           <Background />
           <Controls />
