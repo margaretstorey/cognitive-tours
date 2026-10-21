@@ -380,5 +380,11 @@ test.describe('GitHub repo links', () => {
     await page.reload();
     await page.getByText(label).click();
     await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute('href', `${finito}/blob/HEAD/app/page.tsx`);
+
+    // Removing the personal setting falls back to the site's (none in tests).
+    await page.getByRole('button', { name: 'change repo' }).click();
+    await page.getByRole('button', { name: 'Remove my repo setting' }).click();
+    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: "Set your team's GitHub repo" })).toBeVisible();
   });
 });

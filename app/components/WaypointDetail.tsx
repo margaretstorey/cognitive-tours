@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
-import { githubFileLink, normalizeGitHubRepo, useRepoUrl } from '@/app/lib/repo';
+import { githubFileLink, normalizeGitHubRepo, SITE_REPO_URL, useRepoUrl } from '@/app/lib/repo';
 
 interface WaypointDetailProps {
   waypoint: Waypoint | null;
@@ -32,7 +32,7 @@ export default function WaypointDetail({
   const [editingFolder, setEditingFolder] = useState(false);
   const [folderDraft, setFolderDraft] = useState('');
 
-  const { repoUrl, setRepoUrl } = useRepoUrl();
+  const { repoUrl, setRepoUrl, isOwnSetting } = useRepoUrl();
   const [editingRepo, setEditingRepo] = useState(false);
   const [repoDraft, setRepoDraft] = useState('');
   const [repoError, setRepoError] = useState(false);
@@ -51,7 +51,17 @@ export default function WaypointDetail({
     setEditingRepo(true);
   };
 
+  // Drop this browser's own repo, falling back to the site's (or none).
+  const clearOwnRepo = () => {
+    setRepoUrl(null);
+    setEditingRepo(false);
+  };
+
   const saveRepo = () => {
+    if (!repoDraft.trim()) {
+      clearOwnRepo();
+      return;
+    }
     const normalized = normalizeGitHubRepo(repoDraft);
     if (!normalized) {
       setRepoError(true);
@@ -286,6 +296,10 @@ export default function WaypointDetail({
                 />
                 {repoError ? (
                   <p className="text-red-600">That doesn&apos;t look like a GitHub repo link.</p>
+                ) : !isOwnSetting && SITE_REPO_URL ? (
+                  <p className="text-gray-400">
+                    Your team&apos;s default is set by your instructor. Saving here overrides it in this browser only.
+                  </p>
                 ) : (
                   <p className="text-gray-400">Paste the address of your repo on GitHub. Saved in this browser only.</p>
                 )}
@@ -302,6 +316,16 @@ export default function WaypointDetail({
                   >
                     Cancel
                   </button>
+                  {isOwnSetting && (
+                    <button
+                      onClick={clearOwnRepo}
+                      className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                    >
+                      {SITE_REPO_URL
+                        ? `Use team default (${SITE_REPO_URL.replace('https://github.com/', '')})`
+                        : 'Remove my repo setting'}
+                    </button>
+                  )}
                 </div>
               </div>
             )}
