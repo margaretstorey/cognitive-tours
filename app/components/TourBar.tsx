@@ -162,8 +162,8 @@ export default function TourBar({
   // e.g. "finito-" on a team site, so downloads from different teams don't collide.
   const filePrefix = PROJECT_NAME ? `${tourSlug(PROJECT_NAME)}-` : '';
 
-  const downloadMarkdown = (markdown: string, filename: string) => {
-    const blob = new Blob([markdown], { type: 'text/markdown' });
+  const downloadFile = (content: string, filename: string, type = 'text/markdown') => {
+    const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -177,13 +177,23 @@ export default function TourBar({
     if (!tour) return;
     const markdown = generateTourMarkdown(tour, waypoints, { projectName: PROJECT_NAME, repoUrl });
     const filename = `${filePrefix}${tourSlug(tour.name)}-${new Date().toISOString().slice(0, 10)}.md`;
-    downloadMarkdown(markdown, filename);
+    downloadFile(markdown, filename);
   };
 
   const handleExportFullMap = () => {
     const markdown = generateFullMapMarkdown(waypoints, { projectName: PROJECT_NAME, repoUrl });
     const filename = `${filePrefix}full-map-${new Date().toISOString().slice(0, 10)}.md`;
-    downloadMarkdown(markdown, filename);
+    downloadFile(markdown, filename);
+  };
+
+  // The raw /api/data response: the shape seed-from-backup.ts restores from.
+  // Only ever this site's own data.
+  const handleDownloadBackup = async () => {
+    const res = await fetch('/api/data');
+    if (!res.ok) return;
+    const json = JSON.stringify(await res.json(), null, 2);
+    const filename = `${filePrefix}backup-${new Date().toISOString().slice(0, 10)}.json`;
+    downloadFile(json, filename, 'application/json');
   };
 
   // Green while a tour is live, so it's visible even with Tour Controls collapsed.
@@ -306,6 +316,13 @@ export default function TourBar({
               className="px-2.5 py-1 text-sm font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
             >
               Export full map ↓
+            </button>
+            <button
+              onClick={handleDownloadBackup}
+              title="Save a copy of your team's whole map (waypoints, edges and tours) to your computer"
+              className="px-2.5 py-1 text-sm font-medium border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-100"
+            >
+              Download backup ↓
             </button>
           </div>
         )}

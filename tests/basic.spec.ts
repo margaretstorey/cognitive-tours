@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import * as fs from 'fs';
 import { generateFullMapMarkdown, generateTourMarkdown } from '../app/lib/tour-markdown';
 import type { Tour, Waypoint } from '../app/lib/types';
 import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo } from '../app/lib/repo';
@@ -432,5 +433,20 @@ test.describe('full links as file paths', () => {
 
     await page.getByText(labels[1]).click();
     await expect(page.getByRole('link', { name: 'Open link' })).toHaveAttribute('href', doc);
+  });
+});
+
+test.describe('download backup', () => {
+  test('downloads this site\'s map as restorable JSON', async ({ page }) => {
+    await page.goto('/');
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: 'Download backup ↓' }).click(),
+    ]);
+    expect(download.suggestedFilename()).toMatch(/backup-\d{4}-\d{2}-\d{2}\.json$/);
+    const backup = JSON.parse(fs.readFileSync(await download.path(), 'utf8'));
+    expect(Array.isArray(backup.waypoints)).toBe(true);
+    expect(Array.isArray(backup.edges)).toBe(true);
+    expect(Array.isArray(backup.tours)).toBe(true);
   });
 });
