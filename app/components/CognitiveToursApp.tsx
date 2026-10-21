@@ -548,9 +548,9 @@ export default function CognitiveToursApp() {
               <button
                 onClick={() => setPanelCollapsed(false)}
                 title="Expand waypoint panel"
-                className="text-gray-400 hover:text-gray-700 text-sm"
+                className="text-blue-700 hover:text-blue-900 text-sm font-semibold [writing-mode:vertical-rl]"
               >
-                «
+                Waypoints «
               </button>
             </div>
           ) : (

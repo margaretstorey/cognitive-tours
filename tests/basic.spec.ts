@@ -138,6 +138,7 @@ test.describe('add waypoint while a tour has collapsed the panel', () => {
     // Selecting a tour collapses the waypoint panel by design.
     await page.getByLabel('Tour:').selectOption({ label: tourName });
     await expect(page.getByTitle('Expand waypoint panel')).toBeVisible();
+    await expect(page.getByTitle('Expand waypoint panel')).toContainText('Waypoints');
 
     await page.getByTestId('canvas-add-waypoint').click();
     const form = page.locator('.fixed.inset-0.z-50');
