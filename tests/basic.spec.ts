@@ -43,7 +43,7 @@ test.describe('delete a waypoint', () => {
 
 test('tour navigation increments step counter', async ({ page }) => {
   await page.goto('/');
-  await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' })
+  await page.getByLabel('Tour:')
     .selectOption({ label: 'New Developer Orientation' });
   await expect(page.getByText(/Step 1 of/)).toBeVisible();
   await page.getByRole('button', { name: 'Next →' }).click();
@@ -70,7 +70,7 @@ test.describe('docent mode', () => {
     await modal.getByRole('button', { name: 'Save' }).click();
 
     // Activate the tour
-    await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' }).selectOption({ label: 'Docent Test Tour' });
+    await page.getByLabel('Tour:').selectOption({ label: 'Docent Test Tour' });
 
     // Amber narrative bar should be visible with the stop's narrative
     const bar = page.getByTestId('docent-narrative-bar');
@@ -105,7 +105,7 @@ test.describe('tour author and updated date', () => {
 
     // Reload so the byline comes from the database, not optimistic state.
     await page.reload();
-    await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' }).selectOption({ label: 'Author Test Tour' });
+    await page.getByLabel('Tour:').selectOption({ label: 'Author Test Tour' });
     await page.getByRole('button', { name: 'Markdown View' }).click();
 
     const byline = page.getByTestId('tour-byline');
@@ -136,7 +136,7 @@ test.describe('add waypoint while a tour has collapsed the panel', () => {
     await modal.getByRole('button', { name: 'Save' }).click();
 
     // Selecting a tour collapses the waypoint panel by design.
-    await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' }).selectOption({ label: tourName });
+    await page.getByLabel('Tour:').selectOption({ label: tourName });
     await expect(page.getByTitle('Expand waypoint panel')).toBeVisible();
 
     await page.getByTestId('canvas-add-waypoint').click();

@@ -172,31 +172,47 @@ export default function TourBar({
     downloadMarkdown(markdown, filename);
   };
 
+  // Shared by both selector variants (tour active / full map) so the
+  // "no tour" choice and the tours list read the same everywhere.
+  const tourOptions = (
+    <>
+      <option value="">None (show full map)</option>
+      {sortedTours.length > 0 ? (
+        <optgroup label={`Tours (${sortedTours.length})`}>
+          {sortedTours.map(t => (
+            <option key={t.id} value={t.id}>{t.name}</option>
+          ))}
+        </optgroup>
+      ) : (
+        <option disabled>No tours yet: use + New Tour</option>
+      )}
+    </>
+  );
+
   return (
     <>
       <div className="flex items-center gap-3 px-4 h-14 border-b-2 border-gray-200 bg-slate-50 shrink-0">
+        <label htmlFor="tour-select" className="text-sm font-medium text-gray-700">
+          Tour:
+        </label>
         {activeTourId ? (
           <select
+            id="tour-select"
             className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
             value={activeTourId ?? ''}
             onChange={e => onSelectTour(e.target.value || null)}
           >
-            <option value="">Return to viewing the full map</option>
-            {sortedTours.map(t => (
-              <option key={t.id} value={t.id}>{t.name}</option>
-            ))}
+            {tourOptions}
           </select>
         ) : (
           <>
             <select
+              id="tour-select"
               className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
               value={activeTourId ?? ''}
               onChange={e => onSelectTour(e.target.value || null)}
             >
-              <option value="">Full Map -- all waypoints displayed</option>
-              {sortedTours.map(t => (
-                <option key={t.id} value={t.id}>{t.name}</option>
-              ))}
+              {tourOptions}
             </select>
             <button
               onClick={openCreate}
