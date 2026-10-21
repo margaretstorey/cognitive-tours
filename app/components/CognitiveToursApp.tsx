@@ -520,12 +520,6 @@ export default function CognitiveToursApp() {
             );
           })()
         )}
-        {/* Bram demo, test site only (to be reverted). */}
-        {PROJECT_NAME === 'Test team' && (
-          <p className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-sm font-semibold">
-            Ciara
-          </p>
-        )}
       </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (
