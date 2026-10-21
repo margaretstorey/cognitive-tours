@@ -27,9 +27,10 @@ function WaypointNode({ data, selected }: NodeProps & { data: WaypointNodeData }
   const colorClass = WAYPOINT_COLORS[data.waypoint.type];
   return (
     <div
-      className={`px-3 py-2 rounded-lg border-2 text-sm font-medium max-w-[180px] shadow-sm ${colorClass} ${
+      data-current-stop={data.isActiveTourStep ? 'true' : undefined}
+      className={`px-3 py-2 rounded-lg border-2 transition-transform text-sm font-medium max-w-[180px] shadow-sm ${colorClass} ${
         data.isActiveTourStep
-          ? 'ring-4 ring-offset-2 ring-blue-500 shadow-lg shadow-blue-400/50'
+          ? 'scale-[1.2] ring-[6px] ring-offset-2 ring-blue-500 shadow-xl shadow-blue-500/60'
           : selected ? 'ring-2 ring-offset-1 ring-blue-500' : ''
       }`}
     >
@@ -60,6 +61,8 @@ interface WaypointGraphProps {
   tourName?: string;
   tourDescription?: string;
   panelCollapsed?: boolean;
+  /** While a tour is active: true fits every stop, false follows the current stop. */
+  tourOverview?: boolean;
 }
 
 function Graph({
@@ -78,9 +81,10 @@ function Graph({
   tourName,
   tourDescription,
   panelCollapsed,
+  tourOverview = false,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-  const { getNodesBounds, setViewport } = useReactFlow();
+  const { getNodesBounds, setViewport, setCenter, getInternalNode, getViewport } = useReactFlow();
   const paneRef = useRef<HTMLDivElement>(null);
 
   const hiddenNodeIds = useMemo(() => {
@@ -96,20 +100,25 @@ function Graph({
     () =>
       waypoints
         .filter(w => !hiddenNodeIds.has(w.id))
-        .map(w => ({
-          id: w.id,
-          type: 'waypointNode',
-          position: w.position,
-          data: {
-            waypoint: w,
-            isActiveTourStep: activeTourWaypointIds.length > 0 && w.id === selectedWaypointId,
-          },
-          selected: w.id === selectedWaypointId,
-          style:
-            activeTourWaypointIds.length > 0 && !activeTourWaypointIds.includes(w.id)
-              ? { opacity: 0.2 }
-              : undefined,
-        })),
+        .map(w => {
+          const inTour = activeTourWaypointIds.length > 0;
+          const isCurrentStop = inTour && w.id === selectedWaypointId;
+          // Spotlight: the current stop leads, other stops recede, and
+          // waypoints outside the tour fade furthest.
+          const opacity = !inTour || isCurrentStop
+            ? undefined
+            : activeTourWaypointIds.includes(w.id) ? 0.5 : 0.2;
+          return {
+            id: w.id,
+            type: 'waypointNode',
+            position: w.position,
+            data: { waypoint: w, isActiveTourStep: isCurrentStop },
+            selected: w.id === selectedWaypointId,
+            // Draw the enlarged current stop above neighbours it grows into.
+            zIndex: isCurrentStop ? 1000 : undefined,
+            style: opacity !== undefined ? { opacity } : undefined,
+          };
+        }),
     [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds]
   );
 
@@ -117,6 +126,12 @@ function Graph({
   nodesRef.current = nodes;
 
   const tourKey = activeTourWaypointIds.join(',');
+  // The stop to follow: only when a tour is active, not in overview, and the
+  // selection is one of the tour's stops (a suspended tour selects other nodes).
+  const followStopId =
+    tourKey && !tourOverview && selectedWaypointId && activeTourWaypointIds.includes(selectedWaypointId)
+      ? selectedWaypointId
+      : null;
 
   useEffect(() => {
     // Wait a couple of frames so the tour header (whose height varies with
@@ -137,6 +152,20 @@ function Graph({
         const height = container.clientHeight;
         if (width === 0 || height === 0) return;
 
+        if (followStopId) {
+          // Center the current stop at a readable zoom: zoom in to at least
+          // 1.0 if zoomed out, but don't push an already-close view further.
+          const node = getInternalNode(followStopId);
+          if (node) {
+            const { x, y } = node.internals.positionAbsolute;
+            const w = node.measured.width ?? 0;
+            const h = node.measured.height ?? 0;
+            const zoom = Math.min(1.5, Math.max(1, getViewport().zoom));
+            setCenter(x + w / 2, y + h / 2, { zoom, duration: 400 });
+            return;
+          }
+        }
+
         const ids = tourKey ? tourKey.split(',') : nodesRef.current.map(n => n.id);
         if (ids.length === 0) return;
 
@@ -155,7 +184,7 @@ function Graph({
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
     };
-  }, [tourKey, filterState, panelCollapsed, getNodesBounds, setViewport]);
+  }, [tourKey, followStopId, filterState, panelCollapsed, getNodesBounds, setViewport, setCenter, getInternalNode, getViewport]);
 
   const rfEdges: Edge[] = useMemo(
     () =>

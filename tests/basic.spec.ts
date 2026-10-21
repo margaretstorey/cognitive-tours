@@ -173,3 +173,58 @@ test('filter panel closes when clicking the graph canvas', async ({ page }) => {
 
   await expect(selectAll).not.toBeVisible();
 });
+
+test.describe('tour stop focus', () => {
+  const tourName = 'Focus Test Tour';
+
+  test.afterEach(async ({ request }) => {
+    const { tours } = await (await request.get('/api/data')).json();
+    const tour = tours.find((t: { name: string }) => t.name === tourName);
+    if (tour) await request.delete(`/api/tours/${tour.id}`);
+  });
+
+  test('Next centers and spotlights the current stop; overview shows the whole tour', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: '+ New Tour' }).click();
+    const modal = page.locator('.fixed.inset-0.z-50');
+    await modal.getByPlaceholder('Tour name').fill(tourName);
+    const picker = modal.locator('select').filter({ hasText: 'Add a waypoint' });
+    // Two stops far apart in the alphabetical list, so likely far apart on the map.
+    await picker.selectOption({ index: 1 });
+    const optionCount = await picker.locator('option').count();
+    await picker.selectOption({ index: optionCount - 1 });
+    await modal.getByRole('button', { name: 'Save' }).click();
+
+    await page.getByLabel('Tour:').selectOption({ label: tourName });
+    await page.getByRole('button', { name: 'Next →' }).click();
+
+    const pane = page.locator('.react-flow__pane');
+    const current = page.locator('[data-current-stop="true"]');
+    await expect(current).toHaveCount(1);
+
+    const centred = async () => {
+      const p = (await pane.boundingBox())!;
+      const n = (await current.boundingBox())!;
+      const dx = Math.abs(n.x + n.width / 2 - (p.x + p.width / 2)) / p.width;
+      const dy = Math.abs(n.y + n.height / 2 - (p.y + p.height / 2)) / p.height;
+      return dx < 0.15 && dy < 0.15;
+    };
+    await expect.poll(centred).toBe(true);
+
+    // Overview fits every stop inside the pane.
+    await page.getByRole('button', { name: 'Show whole tour' }).click();
+    // Tour stops are the nodes not dimmed to 0.2 (current stop and other stops).
+    const stops = page.locator('.react-flow__node:not([style*="opacity: 0.2"])');
+    await expect.poll(async () => {
+      const p = (await pane.boundingBox())!;
+      for (const box of await Promise.all((await stops.all()).map(s => s.boundingBox()))) {
+        if (!box) return false;
+        if (box.x < p.x || box.y < p.y || box.x + box.width > p.x + p.width || box.y + box.height > p.y + p.height) return false;
+      }
+      return true;
+    }).toBe(true);
+
+    await page.getByRole('button', { name: 'Back to stop' }).click();
+    await expect.poll(centred).toBe(true);
+  });
+});

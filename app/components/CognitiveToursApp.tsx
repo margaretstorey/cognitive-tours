@@ -50,6 +50,8 @@ export default function CognitiveToursApp() {
   const [tourEditorOpen, setTourEditorOpen] = useState(false);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [controlPanelCollapsed, setControlPanelCollapsed] = useState(false);
+  // During a tour the graph follows the current stop; overview fits every stop.
+  const [tourOverview, setTourOverview] = useState(false);
   const [tourSuspended, setTourSuspended] = useState(false);
   const [stopTextExpanded, setStopTextExpanded] = useState(false);
   const [stopDescriptionOverflowing, setStopDescriptionOverflowing] = useState(false);
@@ -130,6 +132,7 @@ export default function CognitiveToursApp() {
     setTourSuspended(false);
     setControlPanelCollapsed(false);
     setPanelCollapsed(true);
+    setTourOverview(false);
     setSelectedWaypointId(currentStopWaypointId);
   }, [currentStopWaypointId]);
 
@@ -347,6 +350,7 @@ export default function CognitiveToursApp() {
     (id: string | null) => {
       setActiveTourId(id);
       setActiveTourStepRaw(0);
+      setTourOverview(false);
       setPanelCollapsed(!!id);
       setControlPanelCollapsed(false);
       setTourSuspended(false);
@@ -390,6 +394,7 @@ export default function CognitiveToursApp() {
       return;
     }
     setActiveTourStepRaw(next);
+    setTourOverview(false);
     setSelectedWaypointId(activeTour.stops[next].waypointId);
   }, [activeTour, activeTourStep]);
 
@@ -397,6 +402,7 @@ export default function CognitiveToursApp() {
     if (!activeTour || activeTourStep === 0) return;
     const prev = activeTourStep - 1;
     setActiveTourStepRaw(prev);
+    setTourOverview(false);
     setSelectedWaypointId(activeTour.stops[prev].waypointId);
   }, [activeTour, activeTourStep]);
 
@@ -528,6 +534,7 @@ export default function CognitiveToursApp() {
               tourName={activeTour?.name}
               tourDescription={activeTour?.description}
               panelCollapsed={panelCollapsed}
+              tourOverview={tourOverview}
             />
           )}
         </div>
@@ -604,9 +611,17 @@ export default function CognitiveToursApp() {
                       Exit tour
                     </button>
                   </div>
-                  <span className="text-xs font-medium text-gray-700 tabular-nums">
-                    Step {activeTourStep + 1} of {activeTourLength}
-                  </span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-gray-700 tabular-nums">
+                      Step {activeTourStep + 1} of {activeTourLength}
+                    </span>
+                    <button
+                      onClick={() => setTourOverview(o => !o)}
+                      className="px-2.5 py-1 text-xs font-medium border border-gray-300 rounded-md hover:bg-gray-100 text-gray-700"
+                    >
+                      {tourOverview ? 'Back to stop' : 'Show whole tour'}
+                    </button>
+                  </div>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
                   {currentStopWaypoint && (
