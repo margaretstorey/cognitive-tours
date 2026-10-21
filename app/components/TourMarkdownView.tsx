@@ -3,6 +3,7 @@
 import type { Tour, Waypoint } from '@/app/lib/types';
 import { tourByline } from '@/app/lib/tour-markdown';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
+import { githubFileLink, useRepoUrl } from '@/app/lib/repo';
 
 interface TourMarkdownViewProps {
   tour: Tour;
@@ -12,6 +13,7 @@ interface TourMarkdownViewProps {
 
 export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: TourMarkdownViewProps) {
   const [codeFolder] = useCodeFolder();
+  const { repoUrl } = useRepoUrl();
   const waypointMap = new Map(waypoints.map(w => [w.id, w]));
 
   return (
@@ -80,6 +82,16 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
                       {wp.filePath}
                     </span>
                   ))}
+                  {wp.filePath?.trim() && repoUrl && (
+                    <a
+                      href={githubFileLink(repoUrl, wp.filePath) ?? undefined}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-blue-700 hover:underline block mb-2"
+                    >
+                      View on GitHub ↗
+                    </a>
+                  )}
                   {stop.narrative?.trim() && (
                     <div className="mt-2 border-l-2 border-amber-400 bg-amber-50 pl-3 py-2">
                       <p className="text-sm font-bold text-amber-900">Next stop commentary:</p>

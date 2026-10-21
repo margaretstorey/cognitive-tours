@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { generateFullMapMarkdown, generateTourMarkdown } from '../app/lib/tour-markdown';
 import type { Tour, Waypoint } from '../app/lib/types';
+import { normalizeGitHubRepo } from '../app/lib/repo';
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
@@ -282,10 +283,10 @@ test.describe('project name', () => {
     const wp: Waypoint = { id: 'w1', label: 'A waypoint', type: 'Feature', position: { x: 0, y: 0 } };
     const tour: Tour = { id: 't1', name: 'A tour', description: '', stops: [{ waypointId: 'w1' }] };
 
-    expect(generateTourMarkdown(tour, [wp], 'Finito')).toContain('*Project: Finito*');
+    expect(generateTourMarkdown(tour, [wp], { projectName: 'Finito' })).toContain('*Project: Finito*');
     expect(generateTourMarkdown(tour, [wp])).not.toContain('Project:');
 
-    expect(generateFullMapMarkdown([wp], 'Finito')).toMatch(/^# Full Map: Finito$/m);
+    expect(generateFullMapMarkdown([wp], { projectName: 'Finito' })).toMatch(/^# Full Map: Finito$/m);
     expect(generateFullMapMarkdown([wp])).toMatch(/^# Full Map$/m);
   });
 });
@@ -321,5 +322,63 @@ test.describe('code folder setting', () => {
     await page.reload();
     await page.getByText(label).click();
     await expect(page.getByRole('link', { name: 'Open in VS Code' })).toHaveAttribute('href', 'vscode://file/tmp/repo/app/page.tsx');
+  });
+});
+
+test.describe('GitHub repo links', () => {
+  const label = 'Repo Link Waypoint';
+  const finito = 'https://github.com/finito-startup/finito';
+
+  test.afterEach(async ({ request }) => {
+    const { waypoints } = await (await request.get('/api/data')).json();
+    const wp = waypoints.find((w: { label: string }) => w.label === label);
+    if (wp) await request.delete(`/api/waypoints/${wp.id}`);
+  });
+
+  test('normalizes the repo addresses people paste', () => {
+    for (const input of [
+      finito, `${finito}/`, `${finito}.git`, `${finito}/tree/main/app`, 'github.com/finito-startup/finito',
+      'git@github.com:finito-startup/finito.git',
+    ]) {
+      expect(normalizeGitHubRepo(input), input).toBe(finito);
+    }
+    for (const bad of ['https://gitlab.com/x/y', 'finito', 'https://github.com/finito-startup', '']) {
+      expect(normalizeGitHubRepo(bad), bad).toBeNull();
+    }
+  });
+
+  test('exports link file paths to GitHub only when a repo is known', () => {
+    const wp: Waypoint = { id: 'w1', label: 'A', type: 'Code Component', filePath: 'app/page.tsx', position: { x: 0, y: 0 } };
+    expect(generateFullMapMarkdown([wp], { repoUrl: finito })).toContain(`[\`app/page.tsx\`](${finito}/blob/HEAD/app/page.tsx)`);
+    expect(generateFullMapMarkdown([wp])).toContain('`app/page.tsx`');
+    expect(generateFullMapMarkdown([wp])).not.toContain('github.com');
+  });
+
+  test('a student sets the repo once and gets View on GitHub', async ({ page }) => {
+    await page.goto('/');
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(label);
+    await form.locator('select').selectOption('Code Component');
+    await form.getByPlaceholder('e.g. src/components/MyComponent.tsx').fill('app/page.tsx');
+    await form.getByRole('button', { name: 'Save' }).click();
+    await page.getByText(label).click();
+
+    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveCount(0);
+    await page.getByRole('button', { name: "Set your team's GitHub repo" }).click();
+    const input = page.getByLabel("Your team's GitHub repo");
+
+    await input.fill('finito');
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.getByText("That doesn't look like a GitHub repo link.")).toBeVisible();
+
+    await input.fill(`${finito}.git`);
+    await page.getByRole('button', { name: 'Save' }).click();
+    const link = page.getByRole('link', { name: 'View on GitHub' });
+    await expect(link).toHaveAttribute('href', `${finito}/blob/HEAD/app/page.tsx`);
+
+    await page.reload();
+    await page.getByText(label).click();
+    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute('href', `${finito}/blob/HEAD/app/page.tsx`);
   });
 });

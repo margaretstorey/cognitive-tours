@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
+import { githubFileLink, normalizeGitHubRepo, useRepoUrl } from '@/app/lib/repo';
 
 interface WaypointDetailProps {
   waypoint: Waypoint | null;
@@ -31,9 +32,33 @@ export default function WaypointDetail({
   const [editingFolder, setEditingFolder] = useState(false);
   const [folderDraft, setFolderDraft] = useState('');
 
+  const { repoUrl, setRepoUrl } = useRepoUrl();
+  const [editingRepo, setEditingRepo] = useState(false);
+  const [repoDraft, setRepoDraft] = useState('');
+  const [repoError, setRepoError] = useState(false);
+
+  // Only one inline setting form open at a time.
   const startEditingFolder = () => {
     setFolderDraft(codeFolder ?? '');
+    setEditingRepo(false);
     setEditingFolder(true);
+  };
+
+  const startEditingRepo = () => {
+    setRepoDraft(repoUrl ?? '');
+    setRepoError(false);
+    setEditingFolder(false);
+    setEditingRepo(true);
+  };
+
+  const saveRepo = () => {
+    const normalized = normalizeGitHubRepo(repoDraft);
+    if (!normalized) {
+      setRepoError(true);
+      return;
+    }
+    setRepoUrl(normalized);
+    setEditingRepo(false);
   };
 
   const header = (
@@ -146,7 +171,7 @@ export default function WaypointDetail({
           <div className="text-xs text-gray-500 border-t pt-3">
             <div className="font-medium text-gray-600 mb-1">Linked artifact</div>
             <p className="font-mono text-xs text-gray-700 break-all mb-2">{waypoint.filePath}</p>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(waypoint.filePath!).catch(() => {});
@@ -157,6 +182,25 @@ export default function WaypointDetail({
               >
                 {copied ? <span className="text-green-600 font-medium">Copied!</span> : 'Copy path'}
               </button>
+              {repoUrl ? (
+                <a
+                  href={githubFileLink(repoUrl, waypoint.filePath) ?? undefined}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                >
+                  View on GitHub
+                </a>
+              ) : (
+                !editingRepo && (
+                  <button
+                    onClick={startEditingRepo}
+                    className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                  >
+                    Set your team&apos;s GitHub repo
+                  </button>
+                )
+              )}
               {codeFolder ? (
                 <a
                   href={vscodeLink(codeFolder, waypoint.filePath) ?? undefined}
@@ -210,6 +254,50 @@ export default function WaypointDetail({
                   </button>
                   <button
                     onClick={() => setEditingFolder(false)}
+                    className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+            {repoUrl && !editingRepo && (
+              <button
+                onClick={startEditingRepo}
+                className="mt-1.5 block text-xs text-gray-400 hover:text-gray-600 hover:underline"
+              >
+                change repo
+              </button>
+            )}
+            {editingRepo && (
+              <div className="mt-2 flex flex-col gap-1.5">
+                <input
+                  type="text"
+                  aria-label="Your team's GitHub repo"
+                  value={repoDraft}
+                  onChange={e => { setRepoDraft(e.target.value); setRepoError(false); }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') saveRepo();
+                    if (e.key === 'Escape') setEditingRepo(false);
+                  }}
+                  placeholder="https://github.com/your-org/your-repo"
+                  className="border border-gray-300 rounded px-2 py-1 text-xs font-mono"
+                  autoFocus
+                />
+                {repoError ? (
+                  <p className="text-red-600">That doesn&apos;t look like a GitHub repo link.</p>
+                ) : (
+                  <p className="text-gray-400">Paste the address of your repo on GitHub. Saved in this browser only.</p>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    onClick={saveRepo}
+                    className="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 font-medium"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingRepo(false)}
                     className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
                   >
                     Cancel

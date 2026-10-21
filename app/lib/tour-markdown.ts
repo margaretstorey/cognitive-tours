@@ -1,5 +1,6 @@
 import type { Tour, Waypoint } from './types';
 import { WAYPOINT_TYPES } from './types';
+import { githubFileLink } from './repo';
 
 export function tourSlug(name: string): string {
   return name
@@ -8,7 +9,13 @@ export function tourSlug(name: string): string {
     .replace(/^-|-$/g, '');
 }
 
-function pushWaypointBody(lines: string[], wp: Waypoint): void {
+/** Context a deployment adds to exports; both optional. */
+export interface ExportContext {
+  projectName?: string | null;
+  repoUrl?: string | null;
+}
+
+function pushWaypointBody(lines: string[], wp: Waypoint, repoUrl?: string | null): void {
   if (wp.description?.trim()) {
     lines.push(wp.description);
     lines.push('');
@@ -20,8 +27,10 @@ function pushWaypointBody(lines: string[], wp: Waypoint): void {
   }
 
   if (wp.filePath?.trim()) {
-    // Exports are shared and committed, so no one's local folder belongs in them.
-    lines.push(`\`${wp.filePath}\``);
+    // Exports are shared and committed, so no one's local folder belongs in
+    // them; a GitHub link is the same for everyone, so it does.
+    const link = githubFileLink(repoUrl ?? null, wp.filePath);
+    lines.push(link ? `[\`${wp.filePath}\`](${link})` : `\`${wp.filePath}\``);
     lines.push('');
   }
 }
@@ -45,7 +54,7 @@ export function tourByline(tour: Tour): string {
   return parts.join(' · ');
 }
 
-export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[], projectName?: string | null): string {
+export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[], { projectName, repoUrl }: ExportContext = {}): string {
   const waypointMap = new Map(waypoints.map(w => [w.id, w]));
   const lines: string[] = [];
 
@@ -80,7 +89,7 @@ export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[], projectN
     lines.push(`## Stop ${index + 1}: ${wp.label} (${wp.type})`);
     lines.push('');
 
-    pushWaypointBody(lines, wp);
+    pushWaypointBody(lines, wp, repoUrl);
 
     if (stop.narrative?.trim()) {
       lines.push(`> ${stop.narrative}`);
@@ -91,7 +100,7 @@ export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[], projectN
   return lines.join('\n');
 }
 
-export function generateFullMapMarkdown(waypoints: Waypoint[], projectName?: string | null): string {
+export function generateFullMapMarkdown(waypoints: Waypoint[], { projectName, repoUrl }: ExportContext = {}): string {
   const lines: string[] = [];
 
   lines.push(projectName ? `# Full Map: ${projectName}` : '# Full Map');
@@ -114,7 +123,7 @@ export function generateFullMapMarkdown(waypoints: Waypoint[], projectName?: str
       lines.push(`### ${wp.label}`);
       lines.push('');
 
-      pushWaypointBody(lines, wp);
+      pushWaypointBody(lines, wp, repoUrl);
     });
   });
 

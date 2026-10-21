@@ -11,6 +11,7 @@ import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
 import { PROJECT_NAME } from '@/app/lib/project';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
+import { githubFileLink, useRepoUrl } from '@/app/lib/repo';
 
 type FormState =
   | { open: false }
@@ -55,6 +56,7 @@ export default function CognitiveToursApp() {
   // During a tour the graph follows the current stop; overview fits every stop.
   const [tourOverview, setTourOverview] = useState(false);
   const [codeFolder] = useCodeFolder();
+  const { repoUrl } = useRepoUrl();
   const [tourSuspended, setTourSuspended] = useState(false);
   const [stopTextExpanded, setStopTextExpanded] = useState(false);
   const [stopDescriptionOverflowing, setStopDescriptionOverflowing] = useState(false);
@@ -496,13 +498,27 @@ export default function CognitiveToursApp() {
         <p className="text-sm italic text-gray-300 mt-0">A tool for understanding driven development</p>
         {PROJECT_NAME && (
           // Pinned in the header's empty left side so it adds no height.
-          <p
-            data-testid="project-name"
-            title={`Project: ${PROJECT_NAME}`}
-            className="absolute left-4 top-1/2 -translate-y-1/2 max-w-[30%] truncate px-3 py-0.5 rounded-full bg-white text-black text-sm font-semibold"
-          >
-            Project: {PROJECT_NAME}
-          </p>
+          (() => {
+            const pillClass =
+              'absolute left-4 top-1/2 -translate-y-1/2 max-w-[30%] truncate px-3 py-0.5 rounded-full bg-white text-black text-sm font-semibold';
+            // With a known repo, the label opens it on GitHub.
+            return repoUrl ? (
+              <a
+                data-testid="project-name"
+                href={repoUrl}
+                target="_blank"
+                rel="noreferrer"
+                title={`Project: ${PROJECT_NAME} (open repo on GitHub)`}
+                className={`${pillClass} hover:bg-gray-200 underline-offset-2 hover:underline`}
+              >
+                Project: {PROJECT_NAME} ↗
+              </a>
+            ) : (
+              <p data-testid="project-name" title={`Project: ${PROJECT_NAME}`} className={pillClass}>
+                Project: {PROJECT_NAME}
+              </p>
+            );
+          })()
         )}
       </div>
       {/* T017: Error banner for mutation failures */}
@@ -707,6 +723,16 @@ export default function CognitiveToursApp() {
                                 'Copy path'
                               )}
                             </button>
+                            {repoUrl && (
+                              <a
+                                href={githubFileLink(repoUrl, currentStopWaypoint.filePath) ?? undefined}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                              >
+                                View on GitHub
+                              </a>
+                            )}
                             {codeFolder && (
                               <a
                                 href={vscodeLink(codeFolder, currentStopWaypoint.filePath) ?? undefined}
