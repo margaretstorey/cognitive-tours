@@ -34,6 +34,9 @@ export function toTour(row: DbTour & { waypoints: DbTourWaypoint[] }): Tour {
     id: row.id,
     name: row.name,
     description: row.description,
+    ...(row.author ? { author: row.author } : {}),
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
     stops: sorted.map((tw): TourStop => ({
       waypointId: tw.waypointId,
       ...(tw.narrative ? { narrative: tw.narrative } : {}),

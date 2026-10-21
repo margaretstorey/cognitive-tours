@@ -111,6 +111,10 @@ async function main() {
         id: t.id,
         name: t.name,
         description: t.description ?? '',
+        author: t.author?.trim() || null,
+        // Older backups predate these fields; the database defaults to now().
+        ...(t.createdAt ? { createdAt: new Date(t.createdAt) } : {}),
+        ...(t.updatedAt ? { updatedAt: new Date(t.updatedAt) } : {}),
         waypoints: {
           create: (t.stops ?? []).map((s, order) => ({
             waypointId: s.waypointId,

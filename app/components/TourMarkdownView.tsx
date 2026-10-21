@@ -1,6 +1,7 @@
 'use client';
 
 import type { Tour, Waypoint } from '@/app/lib/types';
+import { tourByline } from '@/app/lib/tour-markdown';
 
 interface TourMarkdownViewProps {
   tour: Tour;
@@ -15,6 +16,11 @@ export default function TourMarkdownView({ tour, waypoints, activeStepIndex }: T
     <div className="h-full overflow-y-auto p-6 bg-white">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{tour.name}</h1>
+        {tourByline(tour) && (
+          <p className="text-sm italic text-gray-500 mb-3" data-testid="tour-byline">
+            {tourByline(tour)}
+          </p>
+        )}
         {tour.description?.trim() && (
           <p className="text-gray-600 mb-3">
             <span className="font-bold">Tour Description: </span>

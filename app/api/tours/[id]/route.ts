@@ -27,6 +27,9 @@ export async function PUT(
         data: {
           ...(body.name !== undefined && { name: body.name }),
           ...(body.description !== undefined && { description: body.description }),
+          ...(body.author !== undefined && { author: body.author.trim() || null }),
+          // Explicit so a stops-only save (empty field update) still counts as a change.
+          updatedAt: new Date(),
         },
         include: { waypoints: true },
       });

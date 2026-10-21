@@ -43,7 +43,7 @@ test.describe('delete a waypoint', () => {
 
 test('tour navigation increments step counter', async ({ page }) => {
   await page.goto('/');
-  await page.locator('select').filter({ hasText: 'No tour selected' })
+  await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' })
     .selectOption({ label: 'New Developer Orientation' });
   await expect(page.getByText(/Step 1 of/)).toBeVisible();
   await page.getByRole('button', { name: 'Next →' }).click();
@@ -70,11 +70,46 @@ test.describe('docent mode', () => {
     await modal.getByRole('button', { name: 'Save' }).click();
 
     // Activate the tour
-    await page.locator('select').filter({ hasText: 'No tour selected' }).selectOption({ label: 'Docent Test Tour' });
+    await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' }).selectOption({ label: 'Docent Test Tour' });
 
     // Amber narrative bar should be visible with the stop's narrative
     const bar = page.getByTestId('docent-narrative-bar');
     await expect(bar).toBeVisible();
     await expect(bar).toContainText(narrative);
+  });
+});
+
+test.describe('tour author and updated date', () => {
+  test.afterEach(async ({ request }) => {
+    const { tours } = await (await request.get('/api/data')).json();
+    const tour = tours.find((t: { name: string }) => t.name === 'Author Test Tour');
+    if (tour) await request.delete(`/api/tours/${tour.id}`);
+  });
+
+  test('markdown view shows the tour author and updated date after reload', async ({ page, request }) => {
+    await page.goto('/');
+
+    await page.getByRole('button', { name: '+ New Tour' }).click();
+    const modal = page.locator('.fixed.inset-0.z-50');
+    await modal.getByPlaceholder('Tour name').fill('Author Test Tour');
+    await modal.getByLabel('Author').fill('Playwright Author');
+    await modal.getByRole('button', { name: 'Save' }).click();
+
+    // The server stores the author and sets the timestamps.
+    await expect(async () => {
+      const { tours } = await (await request.get('/api/data')).json();
+      const saved = tours.find((t: { name: string }) => t.name === 'Author Test Tour');
+      expect(saved?.author).toBe('Playwright Author');
+      expect(saved?.updatedAt).toBeTruthy();
+    }).toPass();
+
+    // Reload so the byline comes from the database, not optimistic state.
+    await page.reload();
+    await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' }).selectOption({ label: 'Author Test Tour' });
+    await page.getByRole('button', { name: 'Markdown View' }).click();
+
+    const byline = page.getByTestId('tour-byline');
+    await expect(byline).toContainText('By Playwright Author');
+    await expect(byline).toContainText('Updated');
   });
 });
