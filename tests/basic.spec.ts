@@ -12,7 +12,7 @@ test.describe('create a waypoint', () => {
   test('create a waypoint', async ({ page }) => {
     waypointLabel = `Playwright Test Waypoint ${Date.now()}`;
     await page.goto('/');
-    await page.getByText('+ Add Waypoint').click();
+    await page.getByTestId('canvas-add-waypoint').click();
     const form = page.locator('.fixed.inset-0.z-50');
     await form.getByPlaceholder('Short descriptive title').fill(waypointLabel);
     await form.locator('select').selectOption('Feature');
@@ -30,7 +30,7 @@ test.describe('delete a waypoint', () => {
 
   test('delete a waypoint', async ({ page }) => {
     await page.goto('/');
-    await page.getByText('+ Add Waypoint').click();
+    await page.getByTestId('canvas-add-waypoint').click();
     const form = page.locator('.fixed.inset-0.z-50');
     await form.getByPlaceholder('Short descriptive title').fill('Waypoint To Delete');
     await form.locator('select').selectOption('Feature');
@@ -111,5 +111,39 @@ test.describe('tour author and updated date', () => {
     const byline = page.getByTestId('tour-byline');
     await expect(byline).toContainText('By Playwright Author');
     await expect(byline).toContainText('Updated');
+  });
+});
+
+test.describe('add waypoint while a tour has collapsed the panel', () => {
+  const tourName = 'Collapsed Panel Tour';
+  const waypointLabel = 'Added From Canvas';
+
+  test.afterEach(async ({ request }) => {
+    const { tours, waypoints } = await (await request.get('/api/data')).json();
+    const tour = tours.find((t: { name: string }) => t.name === tourName);
+    if (tour) await request.delete(`/api/tours/${tour.id}`);
+    const wp = waypoints.find((w: { label: string }) => w.label === waypointLabel);
+    if (wp) await request.delete(`/api/waypoints/${wp.id}`);
+  });
+
+  test('canvas Add Waypoint stays reachable after selecting a tour', async ({ page }) => {
+    await page.goto('/');
+
+    await page.getByRole('button', { name: '+ New Tour' }).click();
+    const modal = page.locator('.fixed.inset-0.z-50');
+    await modal.getByPlaceholder('Tour name').fill(tourName);
+    await modal.locator('select').filter({ hasText: 'Add a waypoint' }).selectOption({ index: 1 });
+    await modal.getByRole('button', { name: 'Save' }).click();
+
+    // Selecting a tour collapses the waypoint panel by design.
+    await page.locator('select').filter({ hasText: 'Full Map -- all waypoints displayed' }).selectOption({ label: tourName });
+    await expect(page.getByTitle('Expand waypoint panel')).toBeVisible();
+
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(waypointLabel);
+    await form.locator('select').selectOption('Feature');
+    await form.getByRole('button', { name: 'Save' }).click();
+    await expect(page.getByText(waypointLabel)).toBeAttached();
   });
 });

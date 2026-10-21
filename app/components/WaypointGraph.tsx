@@ -288,7 +288,16 @@ function Graph({
         >
           <Background />
           <Controls />
-          <div className="absolute top-3 right-3 z-10">
+          {/* Add Waypoint lives on the canvas too, so it stays reachable when
+              the waypoint panel is collapsed (e.g. while a tour is selected). */}
+          <div className="absolute top-3 right-3 z-10 flex gap-2">
+            <button
+              onClick={onAddWaypointClick}
+              data-testid="canvas-add-waypoint"
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm hover:bg-gray-50"
+            >
+              + Add Waypoint
+            </button>
             <input
               type="text"
               value={searchQuery}
