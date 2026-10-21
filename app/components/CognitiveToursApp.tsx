@@ -511,6 +511,10 @@ export default function CognitiveToursApp() {
         onEditorOpenChange={setTourEditorOpen}
         filterState={filterState}
         onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
+        onExitTour={() => selectTour(null)}
+        // Exactly one Exit on screen: the top-bar one whenever Tour Controls'
+        // own isn't visible (collapsed, or hidden entirely in markdown view).
+        showExitTour={controlPanelCollapsed || markdownViewOpen}
       />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 relative overflow-hidden">
@@ -570,9 +574,9 @@ export default function CognitiveToursApp() {
               <button
                 onClick={() => setControlPanelCollapsed(false)}
                 title="Expand tour controls panel"
-                className="text-gray-400 hover:text-gray-700 text-sm"
+                className="text-green-700 hover:text-green-900 text-sm font-semibold [writing-mode:vertical-rl]"
               >
-                «
+                Tour «
               </button>
             </div>
           ) : (

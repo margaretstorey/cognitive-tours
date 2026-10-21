@@ -25,6 +25,9 @@ interface TourBarProps {
   onEditorOpenChange?: (open: boolean) => void;
   filterState: FilterState;
   onFilterChange: (type: WaypointType, visible: boolean) => void;
+  onExitTour: () => void;
+  /** Show a top-bar Exit tour when Tour Controls' own Exit isn't visible. */
+  showExitTour: boolean;
 }
 
 interface TourEditorState {
@@ -50,6 +53,8 @@ export default function TourBar({
   onEditorOpenChange,
   filterState,
   onFilterChange,
+  onExitTour,
+  showExitTour,
 }: TourBarProps) {
   const [editor, setEditor] = useState<TourEditorState>({
     open: false,
@@ -174,6 +179,11 @@ export default function TourBar({
     downloadMarkdown(markdown, filename);
   };
 
+  // Green while a tour is live, so it's visible even with Tour Controls collapsed.
+  const selectClass = activeTourId
+    ? 'text-sm border border-green-600 rounded px-2 py-1 bg-green-50 text-green-800 font-medium'
+    : 'text-sm border border-gray-300 rounded px-2 py-1 bg-white';
+
   // Shared by both selector variants (tour active / full map) so the
   // "no tour" choice and the tours list read the same everywhere.
   const tourOptions = (
@@ -200,7 +210,7 @@ export default function TourBar({
         {activeTourId ? (
           <select
             id="tour-select"
-            className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
+            className={selectClass}
             value={activeTourId ?? ''}
             onChange={e => onSelectTour(e.target.value || null)}
           >
@@ -210,7 +220,7 @@ export default function TourBar({
           <>
             <select
               id="tour-select"
-              className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
+              className={selectClass}
               value={activeTourId ?? ''}
               onChange={e => onSelectTour(e.target.value || null)}
             >
@@ -313,6 +323,15 @@ export default function TourBar({
             >
               {markdownViewOpen ? 'Graph View' : 'Markdown View'}
             </button>
+            {showExitTour && (
+              <button
+                onClick={onExitTour}
+                data-testid="topbar-exit-tour"
+                className="px-2.5 py-1 text-xs font-semibold text-white bg-red-600 rounded shadow-sm hover:bg-red-700"
+              >
+                Exit tour
+              </button>
+            )}
           </div>
         ) : null}
 

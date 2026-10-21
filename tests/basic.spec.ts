@@ -228,3 +228,41 @@ test.describe('tour stop focus', () => {
     await expect.poll(centred).toBe(true);
   });
 });
+
+test.describe('tour live indicators', () => {
+  const tourName = 'Live Indicator Tour';
+
+  test.afterEach(async ({ request }) => {
+    const { tours } = await (await request.get('/api/data')).json();
+    const tour = tours.find((t: { name: string }) => t.name === tourName);
+    if (tour) await request.delete(`/api/tours/${tour.id}`);
+  });
+
+  test('green selector and a top-bar Exit tour whenever Tour Controls is not visible', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: '+ New Tour' }).click();
+    const modal = page.locator('.fixed.inset-0.z-50');
+    await modal.getByPlaceholder('Tour name').fill(tourName);
+    await modal.locator('select').filter({ hasText: 'Add a waypoint' }).selectOption({ index: 1 });
+    await modal.getByRole('button', { name: 'Save' }).click();
+
+    const selector = page.getByLabel('Tour:');
+    const topbarExit = page.getByTestId('topbar-exit-tour');
+
+    await selector.selectOption({ label: tourName });
+    await expect(selector).toHaveClass(/border-green-600/);
+    await expect(topbarExit).toHaveCount(0);
+
+    // Collapsed Tour Controls: the top bar offers Exit.
+    await page.getByTitle('Collapse tour controls panel').click();
+    await expect(page.getByTitle('Expand tour controls panel')).toContainText('Tour');
+    await topbarExit.click();
+    await expect(selector).toHaveValue('');
+    await expect(selector).not.toHaveClass(/border-green-600/);
+
+    // Markdown view hides Tour Controls entirely, so the top bar offers Exit there too.
+    await selector.selectOption({ label: tourName });
+    await page.getByRole('button', { name: 'Markdown View' }).click();
+    await expect(topbarExit).toBeVisible();
+  });
+});
