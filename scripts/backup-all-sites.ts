@@ -14,33 +14,11 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import { SITES, siteUrl, isSiteBackup } from '../app/lib/sites';
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const BACKUPS_DIR = path.resolve(PROJECT_ROOT, 'backups');
 const TEAMS_DIR = path.resolve(BACKUPS_DIR, 'teams');
-
-// Mirrors CLAUDE.md → Team sites. Adding a site there means adding it here.
-// null is the user's own site (cognitive-tours.vercel.app).
-const SITES: (string | null)[] = [
-  null,
-  'test',
-  'finito',
-  'vitalitree',
-  'evernear',
-  'elevate',
-  'poold',
-  'ciara',
-];
-
-interface Backup {
-  waypoints: unknown[];
-  edges: unknown[];
-  tours: unknown[];
-}
-
-function siteUrl(name: string | null): string {
-  return `https://cognitive-tours${name ? `-${name}` : ''}.vercel.app`;
-}
 
 // Local date, so an evening backup isn't filed under tomorrow's UTC date.
 function today(): string {
@@ -59,19 +37,13 @@ function freePath(dir: string, base: string): string {
   throw new Error(`Too many backups for ${base} today`);
 }
 
-function isBackup(data: unknown): data is Backup {
-  if (typeof data !== 'object' || data === null) return false;
-  const d = data as Record<string, unknown>;
-  return Array.isArray(d.waypoints) && Array.isArray(d.edges) && Array.isArray(d.tours);
-}
-
 async function backupSite(name: string | null, date: string): Promise<void> {
   const label = (name ?? 'mine').padEnd(11);
   const res = await fetch(`${siteUrl(name)}/api/data`);
   if (!res.ok) throw new Error(`${label} HTTP ${res.status}`);
 
   const data: unknown = await res.json();
-  if (!isBackup(data)) throw new Error(`${label} response is not { waypoints, edges, tours }`);
+  if (!isSiteBackup(data)) throw new Error(`${label} response is not { waypoints, edges, tours }`);
 
   const dir = name ? TEAMS_DIR : BACKUPS_DIR;
   fs.mkdirSync(dir, { recursive: true });

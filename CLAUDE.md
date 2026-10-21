@@ -201,6 +201,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   backups/teams/<team>-YYYY-MM-DD.json (gitignored). Turso's own 
   point-in-time restore only reaches back 1 day on the current plan 
   (10 on Developer), so these files are the longer-term safety net.
+  **Nightly, automatically:** a Vercel cron (`vercel.json` → 
+  `/api/backup-nightly`, ~3 a.m. Pacific) saves every site to the private 
+  Blob store `cognitive-tours-backups`, under `nightly/YYYY-MM-DD/<site>.json` 
+  (`mine.json` is yours). Get one from Vercel → cognitive-tours → 
+  Storage → cognitive-tours-backups, or `vercel blob list`. It runs only 
+  on cognitive-tours (`BACKUP_ALL_SITES=true`, plus `CRON_SECRET`); the 
+  team projects get the cron but it does nothing there. Check its logs 
+  in Vercel if a night's folder is missing.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session.
 - **Refresh dev.db before auditing.** The audit-waypoints skill only 
@@ -269,7 +277,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   backups in `backups/teams/` (gitignored, so student work never lands 
   in the repo). **Adding a team:** add its database and site to this 
   table, to the migration loop *and* to `SITES` in 
-  `scripts/backup-all-sites.ts`.
+  `app/lib/sites.ts` (used by both the backup script and the nightly 
+  backup).
   - **Rotate any credential immediately if it's ever pasted into chat, docs, commit messages, or committed by mistake** — treat exposure to any external system (including this chat) as equivalent to a real leak. Sequence: generate new → invalidate all → generate final → update Vercel → update local `.env` → redeploy. See known issue below re: confirming redeploy actually triggers.
 
 
