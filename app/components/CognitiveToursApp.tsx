@@ -9,6 +9,7 @@ import WaypointDetail from './WaypointDetail';
 import TourBar from './TourBar';
 import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
+import { PROJECT_NAME } from '@/app/lib/project';
 
 type FormState =
   | { open: false }
@@ -491,6 +492,14 @@ export default function CognitiveToursApp() {
         <h1 className="text-4xl font-bold text-white">Cognitive Tours</h1>
         <p className="text-lg font-bold text-gray-200 mt-1">Understanding as a Deliverable</p>
         <p className="text-sm italic text-gray-300 mt-0">A tool for understanding driven development</p>
+        {PROJECT_NAME && (
+          <p
+            data-testid="project-name"
+            className="inline-block mt-1.5 px-3 py-0.5 rounded-full bg-white text-black text-sm font-semibold"
+          >
+            Project: {PROJECT_NAME}
+          </p>
+        )}
       </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (

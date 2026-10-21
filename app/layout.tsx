@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { PROJECT_NAME } from "./lib/project";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cognitive Tours",
+  title: PROJECT_NAME ? `${PROJECT_NAME} · Cognitive Tours` : "Cognitive Tours",
   description: "Navigate code, intent, and understanding together",
 };
 

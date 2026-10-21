@@ -5,6 +5,7 @@ import type { FilterState, Tour, TourStop, Waypoint, WaypointType } from '@/app/
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { generateFullMapMarkdown, generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
+import { PROJECT_NAME } from '@/app/lib/project';
 
 const FILTER_PRESETS: { label: string; types: WaypointType[] }[] = [
   { label: 'Intent Layer', types: ['Goal', 'User Need', 'Feature', 'ADR', 'Test', 'AI Instruction'] },
@@ -155,6 +156,9 @@ export default function TourBar({
     });
   };
 
+  // e.g. "finito-" on a team site, so downloads from different teams don't collide.
+  const filePrefix = PROJECT_NAME ? `${tourSlug(PROJECT_NAME)}-` : '';
+
   const downloadMarkdown = (markdown: string, filename: string) => {
     const blob = new Blob([markdown], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
@@ -168,14 +172,14 @@ export default function TourBar({
   const handleExport = () => {
     const tour = tours.find(t => t.id === activeTourId);
     if (!tour) return;
-    const markdown = generateTourMarkdown(tour, waypoints);
-    const filename = `${tourSlug(tour.name)}-${new Date().toISOString().slice(0, 10)}.md`;
+    const markdown = generateTourMarkdown(tour, waypoints, PROJECT_NAME);
+    const filename = `${filePrefix}${tourSlug(tour.name)}-${new Date().toISOString().slice(0, 10)}.md`;
     downloadMarkdown(markdown, filename);
   };
 
   const handleExportFullMap = () => {
-    const markdown = generateFullMapMarkdown(waypoints);
-    const filename = `full-map-${new Date().toISOString().slice(0, 10)}.md`;
+    const markdown = generateFullMapMarkdown(waypoints, PROJECT_NAME);
+    const filename = `${filePrefix}full-map-${new Date().toISOString().slice(0, 10)}.md`;
     downloadMarkdown(markdown, filename);
   };
 

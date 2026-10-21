@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { generateFullMapMarkdown, generateTourMarkdown } from '../app/lib/tour-markdown';
+import type { Tour, Waypoint } from '../app/lib/types';
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
@@ -265,5 +267,25 @@ test.describe('tour live indicators', () => {
     await selector.selectOption({ label: tourName });
     await page.getByRole('button', { name: 'Markdown View' }).click();
     await expect(topbarExit).toBeVisible();
+  });
+});
+
+test.describe('project name', () => {
+  test('no project pill when NEXT_PUBLIC_PROJECT_NAME is unset', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Cognitive Tours' })).toBeVisible();
+    await expect(page.getByTestId('project-name')).toHaveCount(0);
+    await expect(page).toHaveTitle('Cognitive Tours');
+  });
+
+  test('exports carry the project name only when one is given', () => {
+    const wp: Waypoint = { id: 'w1', label: 'A waypoint', type: 'Feature', position: { x: 0, y: 0 } };
+    const tour: Tour = { id: 't1', name: 'A tour', description: '', stops: [{ waypointId: 'w1' }] };
+
+    expect(generateTourMarkdown(tour, [wp], 'Finito')).toContain('*Project: Finito*');
+    expect(generateTourMarkdown(tour, [wp])).not.toContain('Project:');
+
+    expect(generateFullMapMarkdown([wp], 'Finito')).toMatch(/^# Full Map: Finito$/m);
+    expect(generateFullMapMarkdown([wp])).toMatch(/^# Full Map$/m);
   });
 });

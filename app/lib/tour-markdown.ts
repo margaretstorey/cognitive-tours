@@ -44,12 +44,17 @@ export function tourByline(tour: Tour): string {
   return parts.join(' · ');
 }
 
-export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[]): string {
+export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[], projectName?: string | null): string {
   const waypointMap = new Map(waypoints.map(w => [w.id, w]));
   const lines: string[] = [];
 
   lines.push(`# ${tour.name}`);
   lines.push('');
+
+  if (projectName) {
+    lines.push(`*Project: ${projectName}*`);
+    lines.push('');
+  }
 
   const byline = tourByline(tour);
   if (byline) {
@@ -85,10 +90,10 @@ export function generateTourMarkdown(tour: Tour, waypoints: Waypoint[]): string 
   return lines.join('\n');
 }
 
-export function generateFullMapMarkdown(waypoints: Waypoint[]): string {
+export function generateFullMapMarkdown(waypoints: Waypoint[], projectName?: string | null): string {
   const lines: string[] = [];
 
-  lines.push('# Full Map');
+  lines.push(projectName ? `# Full Map: ${projectName}` : '# Full Map');
   lines.push('');
   lines.push(`*${waypoints.length} waypoint${waypoints.length === 1 ? '' : 's'}*`);
   lines.push('');

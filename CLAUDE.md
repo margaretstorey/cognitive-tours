@@ -234,19 +234,22 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   Vercel project and Turso database, all deploying from this repo's 
   `main`; only the env vars differ. Your own site is untouched.
 
-  | Site | Vercel project (URL may differ; confirm after creation) | Turso database |
-  |---|---|---|
-  | Mine | cognitive-tours (cognitive-tours.vercel.app) | cognitive-tours |
-  | Test (what students see) | cognitive-tours-test | ct-test |
-  | Finito | cognitive-tours-finito | ct-finito |
-  | Vitalitree | cognitive-tours-vitalitree | ct-vitalitree |
-  | Evernear | cognitive-tours-evernear | ct-evernear |
-  | Elevate | cognitive-tours-elevate | ct-elevate |
-  | Poold | cognitive-tours-poold | ct-poold |
+  | Site | Vercel project | Turso database | NEXT_PUBLIC_PROJECT_NAME |
+  |---|---|---|---|
+  | Mine | cognitive-tours (cognitive-tours.vercel.app) | cognitive-tours | (unset) |
+  | Test (what students see) | cognitive-tours-test | ct-test | Test team |
+  | Finito | cognitive-tours-finito | ct-finito | Finito |
+  | Vitalitree | cognitive-tours-vitalitree | ct-vitalitree | Vitalitree |
+  | Evernear | cognitive-tours-evernear | ct-evernear | Evernear |
+  | Elevate | cognitive-tours-elevate | ct-elevate | Elevate |
+  | Poold | cognitive-tours-poold | ct-poold | Poold |
 
-  Team projects set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` and 
-  `SEED_ON_EMPTY=false`, so a new team starts with an empty map instead 
-  of the self-documentation seed. **How changes reach every site:** 
+  Team projects set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, 
+  `SEED_ON_EMPTY=false` (a new team starts with an empty map instead of 
+  the self-documentation seed) and `NEXT_PUBLIC_PROJECT_NAME` (shown as 
+  a "Project:" pill in the header, in the tab title and in exports and 
+  their filenames; baked in at build time, so changing it needs a 
+  redeploy). Sites are at `<vercel project>.vercel.app`. **How changes reach every site:** 
   code: one push to `main` deploys all of them; afterwards, check each 
   project's Deployments tab for the new build (see the Vercel Git 
   disconnect known issue). Schema: the migration loop above, never just 
