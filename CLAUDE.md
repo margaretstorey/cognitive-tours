@@ -511,6 +511,21 @@ Full constitution: .specify/memory/constitution.md
   path. Ties into the existing "Tours will move to their own tab" idea 
   already in Key Decisions.
 
+12. **Waypoint and tour authoring skill, integrated with Bram** (idea, 
+  Oct 20; later). A Claude Code skill that helps create waypoints and 
+  tours while working in a repo through Bram. For example, after a 
+  Worklist item lands, it could offer to draft a waypoint for what 
+  changed, or a tour stop linking the change to its spec and ADR. The 
+  human edits and saves it in the app. Open questions: the item 5 
+  question, whether AI drafting undermines the understanding-building 
+  (a possible answer: the skill asks questions and the human writes, 
+  rather than the skill writing); whether it writes through the app's 
+  API or produces a draft the human pastes in (the existing skills are 
+  deliberately read-only); whether Bram's Worklist history (item drafts 
+  and commits) is the right source for "what changed and why". Related: 
+  item 5 (AI suggest), the `audit-tours` skill idea above, and 
+  `docs/student-kit/` (once it exists).
+
 
 ---
 
