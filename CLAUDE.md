@@ -211,15 +211,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   in Vercel if a night's folder is missing.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session.
-- **Refresh dev.db before auditing.** The audit-waypoints skill only 
-  reads local prisma/dev.db, never production/Turso. Before running the 
-  skill if you want it checking current production state: (1) visit 
-  /api/data on the live app and save the JSON to backups/backup-YYYY-MM-DD.json, 
-  (2) run `npx tsx scripts/seed-from-backup.ts backups/backup-YYYY-MM-DD.json` 
-  to refresh dev.db, (3) then run /audit-waypoints. Otherwise findings 
-  may reflect stale local data, not what's actually live. 
-  /audit-tours needs none of this: it reads the live site's /api/data 
-  directly.
+- **Auditing reads the live site.** /audit-waypoints and /audit-tours 
+  both read the site's /api/data directly (GET only; pass `site <url>` 
+  for a team's site), so there's no dev.db refresh step. 
+  `scripts/seed-from-backup.ts` is still how to refresh local dev data.
   - **Applying a schema migration to production (Turso).** Vercel builds 
   don't run migrations. Before merging a branch with a new migration to 
   `main`: (0) sign in to the Turso CLI with `turso auth login`, using 
@@ -379,10 +374,9 @@ presets in "What is built and working" for the concrete implementation.
   backup. The audit-waypoints skill is strictly read-only by design (see 
   above). Merging them would mean one command sometimes writes and 
   sometimes only reads, which undermines the "always safe to run" trust 
-  the audit skill was specifically redesigned to earn. Workflow: run the 
-  seed script first (deliberately, when dev.db needs to catch up to 
-  production), then run the audit skill separately afterward to check 
-  freshness against whatever's now local.
+  the audit skill was specifically redesigned to earn. (Since Oct 21 
+  the audit skills read the live site's /api/data, not dev.db, so 
+  they no longer depend on the seed script at all.)
   - **"Bridge" vs "Next" terminology still unresolved** (open since Session 
   11, resurfaced Session 14). Decide before touching more surfaces that 
   reference next-stop commentary.

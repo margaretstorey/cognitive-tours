@@ -9,19 +9,29 @@ disable-model-invocation: false
 
 Purpose: check Code Component, ADR, and Test waypoint descriptions
 against the actual current contents of their linked files, and flag
-factual drift. This skill is read-only with respect to waypoint data —
-it never writes to the database, calls the app's API, or edits
-anything on the user's behalf. Waypoints live in whichever database
-the running app is currently pointed at (local SQLite in dev, Turso in
-production), which this skill cannot always tell apart from the repo
-alone — so it never guesses at which store to write to. All
-corrections are applied by the user, by hand, through the app's own
-Edit Waypoint UI.
+factual drift. This skill is read-only with respect to waypoint data:
+it reads the map from the site's `/api/data` and never writes to it or
+edits anything on the user's behalf. All corrections are applied by
+the user, by hand, through the app's own Edit Waypoint UI.
+
+Usage: `/audit-waypoints`, optionally `site <url>`.
+
+## Setup
+
+1. **Which site.** Use the `site` argument if given. Otherwise, if
+   `CLAUDE.md` lists the user's own site, use that
+   (`https://cognitive-tours.vercel.app` in the Cognitive Tours repo);
+   if it doesn't, ask for the site's URL and wait.
+2. **Read the map.** Fetch `<site>/api/data` with a plain GET
+   (`curl -sS <site>/api/data`) into a scratch file and work from it
+   with `jq`. Its `waypoints` each have `id`, `label`, `type`,
+   `description`, `notes` and `filePath`. Say which site was read and
+   how many waypoints it has.
 
 ## Procedure
 
-1. Fetch all waypoints of type "Code Component", "ADR", or "Test" that
-   have a non-empty filePath.
+1. From that JSON, take all waypoints of type "Code Component", "ADR",
+   or "Test" that have a non-empty filePath.
    A filePath starting with `http://` or `https://` is an external
    link: don't read or flag it; list it once at the end as
    "external, not checked".
@@ -100,3 +110,8 @@ independently of the numbered, one-at-a-time drift findings above.
 4. As with the rest of this skill: report only. Never write to the
    waypoint data, and never offer to create the missing file or edit
    the waypoint.
+
+## Never
+
+- Write to the map in any way: no POST, PUT or DELETE to the site, no
+  edits to `prisma/*.db`, no scripts that do either.
