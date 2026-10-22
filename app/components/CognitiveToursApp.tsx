@@ -654,7 +654,7 @@ export default function CognitiveToursApp() {
                     </button>
                   </div>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-gray-700 tabular-nums">
+                    <span className="text-sm font-medium text-gray-700 tabular-nums">
                       Step {activeTourStep + 1} of {activeTourLength}
                     </span>
                     <button
@@ -674,14 +674,14 @@ export default function CognitiveToursApp() {
                         >
                           {currentStopWaypoint.type}
                         </span>
-                        <h3 className="text-sm font-semibold text-gray-900 leading-snug">
+                        <h3 className="text-base font-semibold text-gray-900 leading-snug">
                           {currentStopWaypoint.label}
                         </h3>
                       </div>
                       {currentStopWaypoint.description && (
                         <p
                           ref={stopDescriptionRef}
-                          className={`text-xs text-gray-700 leading-relaxed ${
+                          className={`text-sm text-gray-700 leading-relaxed ${
                             stopTextExpanded ? '' : 'line-clamp-10'
                           }`}
                         >
@@ -689,7 +689,7 @@ export default function CognitiveToursApp() {
                         </p>
                       )}
                       {currentStopWaypoint.notes && (stopTextExpanded || !stopDescriptionOverflowing) && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-sm text-gray-500">
                           <div className="font-medium text-gray-600 mb-0.5">Notes</div>
                           <p
                             ref={stopNotesRef}
@@ -761,7 +761,7 @@ export default function CognitiveToursApp() {
                       {currentNarrative && (
                         <div
                           data-testid="docent-narrative-bar"
-                          className="text-xs text-amber-800 bg-amber-50 border border-amber-400 rounded-lg px-3 py-2"
+                          className="text-sm text-amber-800 bg-amber-50 border border-amber-400 rounded-lg px-3 py-2"
                         >
                           <div className="font-bold mb-0.5">Next stop</div>
                           {currentNarrative}
