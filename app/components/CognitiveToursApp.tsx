@@ -505,7 +505,6 @@ export default function CognitiveToursApp() {
       <div className="relative px-4 py-2 border-b border-gray-200 bg-black shrink-0 text-center">
         <h1 className="text-4xl font-bold text-white">Cognitive Tours</h1>
         <p className="text-lg font-bold text-gray-200 mt-1">Understanding as a Deliverable</p>
-        <p className="text-sm italic text-gray-300 mt-0">A tool for understanding driven development</p>
         {PROJECT_NAME && (
           // Pinned in the header's empty left side so it adds no height.
           (() => {
