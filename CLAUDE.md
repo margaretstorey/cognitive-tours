@@ -210,7 +210,11 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   team projects get the cron but it does nothing there. Check its logs 
   in Vercel if a night's folder is missing.
 - **Update "Last updated" date** at the top of this file each session.
-- **Create a waypoint** for any significant new feature or decision before closing a session.
+- **Create a waypoint** for any significant new feature or decision before closing a session. 
+  Run `/suggest-waypoint`, then `/suggest-tour`: they find what's worth 
+  recording (decisions first) and ask questions while you write it. 
+  Also useful any time you suspect work went unrecorded 
+  (`/suggest-waypoint since YYYY-MM-DD`).
 - **Auditing reads the live site.** /audit-waypoints and /audit-tours 
   both read the site's /api/data directly (GET only; pass `site <url>` 
   for a team's site), so there's no dev.db refresh step. 
@@ -554,7 +558,16 @@ Full constitution: .specify/memory/constitution.md
   deliberately read-only); whether Bram's Worklist history (item drafts 
   and commits) is the right source for "what changed and why". Related: 
   item 5 (AI suggest), the `audit-tours` skill idea above, and 
-  `docs/student-kit/` (once it exists).
+  `docs/student-kit/` (once it exists). 
+  **First version (Oct 21):** `/suggest-waypoint` and `/suggest-tour` 
+  (`.claude/skills/`). Answers so far: they never write to the map 
+  (the human enters everything in the app); they read the site's 
+  /api/data; they use Bram's worklist history for the "why" when it's 
+  there; they ask questions first and give fact fields (label, type, 
+  path, edges, stop order) directly; descriptions and narratives are 
+  drafted only on request, after a nudge to try first. Still open: 
+  whether questions-first actually builds understanding (try it, and 
+  with students), and adding them to the student kit.
 
 
 ---
