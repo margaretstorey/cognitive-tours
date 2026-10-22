@@ -107,7 +107,7 @@ function Graph({
           // waypoints outside the tour fade furthest.
           const opacity = !inTour || isCurrentStop
             ? undefined
-            : activeTourWaypointIds.includes(w.id) ? 0.5 : 0.2;
+            : activeTourWaypointIds.includes(w.id) ? 0.85 : 0.2;
           return {
             id: w.id,
             type: 'waypointNode',
