@@ -217,7 +217,9 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   /api/data on the live app and save the JSON to backups/backup-YYYY-MM-DD.json, 
   (2) run `npx tsx scripts/seed-from-backup.ts backups/backup-YYYY-MM-DD.json` 
   to refresh dev.db, (3) then run /audit-waypoints. Otherwise findings 
-  may reflect stale local data, not what's actually live.
+  may reflect stale local data, not what's actually live. 
+  /audit-tours needs none of this: it reads the live site's /api/data 
+  directly.
   - **Applying a schema migration to production (Turso).** Vercel builds 
   don't run migrations. Before merging a branch with a new migration to 
   `main`: (0) sign in to the Turso CLI with `turso auth login`, using 
@@ -428,8 +430,17 @@ Full constitution: .specify/memory/constitution.md
   needs a stop covering it, likely inserted after CognitiveToursApp or 
   after TourBar, once audit-tours (or a manual pass) confirms full scope.
 
-  - **`audit-tours` skill (new, not yet built)** — Session 14 surfaced that 
-  `audit-waypoints` (per-node accuracy) has no counterpart for tour-level 
+  - **`audit-tours` skill — v1 built (Oct 21)** at 
+  `.claude/skills/audit-tours/SKILL.md`; run `/audit-tours since 
+  YYYY-MM-DD`. Read-only; reads the site's /api/data (not dev.db). 
+  Covers: which recently changed files have no waypoint or are in no 
+  tour (Coverage), stale bridges, bridges that don't bridge or point 
+  at the wrong next stop, redundant edges, and "consider" missing 
+  stops. Drafts narratives only on request, after a nudge to try 
+  first. Future improvements: the last scope bullet below (components 
+  that grew a lot but are in no tour that should include them), and 
+  tuning the heuristics once it's been used. Original scope, Session 
+  14: `audit-waypoints` (per-node accuracy) had no counterpart for tour-level 
   coherence. When a component moves or is restructured (e.g. today's move 
   of docent's amber bar from TourBar into Tour Control Panel), tour 
   bridges and edges can go stale silently — nothing currently flags this, 

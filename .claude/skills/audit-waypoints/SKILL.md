@@ -22,6 +22,9 @@ Edit Waypoint UI.
 
 1. Fetch all waypoints of type "Code Component", "ADR", or "Test" that
    have a non-empty filePath.
+   A filePath starting with `http://` or `https://` is an external
+   link: don't read or flag it; list it once at the end as
+   "external, not checked".
 2. For each one, read the actual file at that path.
 3. Compare the waypoint's description and notes against the file's
    current contents. Flag only concrete, verifiable claims that have
