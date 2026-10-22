@@ -39,8 +39,9 @@ Usage: `/audit-tours`, optionally `since YYYY-MM-DD` and/or
 
 This answers "what did I change that the map doesn't know about yet?"
 
-1. Run `git log --since=<date> --name-only --format='%h %s'` and
-   collect the changed files under `app/`, `tests/`, `scripts/` and
+1. Run `git log --since='<date> 00:00' --name-only --format='%h %s'`
+   (the `00:00` matters: a bare date means that day at the current
+   time) and collect the changed files under `app/`, `tests/`, `scripts/` and
    `prisma/schema.prisma` that still exist.
 2. For each file, list the waypoints whose `filePath` is that file
    (compare ignoring a leading `./`). Mark it **NO WAYPOINT** when
