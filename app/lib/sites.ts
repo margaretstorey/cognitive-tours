@@ -14,6 +14,7 @@ export const SITES: (string | null)[] = [
   'elevate',
   'poold',
   'ciara',
+  'demo',
 ];
 
 export function siteUrl(name: string | null): string {

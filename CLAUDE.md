@@ -230,7 +230,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (2) run the migration on **every database** in the Team sites list, 
   stopping at the first failure:
   ```
-  for db in cognitive-tours ct-test ct-finito ct-vitalitree ct-evernear ct-elevate ct-poold ct-ciara; do
+  for db in cognitive-tours ct-test ct-finito ct-vitalitree ct-evernear ct-elevate ct-poold ct-ciara ct-demo; do
     echo "== $db"; turso db shell "$db" < prisma/migrations/<new>/migration.sql || break
   done
   ```
@@ -258,6 +258,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   | Elevate | cognitive-tours-elevate | ct-elevate | Elevate | (unset) |
   | Poold | cognitive-tours-poold | ct-poold | Poold | (unset) |
   | Ciara (trying it out) | cognitive-tours-ciara | ct-ciara | Ciara | (unset) |
+  | Demo (public, brownfield) | cognitive-tours-demo | ct-demo | Flask (demo) | https://github.com/margaretstorey/flask |
+
+  The Demo site (Oct 22) is the public demo for the ICSE 2027 demo 
+  paper and for letting others try the tool, so they never edit your 
+  own map. Its map tours the user's fork of Flask (cloned at `~/flask`; 
+  `docs/design.rst` is the source for ADR waypoints). Anyone can edit 
+  it, so back it up before sharing the link; resetting it means 
+  re-seeding from a backup (see `restore-production-from-backup`).
 
   Team projects set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, 
   `SEED_ON_EMPTY=false` (a new team starts with an empty map instead of 
