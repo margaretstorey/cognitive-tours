@@ -181,6 +181,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   out into the Tour Controls panel earlier this session; the "select a 
   tour" prompt moved into the Waypoint panel. Waypoint renamed from "TourBar 
   — tour navigation" to "TourBar" to reflect this. ✅
+- New waypoints appear where the cursor last was on the map (Oct 27), 
+  replacing the Jul 8 top-right-of-the-map placement, which landed 
+  off-screen once you'd zoomed or panned. The position is taken when 
+  the form opens. From the canvas's + Add Waypoint it goes just below 
+  the button; if the cursor never came over the map, mid-view; always 
+  inside the visible map. Several in a row stack in a column instead 
+  of on top of each other. Markdown view and the empty-map screen keep 
+  the old placement. Covered by a Playwright test ✅
 
 ---
 

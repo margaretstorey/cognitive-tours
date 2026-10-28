@@ -63,7 +63,15 @@ interface WaypointGraphProps {
   panelCollapsed?: boolean;
   /** While a tour is active: true fits every stop, false follows the current stop. */
   tourOverview?: boolean;
+  /** Filled in by the graph: where a new waypoint should go, in map coordinates (null while the map isn't shown). */
+  placementRef?: React.MutableRefObject<(() => { x: number; y: number } | null) | null>;
 }
+
+// Roughly a waypoint node's size on screen at zoom 1 (nodes are max-w-[180px]),
+// used to keep a newly placed node fully inside the visible map.
+const NEW_NODE_WIDTH = 180;
+const NEW_NODE_HEIGHT = 60;
+const NEW_NODE_MARGIN = 16;
 
 function Graph({
   waypoints,
@@ -82,10 +90,64 @@ function Graph({
   tourDescription,
   panelCollapsed,
   tourOverview = false,
+  placementRef,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-  const { getNodesBounds, setViewport, setCenter, getInternalNode, getViewport } = useReactFlow();
+  const { getNodesBounds, setViewport, setCenter, getInternalNode, getViewport, screenToFlowPosition, getNodes } = useReactFlow();
   const paneRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
+  // Last cursor position over the map, in window coordinates, and whether it
+  // was over the canvas's own controls (+ Add Waypoint, Search).
+  const lastCursorRef = useRef<{ x: number; y: number; overControls: boolean } | null>(null);
+
+  const onPaneMouseMove = useCallback((e: React.MouseEvent) => {
+    const overControls = e.target instanceof Element && !!controlsRef.current?.contains(e.target);
+    lastCursorRef.current = { x: e.clientX, y: e.clientY, overControls };
+  }, []);
+
+  // A new waypoint goes under the cursor's last position on the map; just
+  // below the canvas controls if that's where the cursor was (the canvas's
+  // + Add Waypoint); or in the middle of the view if the cursor never came
+  // over the map. Always kept fully inside the visible map.
+  useEffect(() => {
+    if (!placementRef) return;
+    placementRef.current = () => {
+      // Not mounted while the map is empty ("Add first waypoint" screen).
+      if (!paneRef.current) return null;
+      const pane = paneRef.current.getBoundingClientRect();
+      const { zoom } = getViewport();
+      const w = NEW_NODE_WIDTH * zoom;
+      const h = NEW_NODE_HEIGHT * zoom;
+      const cursor = lastCursorRef.current;
+      let left: number;
+      let top: number;
+      if (cursor?.overControls && controlsRef.current) {
+        const controls = controlsRef.current.getBoundingClientRect();
+        left = controls.right - w;
+        top = controls.bottom + NEW_NODE_MARGIN;
+      } else if (cursor) {
+        left = cursor.x - w / 2;
+        top = cursor.y - h / 2;
+      } else {
+        left = pane.left + (pane.width - w) / 2;
+        top = pane.top + (pane.height - h) / 2;
+      }
+      left = Math.max(pane.left + NEW_NODE_MARGIN, Math.min(left, pane.right - w - NEW_NODE_MARGIN));
+      top = Math.max(pane.top + NEW_NODE_MARGIN, Math.min(top, pane.bottom - h - NEW_NODE_MARGIN));
+      const position = screenToFlowPosition({ x: left, y: top });
+      // Adding several waypoints in a row from the same spot stacks them in
+      // a column rather than exactly on top of each other.
+      const taken = (p: { x: number; y: number }) =>
+        getNodes().some(
+          n => Math.abs(n.position.x - p.x) < NEW_NODE_WIDTH / 2 && Math.abs(n.position.y - p.y) < NEW_NODE_HEIGHT,
+        );
+      for (let i = 0; i < 20 && taken(position); i++) position.y += NEW_NODE_HEIGHT + NEW_NODE_MARGIN;
+      return position;
+    };
+    return () => {
+      placementRef.current = null;
+    };
+  }, [placementRef, getViewport, screenToFlowPosition, getNodes]);
 
   const hiddenNodeIds = useMemo(() => {
     const q = searchQuery.toLowerCase();
@@ -300,7 +362,7 @@ function Graph({
   return (
     <div className="h-full w-full flex flex-col">
       {tourHeader}
-      <div className="flex-1 min-h-0 relative" ref={paneRef}>
+      <div className="flex-1 min-h-0 relative" ref={paneRef} onMouseMove={onPaneMouseMove}>
         <ReactFlow
           nodes={nodes}
           edges={rfEdges}
@@ -319,7 +381,7 @@ function Graph({
           <Controls />
           {/* Add Waypoint lives on the canvas too, so it stays reachable when
               the waypoint panel is collapsed (e.g. while a tour is selected). */}
-          <div className="absolute top-3 right-3 z-10 flex gap-2">
+          <div ref={controlsRef} className="absolute top-3 right-3 z-10 flex gap-2">
             <button
               onClick={onAddWaypointClick}
               data-testid="canvas-add-waypoint"

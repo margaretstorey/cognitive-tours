@@ -15,7 +15,7 @@ import { githubFileLink, linkLabel, useRepoUrl } from '@/app/lib/repo';
 
 type FormState =
   | { open: false }
-  | { open: true; mode: 'create' }
+  | { open: true; mode: 'create'; position: { x: number; y: number } | null }
   | { open: true; mode: 'edit'; waypoint: Waypoint };
 
 type LoadState = 'loading' | 'ready' | 'error';
@@ -66,6 +66,8 @@ export default function CognitiveToursApp() {
   const stopNotesRef = useRef<HTMLParagraphElement>(null);
   // Per-node debounce map for position changes (onNodesChange fires on every drag frame).
   const positionDebounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  // Set by WaypointGraph while the map is shown: where a new waypoint should go.
+  const placementRef = useRef<(() => { x: number; y: number } | null) | null>(null);
 
   const selectedWaypoint = waypoints.find(w => w.id === selectedWaypointId) ?? null;
   const activeTour = tours.find(t => t.id === activeTourId) ?? null;
@@ -153,14 +155,14 @@ export default function CognitiveToursApp() {
 
   // T018
   const createWaypoint = useCallback(
-    (data: Omit<Waypoint, 'id' | 'position'>) => {
+    (data: Omit<Waypoint, 'id' | 'position'>, placement: { x: number; y: number } | null) => {
       const id = `w-${Date.now()}`;
-      // Place near the top-right, next to the "+ Add Waypoint" button, so a
-      // newly created node is easy to spot instead of landing in the middle
-      // of the graph among everything else.
+      // Normally where the cursor last was on the map (see WaypointGraph's
+      // placementRef). When the map isn't showing (markdown view, or the
+      // empty-map screen), fall back to the top-right corner of the map.
       const maxX = waypoints.length > 0 ? Math.max(...waypoints.map(w => w.position.x)) : 400;
       const minY = waypoints.length > 0 ? Math.min(...waypoints.map(w => w.position.y)) : 100;
-      const position = { x: maxX + 150, y: minY };
+      const position = placement ?? { x: maxX + 150, y: minY };
       const newWaypoint: Waypoint = { id, position, ...data };
       setWaypoints(prev => [...prev, newWaypoint]);
       void (async () => {
@@ -464,7 +466,12 @@ export default function CognitiveToursApp() {
     [clearErrorAfterDelay],
   );
 
-  const openCreateForm = useCallback(() => setForm({ open: true, mode: 'create' }), []);
+  // The position is taken when the form opens, so moving the mouse while
+  // filling it in doesn't change where the waypoint lands.
+  const openCreateForm = useCallback(
+    () => setForm({ open: true, mode: 'create', position: placementRef.current?.() ?? null }),
+    [],
+  );
   const openEditForm = useCallback(
     (waypoint: Waypoint) => setForm({ open: true, mode: 'edit', waypoint }),
     [],
@@ -474,7 +481,7 @@ export default function CognitiveToursApp() {
   const handleFormSave = useCallback(
     (data: Omit<Waypoint, 'id' | 'position'>) => {
       if (form.open && form.mode === 'create') {
-        createWaypoint(data);
+        createWaypoint(data, form.position);
       } else if (form.open && form.mode === 'edit') {
         updateWaypoint(form.waypoint.id, data);
       }
@@ -577,6 +584,7 @@ export default function CognitiveToursApp() {
               tourDescription={activeTour?.description}
               panelCollapsed={panelCollapsed}
               tourOverview={tourOverview}
+              placementRef={placementRef}
             />
           )}
         </div>

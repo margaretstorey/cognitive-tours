@@ -24,6 +24,25 @@ test.describe('create a waypoint', () => {
     await form.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText(waypointLabel)).toBeVisible();
   });
+
+  test('a new waypoint appears where the cursor was on the map', async ({ page }) => {
+    waypointLabel = `Playwright Cursor Waypoint ${Date.now()}`;
+    await page.goto('/');
+    const pane = (await page.locator('.react-flow__pane').boundingBox())!;
+    const cursor = { x: pane.x + pane.width * 0.4, y: pane.y + pane.height * 0.6 };
+    await page.mouse.move(cursor.x, cursor.y);
+    // The waypoint panel's button, outside the map, so the last position the
+    // map saw is the one above.
+    await page.getByRole('button', { name: '+ Add Waypoint' }).and(page.locator(':not([data-testid])')).click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(waypointLabel);
+    await form.locator('select').selectOption('Feature');
+    await form.getByRole('button', { name: 'Save' }).click();
+
+    const node = (await page.locator('.react-flow__node', { hasText: waypointLabel }).boundingBox())!;
+    expect(Math.abs(node.x + node.width / 2 - cursor.x)).toBeLessThan(node.width);
+    expect(Math.abs(node.y + node.height / 2 - cursor.y)).toBeLessThan(node.height);
+  });
 });
 
 test.describe('delete a waypoint', () => {
