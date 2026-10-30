@@ -377,7 +377,8 @@ function Graph({
           fitViewOptions={{ padding: 0.2 }}
           deleteKeyCode={null}
         >
-          <Background />
+          {/* Tailwind pink-50: the palest pink, so Test waypoints (pink-100) still stand out. */}
+          <Background bgColor="#fdf2f8" />
           <Controls />
           {/* Add Waypoint lives on the canvas too, so it stays reachable when
               the waypoint panel is collapsed (e.g. while a tour is selected). */}

@@ -189,6 +189,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   inside the visible map. Several in a row stack in a column instead 
   of on top of each other. Markdown view and the empty-map screen keep 
   the old placement. Covered by a Playwright test ✅
+- Pink map canvas (Oct 30) — the graph background is Tailwind's pink-50 
+  (`<Background bgColor>` in WaypointGraph.tsx), on every site; panels, 
+  header and canvas buttons stay white. Kept paler than Test waypoints' 
+  pink-100 fill so they still stand out ✅
 
 ---
 
