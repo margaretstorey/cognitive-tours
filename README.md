@@ -15,8 +15,9 @@ the tours before reading any code. "Cognitive Tours - A Research Story" explains
 the research motivation. "How Cognitive Tours Work" walks through the code 
 architecture. The app is self-documenting — the tours are the onboarding.
 
-**Live app:** https://cognitive-tours.vercel.app  
-<!-- Note this is not password protected -->
+**Try it:** https://cognitive-tours-demo.vercel.app, a public demo map of Flask
+that anyone can explore and edit. The self-documenting Cognitive Tours map
+itself is private for now.  
 **Domains:** cognitive.tours | cognitivetours.dev  
 **Research foundation:** [From Technical Debt to Cognitive and Intent Debt](https://arxiv.org/abs/2603.22106) (Storey, 2026)
 

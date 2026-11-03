@@ -264,7 +264,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
   | Site | Vercel project | Turso database | NEXT_PUBLIC_PROJECT_NAME | NEXT_PUBLIC_REPO_URL |
   |---|---|---|---|---|
-  | Mine | cognitive-tours (cognitive-tours.vercel.app) | cognitive-tours | (unset) | (unset) |
+  | Mine | cognitive-tours (address in `MY_SITE_URL`; not written here) | cognitive-tours | (unset) | (unset) |
   | Test (what students see) | cognitive-tours-test | ct-test | Test team | (unset) |
   | Finito | cognitive-tours-finito | ct-finito | Finito | (unset) |
   | Vitalitree | cognitive-tours-vitalitree | ct-vitalitree | Vitalitree | (unset) |
@@ -273,6 +273,17 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   | Poold | cognitive-tours-poold | ct-poold | Poold | (unset) |
   | Ciara (trying it out) | cognitive-tours-ciara | ct-ciara | Ciara | (unset) |
   | Demo (public, brownfield) | cognitive-tours-demo | ct-demo | Flask (demo) | https://github.com/margaretstorey/flask |
+
+  **Your own site's address is kept out of the repo** (Nov 3): it 
+  lives only in `MY_SITE_URL`, in your local `.env` and in the 
+  cognitive-tours Vercel project (server-only, no `NEXT_PUBLIC_`), 
+  read by `app/lib/sites.ts`, the backup script, the nightly backup 
+  and the four audit/suggest skills. The site was moved to a 
+  hard-to-guess `cognitive-tours-<random>.vercel.app` so students and 
+  strangers don't stumble on it. That's a stopgap, not access control: 
+  anyone holding the link can still edit everything. The proper fix is 
+  Vercel Authentication (free on Pro) plus a protection bypass for the 
+  scripts and skills.
 
   The Demo site (Oct 22) is the public demo for the ICSE 2027 demo 
   paper and for letting others try the tool, so they never edit your 

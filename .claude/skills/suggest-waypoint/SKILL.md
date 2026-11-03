@@ -20,10 +20,12 @@ Usage: `/suggest-waypoint`, optionally `since YYYY-MM-DD` and/or
 
 ## Setup
 
-1. **Which site.** Use the `site` argument if given. Otherwise, if
-   `CLAUDE.md` lists the user's own site, use that
-   (`https://cognitive-tours.vercel.app` in the Cognitive Tours repo);
-   if it doesn't, ask for the site's URL and wait.
+1. **Which site.** Use the `site` argument if given. Otherwise use
+   the user's own site from the `MY_SITE_URL` line of the repo's
+   `.env`, read with `grep '^MY_SITE_URL=' .env` so nothing else in
+   `.env` is read. If there's no such line (e.g. in another repo), ask
+   for the site's URL and wait. Never write the address into a file
+   or a public artifact.
 2. **Read the map.** Fetch `<site>/api/data` with a plain GET
    (`curl -sS <site>/api/data`) into a scratch file and work from it
    with `jq`. It holds `waypoints` (`id`, `label`, `type`,

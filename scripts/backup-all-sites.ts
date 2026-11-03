@@ -12,6 +12,7 @@
  * are never overwritten: a second run the same day adds b, c, ...
  */
 
+import 'dotenv/config'; // MY_SITE_URL, your own site's address (see app/lib/sites.ts)
 import * as path from 'path';
 import * as fs from 'fs';
 import { SITES, siteUrl, isSiteBackup } from '../app/lib/sites';
