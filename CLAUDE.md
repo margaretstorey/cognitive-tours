@@ -193,6 +193,11 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (`<Background bgColor>` in WaypointGraph.tsx), on every site; panels, 
   header and canvas buttons stay white. Kept paler than Test waypoints' 
   pink-100 fill so they still stand out ✅
+- Tour Controls text one more size larger (Nov 3), for projecting and 
+  the demo video: every size in the panel stepped up together (stop 
+  title text-lg, body and buttons text-base, small print text-sm), 
+  after the Oct 21 step. Panel width unchanged; the Prev/Next/Exit row 
+  still fits on one line ✅
 
 ---
 

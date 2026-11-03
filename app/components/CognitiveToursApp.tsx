@@ -629,11 +629,11 @@ export default function CognitiveToursApp() {
             <div className="w-96 border-l border-gray-200 bg-white overflow-hidden shrink-0">
               <div className="flex flex-col h-full">
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between shrink-0">
-                  <h2 className="text-base font-bold text-gray-900">Tour Controls</h2>
+                  <h2 className="text-lg font-bold text-gray-900">Tour Controls</h2>
                   <button
                     onClick={() => setControlPanelCollapsed(true)}
                     title="Collapse tour controls panel"
-                    className="text-gray-400 hover:text-gray-700 text-xs px-1"
+                    className="text-gray-400 hover:text-gray-700 text-sm px-1"
                   >
                     »
                   </button>
@@ -643,31 +643,31 @@ export default function CognitiveToursApp() {
                     <button
                       onClick={handlePrev}
                       disabled={activeTourStep === 0}
-                      className="px-3 py-1.5 text-sm font-medium border border-gray-300 rounded-md disabled:opacity-40 hover:bg-gray-100 text-gray-700"
+                      className="px-3 py-1.5 text-base font-medium border border-gray-300 rounded-md disabled:opacity-40 hover:bg-gray-100 text-gray-700"
                     >
                       ← Prev
                     </button>
                     <button
                       onClick={handleNext}
                       disabled={isLastTourStep}
-                      className="px-3 py-1.5 text-sm font-semibold text-white bg-green-600 rounded-md shadow-sm hover:bg-green-700 disabled:opacity-40 disabled:hover:bg-green-600"
+                      className="px-3 py-1.5 text-base font-semibold text-white bg-green-600 rounded-md shadow-sm hover:bg-green-700 disabled:opacity-40 disabled:hover:bg-green-600"
                     >
                       Next →
                     </button>
                     <button
                       onClick={() => selectTour(null)}
-                      className="px-3 py-1.5 text-sm font-semibold text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700"
+                      className="px-3 py-1.5 text-base font-semibold text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700"
                     >
                       Exit tour
                     </button>
                   </div>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-gray-700 tabular-nums">
+                    <span className="text-base font-medium text-gray-700 tabular-nums">
                       Step {activeTourStep + 1} of {activeTourLength}
                     </span>
                     <button
                       onClick={() => setTourOverview(o => !o)}
-                      className="px-2.5 py-1 text-xs font-medium border border-gray-300 rounded-md hover:bg-gray-100 text-gray-700"
+                      className="px-2.5 py-1 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-100 text-gray-700"
                     >
                       {tourOverview ? 'Back to stop' : 'Show whole tour'}
                     </button>
@@ -678,18 +678,18 @@ export default function CognitiveToursApp() {
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-start gap-2">
                         <span
-                          className={`inline-block shrink-0 mt-0.5 px-2 py-0.5 rounded text-xs font-medium border ${WAYPOINT_COLORS[currentStopWaypoint.type]}`}
+                          className={`inline-block shrink-0 mt-0.5 px-2 py-0.5 rounded text-sm font-medium border ${WAYPOINT_COLORS[currentStopWaypoint.type]}`}
                         >
                           {currentStopWaypoint.type}
                         </span>
-                        <h3 className="text-base font-semibold text-gray-900 leading-snug">
+                        <h3 className="text-lg font-semibold text-gray-900 leading-snug">
                           {currentStopWaypoint.label}
                         </h3>
                       </div>
                       {currentStopWaypoint.description && (
                         <p
                           ref={stopDescriptionRef}
-                          className={`text-sm text-gray-700 leading-relaxed ${
+                          className={`text-base text-gray-700 leading-relaxed ${
                             stopTextExpanded ? '' : 'line-clamp-10'
                           }`}
                         >
@@ -697,7 +697,7 @@ export default function CognitiveToursApp() {
                         </p>
                       )}
                       {currentStopWaypoint.notes && (stopTextExpanded || !stopDescriptionOverflowing) && (
-                        <div className="text-sm text-gray-500">
+                        <div className="text-base text-gray-500">
                           <div className="font-medium text-gray-600 mb-0.5">Notes</div>
                           <p
                             ref={stopNotesRef}
@@ -712,17 +712,17 @@ export default function CognitiveToursApp() {
                         : stopDescriptionOverflowing || stopNotesOverflowing) && (
                         <button
                           onClick={() => setStopTextExpanded(e => !e)}
-                          className="self-start text-xs font-medium text-blue-600 hover:underline"
+                          className="self-start text-sm font-medium text-blue-600 hover:underline"
                         >
                           {stopTextExpanded ? 'Less' : 'More'}
                         </button>
                       )}
                       {currentStopWaypoint.filePath && (
-                        <div className="text-xs text-gray-500 border-t pt-3">
+                        <div className="text-sm text-gray-500 border-t pt-3">
                           <div className="font-medium text-gray-600 mb-1">
                             Linked artifact for the current waypoint
                           </div>
-                          <p className="font-mono text-xs text-gray-700 break-all mb-2">
+                          <p className="font-mono text-sm text-gray-700 break-all mb-2">
                             {currentStopWaypoint.filePath}
                           </p>
                           <div className="flex gap-2">
@@ -732,7 +732,7 @@ export default function CognitiveToursApp() {
                                 setStopLinkCopied(true);
                                 setTimeout(() => setStopLinkCopied(false), 2000);
                               }}
-                              className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                              className="px-2 py-1 text-sm border border-gray-200 rounded hover:bg-gray-50"
                             >
                               {stopLinkCopied ? (
                                 <span className="text-green-600 font-medium">Copied!</span>
@@ -747,7 +747,7 @@ export default function CognitiveToursApp() {
                                   href={webLink}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                                  className="px-2 py-1 text-sm border border-gray-200 rounded hover:bg-gray-50"
                                 >
                                   {linkLabel(webLink)}
                                 </a>
@@ -758,7 +758,7 @@ export default function CognitiveToursApp() {
                                 href={vscodeLink(codeFolder, currentStopWaypoint.filePath) ?? undefined}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="px-2 py-1 text-xs border border-gray-200 rounded hover:bg-gray-50"
+                                className="px-2 py-1 text-sm border border-gray-200 rounded hover:bg-gray-50"
                               >
                                 Open in VS Code
                               </a>
@@ -769,7 +769,7 @@ export default function CognitiveToursApp() {
                       {currentNarrative && (
                         <div
                           data-testid="docent-narrative-bar"
-                          className="text-sm text-amber-800 bg-amber-50 border border-amber-400 rounded-lg px-3 py-2"
+                          className="text-base text-amber-800 bg-amber-50 border border-amber-400 rounded-lg px-3 py-2"
                         >
                           <div className="font-bold mb-0.5">Next stop</div>
                           {currentNarrative}
@@ -779,7 +779,7 @@ export default function CognitiveToursApp() {
                   )}
                   <button
                     onClick={() => setPanelCollapsed(false)}
-                    className="text-xs text-gray-400 hover:text-gray-600 hover:underline self-start mt-auto"
+                    className="text-sm text-gray-400 hover:text-gray-600 hover:underline self-start mt-auto"
                   >
                     Open the Waypoint panel to edit →
                   </button>
