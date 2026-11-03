@@ -1,6 +1,6 @@
 # ADR 008: One Site and Database per Team
 
-**Status:** Accepted (supersedes ADR 007)  
+**Status:** Accepted (stopgap; defers ADR 007)  
 **Date:** 2026-10-20 (decided); written up 2026-11-03  
 **Related:** ADR 007 (One Database with Team-Scoped Rows), spec 009 (`specs/009-multi-user-support/spec.md`), issue #10, ADR 003 (Use Turso), ADR 004 (Deploy to Vercel), `docs/RESTORE.md`  
 **Author:** Margaret-Anne Storey (decision), Claude (write-up)
@@ -38,8 +38,11 @@ Only environment variables differ between sites (see the Team sites table in
 
 **Why:** mostly time, and also ease of deployment. It needed no schema change
 and no team code (46f4f82 changed five lines of application code), so the
-sites could be ready for the course. ADR 007 remains the better-researched
-design for team spaces in code; this was the one that could ship.
+sites could be ready for the course. It is meant to be temporary: the
+intended direction is still ADR 007's single database with team-scoped rows
+(now Deferred). Until one of the triggers below arrives, one site each is
+enough; as of Nov 3, perhaps 2 or 3 outside users are expected, and each can
+be given a site (or use the demo).
 
 ---
 
@@ -71,7 +74,8 @@ design for team spaces in code; this was the one that could ship.
 ## Alternatives Considered
 
 - **ADR 007, one database with team-scoped rows**: not chosen for the
-  launch, for lack of time to build and test the scoping safely.
+  launch, for lack of time to build and test the scoping safely. Deferred,
+  not abandoned.
 - **Separate tables per team**: still rejected, for ADR 007's reasons.
 
 ---
@@ -79,8 +83,8 @@ design for team spaces in code; this was the one that could ship.
 ## Revisit If
 
 - People outside the course (public or industry users) need their own
-  space to build their own tours, which needs accounts rather than a site
-  per person.
+  space to build their own tours, in numbers that one site each can't
+  handle; that needs accounts rather than a site per person.
 - An instructor overview across teams is needed.
 - The number of sites makes migrations, backups or builds a burden.
 - An approved research protocol (spec 009 FR-020 and FR-026) needs research

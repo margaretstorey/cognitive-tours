@@ -1,6 +1,6 @@
 # ADR 007: One Database with Team-Scoped Rows
 
-**Status:** Superseded by ADR 008 (`docs/adr/008-one-site-per-team.md`), Oct 20 2026: never built; each team got its own site and database instead  
+**Status:** Deferred (Nov 3 2026): still the intended direction, not built yet. Since Oct 20 each team has its own site and database instead, as a stopgap (ADR 008, `docs/adr/008-one-site-per-team.md`)  
 **Date:** 2026-09-24  
 **Related:** spec 009 (`specs/009-multi-user-support/spec.md`, FR-006, FR-007, SC-007), issue #10, ADR 003 (Use Turso), ADR 005 (SQLite + Prisma persistence)  
 **Author:** Margaret-Anne Storey (decision), Claude (write-up)
