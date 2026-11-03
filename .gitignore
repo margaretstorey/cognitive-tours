@@ -53,3 +53,5 @@ resources/
 
 # Team site backups contain student work; keep them out of the repo
 backups/teams/
+# Restore files (scripts/restore-production-from-backup.ts) can hold student work too
+backups/restore/

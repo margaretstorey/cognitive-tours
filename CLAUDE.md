@@ -223,6 +223,22 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   on cognitive-tours (`BACKUP_ALL_SITES=true`, plus `CRON_SECRET`); the 
   team projects get the cron but it does nothing there. Check its logs 
   in Vercel if a night's folder is missing.
+- **Restoring a site from a backup** (Nov 3). Replaces *everything* on 
+  that one site with the backup; anything written since is lost. 
+  `npx tsx scripts/restore-production-from-backup.ts <backup.json> <site>` 
+  (`<site>`: `mine`, `demo`, `finito`, …) checks the backup and writes 
+  `backups/restore/<site>-from-<backup>.sql` (gitignored). It connects 
+  to nothing and changes nothing. Then: (1) `npx tsx 
+  scripts/backup-all-sites.ts`, a fresh backup first; (2) `turso auth 
+  login` (gmail account); (3) `turso db shell <database> < <that file>` 
+  (`cognitive-tours` for yours, `ct-<name>` for the others); (4) reload 
+  the site and compare counts. To reset the demo, use 
+  `backups/demo-canonical.json` (committed, the Nov 3 demo map). 
+  Rehearse first if unsure: `sqlite3 <copy of dev.db> < <file>`. If 
+  the problem is code rather than data, use Vercel's Instant Rollback 
+  instead; Turso's own point-in-time restore covers the last day. 
+  Not yet checked: whether `turso db shell` rolls a failed file back 
+  as `sqlite3` does; if a run stops partway, run the same file again.
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session. 
   Run `/suggest-waypoint`, then `/suggest-tour`: they find what's worth 
@@ -290,7 +306,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   own map. Its map tours the user's fork of Flask (cloned at `~/flask`; 
   `docs/design.rst` is the source for ADR waypoints). Anyone can edit 
   it, so back it up before sharing the link; resetting it means 
-  re-seeding from a backup (see `restore-production-from-backup`).
+  restoring `backups/demo-canonical.json` (see "Restoring a site from 
+  a backup" above).
 
   Team projects set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, 
   `SEED_ON_EMPTY=false` (a new team starts with an empty map instead of 
