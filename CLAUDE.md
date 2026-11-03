@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: October 20 2026
+Last updated: November 3 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -87,7 +87,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   stop: selecting a tour, Next, Prev and Resume center it at a readable 
   zoom (at least 1.0, at most 1.5); node positions never change. 
   Spotlight: current stop scaled 1.2× with a heavier ring/glow and drawn 
-  on top, other stops at 50% opacity, non-tour nodes at 20%. "Show whole 
+  on top, other stops at 85% opacity (50% until Oct 21; raised so tours 
+  print clearly), non-tour nodes at 20%. "Show whole 
   tour" in Tour Controls switches to the fit-all-stops view ("Back to 
   stop" returns); stepping always returns to following. Note this 
   replaces "selecting a tour fits the whole tour" above: the whole-tour 
