@@ -537,5 +537,29 @@ test.describe('search highlights instead of hiding', () => {
     await expect(page.getByTestId('search-counter')).toHaveCount(0);
     await expect(page.locator('[data-current-match]')).toHaveCount(0);
     await expect(nodes.filter({ hasText: labels[2] })).not.toHaveAttribute('style', /opacity/);
+
+    // Clicking empty canvas ends the search too.
+    await search.fill(word);
+    await expect(page.locator('[data-current-match]')).toHaveCount(1);
+    await page.locator('.react-flow__pane').click({ position: { x: 20, y: 20 } });
+    await expect(search).toHaveValue('');
+    await expect(page.getByTestId('search-counter')).toHaveCount(0);
+    await expect(page.locator('[data-current-match]')).toHaveCount(0);
+
+    // So does clicking a waypoint, which stays selected.
+    await search.fill(word);
+    await expect(page.locator('[data-current-match]')).toHaveCount(1);
+    await nodes.filter({ hasText: labels[1] }).click();
+    await expect(search).toHaveValue('');
+    await expect(page.locator('[data-current-match]')).toHaveCount(0);
+    await expect(page.locator('.react-flow__node.selected')).toHaveText(new RegExp(labels[1]));
+
+    // So does the Exit search button.
+    await search.fill(word);
+    await expect(page.locator('[data-current-match]')).toHaveCount(1);
+    await page.getByRole('button', { name: 'Exit search' }).click();
+    await expect(search).toHaveValue('');
+    await expect(page.getByTestId('search-counter')).toHaveCount(0);
+    await expect(page.locator('[data-current-match]')).toHaveCount(0);
   });
 });

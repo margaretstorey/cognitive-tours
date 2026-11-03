@@ -363,16 +363,20 @@ function Graph({
     setPendingConnection(null);
   }, []);
 
+  // Clicking a waypoint or empty canvas also ends a search, so there's no
+  // box to clear.
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
       onSelectWaypoint(node.id);
+      if (searchQuery) onSearchChange('');
     },
-    [onSelectWaypoint]
+    [onSelectWaypoint, searchQuery, onSearchChange]
   );
 
   const onPaneClick = useCallback(() => {
     onSelectWaypoint(null);
-  }, [onSelectWaypoint]);
+    if (searchQuery) onSearchChange('');
+  }, [onSelectWaypoint, searchQuery, onSearchChange]);
 
   const onEdgeDoubleClick = useCallback(
     (_: React.MouseEvent, edge: Edge) => {
@@ -428,8 +432,7 @@ function Graph({
           fitViewOptions={{ padding: 0.2 }}
           deleteKeyCode={null}
         >
-          {/* Tailwind pink-50: the palest pink, so Test waypoints (pink-100) still stand out. */}
-          <Background bgColor="#fdf2f8" />
+          <Background />
           <Controls />
           {/* Add Waypoint lives on the canvas too, so it stays reachable when
               the waypoint panel is collapsed (e.g. while a tour is selected). */}
@@ -472,6 +475,14 @@ function Graph({
                 ) : (
                   <span className="text-gray-500 whitespace-nowrap">No matches</span>
                 )}
+                <button
+                  onClick={() => onSearchChange('')}
+                  aria-label="Exit search"
+                  title="Exit search"
+                  className="px-1 ml-1 text-gray-400 hover:text-gray-700"
+                >
+                  ✕
+                </button>
               </div>
             )}
           </div>
