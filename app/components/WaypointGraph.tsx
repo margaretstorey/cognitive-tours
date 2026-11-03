@@ -21,15 +21,16 @@ import {
 import type { Waypoint, WaypointEdge, FilterState } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 
-type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean };
+type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean; isCurrentMatch: boolean };
 
 function WaypointNode({ data, selected }: NodeProps & { data: WaypointNodeData }) {
   const colorClass = WAYPOINT_COLORS[data.waypoint.type];
   return (
     <div
       data-current-stop={data.isActiveTourStep ? 'true' : undefined}
+      data-current-match={data.isCurrentMatch ? 'true' : undefined}
       className={`px-3 py-2 rounded-lg border-2 transition-transform text-sm font-medium max-w-[180px] shadow-sm ${colorClass} ${
-        data.isActiveTourStep
+        data.isActiveTourStep || data.isCurrentMatch
           ? 'scale-[1.2] ring-[6px] ring-offset-2 ring-blue-500 shadow-xl shadow-blue-500/60'
           : selected ? 'ring-2 ring-offset-1 ring-blue-500' : ''
       }`}
@@ -149,39 +150,80 @@ function Graph({
     };
   }, [placementRef, getViewport, screenToFlowPosition, getNodes]);
 
-  const hiddenNodeIds = useMemo(() => {
-    const q = searchQuery.toLowerCase();
-    return new Set(
-      waypoints
-        .filter(w => !filterState[w.type] || (q && !w.label.toLowerCase().includes(q)))
-        .map(w => w.id)
-    );
-  }, [waypoints, filterState, searchQuery]);
+  // Only the type filter hides waypoints; search highlights instead.
+  const hiddenNodeIds = useMemo(
+    () => new Set(waypoints.filter(w => !filterState[w.type]).map(w => w.id)),
+    [waypoints, filterState]
+  );
+
+  // Visible waypoints whose label contains the query, alphabetical like the
+  // tour stop picker.
+  const matchesFor = useCallback(
+    (query: string) => {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      return waypoints
+        .filter(w => filterState[w.type] && w.label.toLowerCase().includes(q))
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .map(w => w.id);
+    },
+    [waypoints, filterState]
+  );
+  const matchIds = useMemo(() => matchesFor(searchQuery), [matchesFor, searchQuery]);
+  // Which match is current; a new query starts again at the first.
+  const [matchCursor, setMatchCursor] = useState({ query: '', index: 0 });
+  const matchIndex =
+    matchCursor.query === searchQuery && matchCursor.index < matchIds.length ? matchCursor.index : 0;
+  const currentMatchId = matchIds[matchIndex] ?? null;
+  const searching = matchIds.length > 0;
+
+  const onSearchInput = useCallback(
+    (query: string) => {
+      onSearchChange(query);
+      const first = matchesFor(query)[0];
+      if (first) onSelectWaypoint(first);
+    },
+    [onSearchChange, matchesFor, onSelectWaypoint]
+  );
+
+  const stepMatch = useCallback(
+    (delta: number) => {
+      if (matchIds.length === 0) return;
+      const index = (matchIndex + delta + matchIds.length) % matchIds.length;
+      setMatchCursor({ query: searchQuery, index });
+      onSelectWaypoint(matchIds[index]);
+    },
+    [matchIds, matchIndex, searchQuery, onSelectWaypoint]
+  );
 
   const nodes: Node[] = useMemo(
     () =>
       waypoints
         .filter(w => !hiddenNodeIds.has(w.id))
         .map(w => {
-          const inTour = activeTourWaypointIds.length > 0;
+          // A search with matches takes over the tour's spotlight.
+          const inTour = !searching && activeTourWaypointIds.length > 0;
           const isCurrentStop = inTour && w.id === selectedWaypointId;
-          // Spotlight: the current stop leads, other stops recede, and
-          // waypoints outside the tour fade furthest.
-          const opacity = !inTour || isCurrentStop
-            ? undefined
-            : activeTourWaypointIds.includes(w.id) ? 0.85 : 0.2;
+          const isCurrentMatch = w.id === currentMatchId;
+          // Spotlight: the current stop (or match) leads, other stops (or
+          // matches) recede, and everything else fades furthest.
+          const opacity = searching
+            ? isCurrentMatch ? undefined : matchIds.includes(w.id) ? 0.85 : 0.2
+            : !inTour || isCurrentStop
+              ? undefined
+              : activeTourWaypointIds.includes(w.id) ? 0.85 : 0.2;
           return {
             id: w.id,
             type: 'waypointNode',
             position: w.position,
-            data: { waypoint: w, isActiveTourStep: isCurrentStop },
+            data: { waypoint: w, isActiveTourStep: isCurrentStop, isCurrentMatch },
             selected: w.id === selectedWaypointId,
             // Draw the enlarged current stop above neighbours it grows into.
-            zIndex: isCurrentStop ? 1000 : undefined,
+            zIndex: isCurrentStop || isCurrentMatch ? 1000 : undefined,
             style: opacity !== undefined ? { opacity } : undefined,
           };
         }),
-    [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds]
+    [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds, searching, currentMatchId, matchIds]
   );
 
   const nodesRef = useRef(nodes);
@@ -194,8 +236,16 @@ function Graph({
     tourKey && !tourOverview && selectedWaypointId && activeTourWaypointIds.includes(selectedWaypointId)
       ? selectedWaypointId
       : null;
+  // Clearing a search leaves the camera where the search put it.
+  const searchHadFocusRef = useRef(false);
 
   useEffect(() => {
+    if (!currentMatchId && searchHadFocusRef.current) {
+      searchHadFocusRef.current = false;
+      return;
+    }
+    searchHadFocusRef.current = !!currentMatchId;
+    const focusId = currentMatchId ?? followStopId;
     // Wait a couple of frames so the tour header (whose height varies with
     // description length, and disappears entirely in full-map mode) has
     // finished resizing the canvas before we measure it.
@@ -214,10 +264,11 @@ function Graph({
         const height = container.clientHeight;
         if (width === 0 || height === 0) return;
 
-        if (followStopId) {
-          // Center the current stop at a readable zoom: zoom in to at least
-          // 1.0 if zoomed out, but don't push an already-close view further.
-          const node = getInternalNode(followStopId);
+        if (focusId) {
+          // Center the current stop (or search match) at a readable zoom: zoom
+          // in to at least 1.0 if zoomed out, but don't push an already-close
+          // view further.
+          const node = getInternalNode(focusId);
           if (node) {
             const { x, y } = node.internals.positionAbsolute;
             const w = node.measured.width ?? 0;
@@ -246,16 +297,16 @@ function Graph({
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
     };
-  }, [tourKey, followStopId, filterState, panelCollapsed, getNodesBounds, setViewport, setCenter, getInternalNode, getViewport]);
+  }, [tourKey, followStopId, currentMatchId, filterState, panelCollapsed, getNodesBounds, setViewport, setCenter, getInternalNode, getViewport]);
 
   const rfEdges: Edge[] = useMemo(
     () =>
       edges
         .filter(e => !hiddenNodeIds.has(e.source) && !hiddenNodeIds.has(e.target))
         .map(e => {
-          const dimmed =
-            activeTourWaypointIds.length > 0 &&
-            !(activeTourWaypointIds.includes(e.source) && activeTourWaypointIds.includes(e.target));
+          // Full strength only between two matches (or two tour stops).
+          const lit = searching ? matchIds : activeTourWaypointIds;
+          const dimmed = lit.length > 0 && !(lit.includes(e.source) && lit.includes(e.target));
           return {
             id: e.id,
             source: e.source,
@@ -265,7 +316,7 @@ function Graph({
             style: dimmed ? { opacity: 0.2 } : undefined,
           };
         }),
-    [edges, activeTourWaypointIds, selectedEdgeId, hiddenNodeIds]
+    [edges, activeTourWaypointIds, selectedEdgeId, hiddenNodeIds, searching, matchIds]
   );
 
   const [pendingConnection, setPendingConnection] = useState<{ source: string; target: string } | null>(null);
@@ -393,10 +444,36 @@ function Graph({
             <input
               type="text"
               value={searchQuery}
-              onChange={e => onSearchChange(e.target.value)}
+              onChange={e => onSearchInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') stepMatch(e.shiftKey ? -1 : 1);
+                if (e.key === 'Escape') onSearchChange('');
+              }}
               placeholder="Search…"
               className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm shadow-sm w-40 focus:outline-none focus:border-gray-400"
             />
+            {searchQuery.trim() && (
+              <div
+                data-testid="search-counter"
+                className="flex items-center gap-1 px-2 py-1 bg-white border border-gray-300 rounded-lg text-sm shadow-sm"
+              >
+                {searching ? (
+                  <>
+                    <button onClick={() => stepMatch(-1)} aria-label="Previous match" className="px-1 hover:text-blue-600">
+                      ‹
+                    </button>
+                    <span className="tabular-nums whitespace-nowrap">
+                      {matchIndex + 1} of {matchIds.length}
+                    </span>
+                    <button onClick={() => stepMatch(1)} aria-label="Next match" className="px-1 hover:text-blue-600">
+                      ›
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-gray-500 whitespace-nowrap">No matches</span>
+                )}
+              </div>
+            )}
           </div>
           {pendingConnection && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">

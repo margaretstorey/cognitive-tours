@@ -497,3 +497,45 @@ test.describe('markdown view opens at the current stop', () => {
     await expect(page.locator('#stop-0')).not.toBeInViewport();
   });
 });
+
+test.describe('search highlights instead of hiding', () => {
+  const word = `Zebrafish${Date.now()}`;
+  const labels = [`${word} Alpha`, `${word} Beta`, `Unrelated ${Date.now()}`];
+
+  test.afterEach(async ({ request }) => {
+    for (const [i] of labels.entries()) await request.delete(`/api/waypoints/w-search-${i}`);
+  });
+
+  test('matches are spotlighted one at a time and nothing is hidden', async ({ page, request }) => {
+    for (const [i, label] of labels.entries()) {
+      await request.post('/api/waypoints', {
+        data: { id: `w-search-${i}`, label, type: 'Feature', position: { x: 2000 + i * 250, y: 2000 } },
+      });
+    }
+    await page.goto('/');
+    const nodes = page.locator('.react-flow__node');
+    await expect(nodes.filter({ hasText: labels[2] })).toHaveCount(1);
+    const before = await nodes.count();
+
+    const search = page.getByPlaceholder('Search…');
+    await search.fill(word);
+    await expect(nodes).toHaveCount(before);
+    await expect(page.getByTestId('search-counter')).toHaveText(/1 of 2/);
+    await expect(page.locator('[data-current-match]')).toHaveText(new RegExp(labels[0]));
+    await expect(page.locator('.react-flow__node.selected')).toHaveText(new RegExp(labels[0]));
+
+    await search.press('Enter');
+    await expect(page.getByTestId('search-counter')).toHaveText(/2 of 2/);
+    await expect(page.locator('[data-current-match]')).toHaveText(new RegExp(labels[1]));
+    await expect(page.locator('.react-flow__node.selected')).toHaveText(new RegExp(labels[1]));
+
+    await search.press('Shift+Enter');
+    await expect(page.getByTestId('search-counter')).toHaveText(/1 of 2/);
+
+    await search.press('Escape');
+    await expect(search).toHaveValue('');
+    await expect(page.getByTestId('search-counter')).toHaveCount(0);
+    await expect(page.locator('[data-current-match]')).toHaveCount(0);
+    await expect(nodes.filter({ hasText: labels[2] })).not.toHaveAttribute('style', /opacity/);
+  });
+});
