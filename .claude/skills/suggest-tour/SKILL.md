@@ -75,6 +75,12 @@ it, give a short draft, marked as a draft to edit. Never offer drafts
 unprompted. The last stop's narrative can close the tour or point to
 another tour.
 
+**With any drafted narrative, give a provenance line.** Tours have no
+Notes field, so the line goes at the end of the tour description,
+naming yourself (Claude or Codex), which stops, and the date:
+`Stop narratives 2 and 4 drafted with Claude's help, Nov 3.` Ask the
+user to add their own line when they rewrite one. No draft, no line.
+
 ## 4. Steps to do in the app
 
 When the stops and narratives are settled, list what to do, in plain
@@ -82,7 +88,9 @@ text (no wide code blocks):
 
 - which tour, and **Edit tour** or **+ New Tour**;
 - which stops to add, and where to move them;
-- which narratives to paste (the user's own wording).
+- which narratives to paste (the user's own wording);
+- if any narrative was drafted, the provenance line for the end of the
+  tour description.
 
 Then wait. On "next", move to the next suggestion; when done, say so.
 

@@ -101,6 +101,16 @@ one sentence: what would you want to read here in three months? I'll
 react to it"). If they still want it, give a short draft, marked as a
 draft to edit. Never offer drafts unprompted.
 
+**With every draft, give a provenance line for Notes.** Provenance
+lives in the Notes field by convention (there is no author field on
+waypoints), so hand over one line to paste at the end of the
+waypoint's notes, naming yourself (Claude or Codex) and the date:
+`Description drafted with Claude's help, Nov 3.` Ask the user to add
+their own line when they edit it (`Edited by <name>, <date>: <what
+changed>`). Never replace existing notes lines; the list only grows.
+No draft, no line: text the user wrote from their own answers needs
+no marker.
+
 Waypoint content must make sense on its own, whatever tour brings a
 reader to it: no "next we'll see…" in a waypoint.
 
