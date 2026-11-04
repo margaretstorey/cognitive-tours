@@ -18,7 +18,7 @@
       "type": "Feature",
       "description": "A Waypoint is a meaningful place in a software project — a user need, a design decision, a risky area, a key component, a test, or an open question. Waypoints are the nodes of the understanding map and they are typed.",
       "notes": "Waypoints can be filtered by type. There is a small ontology of waypoint types that include waypoints to represent data about user needs (e.g., from customer interviews), proposed features, decisions made, code components, tests, AI instructions, and open questions/ideas.",
-      "filePath": "",
+      "filePath": "app/lib/types.ts",
       "position": {
         "x": 201.8684475431208,
         "y": -179.58163738323833
@@ -30,7 +30,7 @@
       "type": "Feature",
       "description": "Tours are ordered sequences of waypoints. Docent mode adds a narrative field to each stop so the tour can guide the reader between waypoints.\n\nA tour can represent any ordered narrative: onboarding, a prioritized backlog, a sprint, or a roadmap. It supports navigation across waypoints to tell the story.",
       "notes": "Originated in TagSEA Routes (2006) and the Tours Eclipse plugin",
-      "filePath": "",
+      "filePath": "app/lib/types.ts",
       "position": {
         "x": 73.56944496832185,
         "y": 88.07160131905654
@@ -42,7 +42,7 @@
       "type": "Feature",
       "description": "Waypoints can optionally link to a file or document. A plain path is relative to the project: clicking it copies it, \"Open in VS Code\" opens it using the code folder each browser remembers, and \"View on GitHub\" appears when the site (or your browser) has the team's repo set. A full https:// link is used as is (\"View on GitHub\" or \"Open link\"), so a waypoint can point to material outside the repo, like interview notes. This connects intent artifacts to the code and evidence they describe, closing the loop between why and where.\n\nDescription drafted with Claude's help, Nov 3.",
       "notes": "File preview in the detail panel isn't built yet; see the Open Question \"How to show file contents in the detail panel?\". Description drafted with Claude's help, Nov 3.",
-      "filePath": "",
+      "filePath": "specs/003-waypoint-filepath/spec.md",
       "position": {
         "x": 342.75803233010527,
         "y": 163.10582465899267
@@ -54,7 +54,7 @@
       "type": "ADR",
       "description": "Decision: use @xyflow/react for the graph canvas. Saves weeks of custom graph work. React Flow is TypeScript-first, mature, and handles node rendering, edge routing, drag-to-connect, and pan/zoom out of the box.",
       "notes": "One limitation: edge deletion via keyboard is unreliable on Mac — requires a workaround.",
-      "filePath": "",
+      "filePath": "docs/adr/001-use-react-flow.md",
       "position": {
         "x": -141.80748641913766,
         "y": -432.359421233737
@@ -66,7 +66,7 @@
       "type": "ADR",
       "description": "Decision: use SQLite via Prisma ORM for local persistence. Rationale: single-user app with no need for a server database. SQLite runs in-process, requires no setup, and Prisma provides type-safe queries and migrations.",
       "notes": "For cloud deployment, Turso (a hosted libSQL service) is used instead of a local SQLite file. Both are SQLite-compatible via Prisma. See the \"Use Turso for cloud persistence\" ADR.",
-      "filePath": "",
+      "filePath": "docs/adr/005-sqlite-prisma-persistence.md",
       "position": {
         "x": -239.05129873450528,
         "y": -566.4162274668331
@@ -78,7 +78,7 @@
       "type": "ADR",
       "description": "Decision: all mutations update the UI immediately without waiting for database confirmation. On failure, the UI reverts and shows an error banner. Rationale: makes the graph feel responsive and natural for interactive use.",
       "notes": "More details on The decision: Optimistic updates for all mutations\nWhen you do something in the app — create a waypoint, delete an edge, update a tour — there are two possible approaches:\nPessimistic (wait for confirmation):\n\nUser clicks \"Delete waypoint\"\nApp sends request to database\nApp WAITS for database to confirm deletion\nOnly then does the node disappear from the graph\nFeels slow — there's a visible delay\n\nOptimistic (assume success):\n\nUser clicks \"Delete waypoint\"\nNode IMMEDIATELY disappears from the graph\nApp sends request to database in the background\nIf database confirms — nothing changes, already done\nIf database FAILS — node reappears and error banner shows\nFeels instant\n\nWhy this matters for Cognitive Tours:\nThe graph is interactive — you're dragging nodes, connecting edges, clicking around. Any visible delay would feel jarring. Optimistic updates make the app feel responsive and natural.\n\nPoints to the source code that implements this decision but this records it.\n\nThe risk:\nVery occasionally a write fails silently — you think you deleted something but it's still in the database. The error banner handles this.",
-      "filePath": "",
+      "filePath": "docs/adr/006-optimistic-updates.md",
       "position": {
         "x": 550.8060939665113,
         "y": -528.5344966113994
@@ -90,7 +90,7 @@
       "type": "Code Component",
       "description": "The single \"use client\" root that owns all app state (waypoints, edges, tours, selection, active tour, load state, error message). All mutation handlers are defined here and passed as props. Keeps state management simple — no global stores.",
       "notes": "Tour stops are represented as TourStop objects (not bare waypoint IDs), which carry each stop's docent narrative alongside its waypoint reference.",
-      "filePath": "",
+      "filePath": "app/components/CognitiveToursApp.tsx",
       "position": {
         "x": 450.7742091766767,
         "y": -143.58404558434825
@@ -102,7 +102,7 @@
       "type": "Code Component",
       "description": "The left-panel component that renders the understanding map as an interactive graph. Uses React Flow with a custom WaypointNode type for type-coloured nodes and drag-to-connect handles. Supports pan, zoom, node drag, edge delete.",
       "notes": "",
-      "filePath": "",
+      "filePath": "app/components/WaypointGraph.tsx",
       "position": {
         "x": 1426.6750622251282,
         "y": -399.5396218459125
@@ -114,7 +114,7 @@
       "type": "Code Component",
       "description": "The right-panel component showing the selected waypoint's type badge, title, description, notes, and linked artifact (with clipboard copy). Edit, Delete, and Add Waypoint actions are pinned near the top when a waypoint is selected (Add Waypoint alone when none is selected). A \"Resume tour\" button appears at the top whenever a tour is suspended (user selected a node outside the current tour stop), regardless of what's currently shown below. Shows a \"Getting oriented\" empty state when nothing is selected, including the \"Select a tour to begin understanding, or create a new one\" prompt when no tour is active.",
       "notes": "",
-      "filePath": "",
+      "filePath": "app/components/WaypointDetail.tsx",
       "position": {
         "x": 1524.0882699969002,
         "y": -116.91848161685174
@@ -126,7 +126,7 @@
       "type": "Code Component",
       "description": "The top-bar component with tour selector dropdown (switch tours or return to full map), waypoint-type Filter button/dropdown (hidden in markdown view), + New Tour, Edit tour (active tour only), Markdown/Graph view toggle, and Export buttons (Export full map in full-map mode, Export tour when a tour is active), plus the tour editor popup for creating and editing tours (name, description, ordered waypoint stops with up/down reordering and delete, per-stop narrative textarea). Prev/Next buttons, the step counter, and the docent narrative bar have moved out of TourBar into the Tour Controls panel (in CognitiveToursApp.tsx). Suspend/resume state (when a user selects an off-tour node) is also handled outside TourBar.",
       "notes": "",
-      "filePath": "",
+      "filePath": "app/components/TourBar.tsx",
       "position": {
         "x": 1048.7847455643855,
         "y": 68.38440714208586
@@ -138,7 +138,7 @@
       "type": "Code Component",
       "description": "Modal form for creating and editing waypoints. Fields: title, type (dropdown populated from all defined waypoint types), description, notes, and linked artifact (file path). Opened from the '+ Add Waypoint' button in the waypoint detail panel's pinned action row, the graph's 'Add first waypoint' empty-state button, or the detail panel's Edit action.",
       "notes": "",
-      "filePath": "",
+      "filePath": "app/components/WaypointForm.tsx",
       "position": {
         "x": 976.4697104496496,
         "y": -360.5450656860766
@@ -150,7 +150,7 @@
       "type": "Code Component",
       "description": "TypeScript interfaces for the entire app: WaypointType (union of 10 types), Waypoint, WaypointEdge, Tour, AppState. The single source of truth for what every entity is. All components and API routes import from here.",
       "notes": "",
-      "filePath": "",
+      "filePath": "app/lib/types.ts",
       "position": {
         "x": 255.93904185883156,
         "y": -336.4110639847413
@@ -162,7 +162,7 @@
       "type": "Code Component",
       "description": "Defines the SQLite database structure: Waypoint, Edge, Tour, TourWaypoint (join table with order column for preserving tour waypoint sequence). The source of truth for persistence.",
       "notes": "Includes a nullable narrative field on the TourWaypoint join table, allowing the same waypoint to carry different transition text depending on which tour it appears in.",
-      "filePath": "",
+      "filePath": "prisma/schema.prisma",
       "position": {
         "x": 850.691448463977,
         "y": -445.91414376602813
@@ -174,7 +174,7 @@
       "type": "Code Component",
       "description": "The database stores waypoint positions as posX and posY columns. The app expects position as {x, y}. db-mappers translates between the two.",
       "notes": "Docent: This is the last step before the data reaches the screen — it takes what's in the database and shapes it into what the app actually displays.",
-      "filePath": "",
+      "filePath": "app/lib/db-mappers.ts",
       "position": {
         "x": 1074.6733378613253,
         "y": -514.8491116367204
@@ -210,7 +210,7 @@
       "type": "AI Instruction",
       "description": "INSTRUCTION FOR AI AGENTS: Before writing any component or API route, read specs/001-shrimp-mvp/spec.md, plan.md, and the constitution at .specify/memory/constitution.md. Do not add props, state, or features not defined in the contracts. Follow Principle I (Simplicity) and Principle VIII (Human and Agent Readable).",
       "notes": "I. Simplicity Over Complexity — YAGNI enforced\nII. Incremental Growth — one small verifiable step at a time\nIII. Intent Before Implementation — spec before code\nIV. Clean Readable TypeScript — strict mode, no any\nV. Minimal Clear UI — every element earns its place\nVI. Waypoints and Tours are Universal — not just for code\nVII. Flexible Navigation — code, intent, or both\nVIII. Human and Agent Readable — every waypoint meaningful to humans AND agents",
-      "filePath": "",
+      "filePath": ".specify/memory/constitution.md",
       "position": {
         "x": -407.52542857506353,
         "y": -115.39744606151596
@@ -258,7 +258,7 @@
       "type": "Feature",
       "description": "A filter button on the top left of the graph that has a list and toggles for each waypoint type.  Hides nodes of the selected types and their connected edges.  Default all types are shown.  State is saved in ShrimpAPp and passed to WaypointGraph.\n\nNo API changes — UI only.",
       "notes": "ShrimpApp.tsx\n\nTodo: maybe connet this instead to a spec kit file",
-      "filePath": "",
+      "filePath": "specs/005-waypoint-type-filter/spec.md",
       "position": {
         "x": 344.01519817391124,
         "y": -268.919270012353
@@ -270,7 +270,7 @@
       "type": "Open Question",
       "description": "Could the skill output (markdown tour) be imported into the graph app to create clickable, navigable waypoints automatically? Would close the loop between the dialogue-based authoring approach and the visual navigation layer. Currently these are two separate workflows — import would make them complementary rather than parallel.",
       "notes": "",
-      "filePath": "",
+      "filePath": "cognitive-tours-skill.md",
       "position": {
         "x": -537.9551452892754,
         "y": 720.4274616805181
@@ -304,7 +304,7 @@
       "type": "ADR",
       "description": "SQLite runs locally but Vercel's filesystem is ephemeral. Turso is a hosted libSQL service (SQLite-compatible) that persists data across deployments. Both local and production now point to the same Turso database.",
       "notes": "The fix — Turso, a hosted version of SQLite, extending the same Prisma layer we already had\n\nTurso is a hosted libSQL service — SQLite-compatible but lives in the cloud. Both local and production now point to the same database.",
-      "filePath": "",
+      "filePath": "docs/adr/003-use-turso.md",
       "position": {
         "x": 343.65522478856167,
         "y": -741.9333824563785
@@ -316,7 +316,7 @@
       "type": "ADR",
       "description": "Hosting on Vercel for zero-config Next.js deployment. Auto-deploys on every push to main. Hosted at a .vercel.app address, with the cognitive.tours domain to be connected.",
       "notes": "Note: Vercel gives us zero-config Next.js hosting with auto-deploy on every push to main. But deploying here exposed the SQLite problem. Next: how we solved the database.",
-      "filePath": "",
+      "filePath": "docs/adr/004-deploy-to-vercel.md",
       "position": {
         "x": 4.281427891204572,
         "y": -567.8746695842112
@@ -328,7 +328,7 @@
       "type": "Code Component",
       "description": "Creates the Prisma client with the correct adapter. Selects Turso (libSQL) vs. local SQLite by checking NODE_ENV === 'production' explicitly — not by whether TURSO_DATABASE_URL is set, since that variable is always present in .env. Throws if TURSO_DATABASE_URL is missing in production; otherwise uses DATABASE_URL via better-sqlite3 in development/test. The single place where the database connection is configured.",
       "notes": "The single file that switches between local SQLite and Turso based on environment variables. This is where the deployment architecture lives in code.\n\nDocent: \"Here's where it all comes together: one file that decides which database to talk to, Turso in production, local SQLite in development.\"",
-      "filePath": "",
+      "filePath": "app/lib/db.ts",
       "position": {
         "x": 650.7778679504131,
         "y": -721.6896341726244
@@ -340,7 +340,7 @@
       "type": "Open Question",
       "description": "Currently backups are manual — visit /api/data and save the JSON. Should automate this with a scheduled export to GitHub or a file. Turso paid plan has built-in backup. Consider a simple cron job or GitHub Action that exports data weekly.",
       "notes": "RESOLVED (Oct 20, faf1086): a nightly Vercel cron (/api/backup-nightly, about 3 a.m. Pacific) saves every site's /api/data to the private Blob store cognitive-tours-backups, under nightly/YYYY-MM-DD/<site>.json. Before class sessions, migrations or giving anyone new access, scripts/backup-all-sites.ts takes a manual copy too. Restoring follows docs/RESTORE.md, tested on Nov 3.\n\nDifferent from what was planned here: nightly, not weekly; a private Blob store, not GitHub, because team maps are student work and shouldn't land in the repo; and every site, not one, since the team sites arrived. Turso's built-in restore only reaches back 1 day on the current plan, so these files are the longer-term safety net.\n\nNotes drafted with Claude's help, Nov 3.",
-      "filePath": "",
+      "filePath": "docs/RESTORE.md",
       "position": {
         "x": -239.7374957654214,
         "y": 1008.7907686877104
@@ -351,7 +351,7 @@
       "label": "Is this component doing too much (smell)?",
       "type": "Risk",
       "description": "The CognitiveToursApp.tsx Owns all app state and every mutation handler, and is also where the Tour Controls panel is built inline (badge, description/notes with expand/overflow tracking, linked artifact, suspend/resume, nav) rather than in its own component — unlike WaypointGraph, WaypointDetail, TourBar, and WaypointForm, which are each split out. At 717 lines, this is the strongest concrete case so far for the \"God class\" concern.\nNotes: Extraction candidate: pull the Tour Controls JSX + its purely-local state (stopTextExpanded, overflow tracking, stopLinkCopied) into its own  component, similar to WaypointDetail. tourSuspended, controlPanelCollapsed, currentStopWaypoint, and the nav handlers would stay lifted since they're  shared with the Waypoint panel.",
-      "filePath": "",
+      "filePath": "app/components/CognitiveToursApp.tsx",
       "position": {
         "x": 483.7967767736651,
         "y": -372.69425872762434
@@ -414,7 +414,7 @@
       "type": "Feature",
       "description": "Per-step narrative for tours. Authors write transition text for each stop in the tour editor. Readers see it in an amber bar below the tour bar.",
       "notes": "This text generated by Claude ... (example of what an agent could do)\nLink to code not right... fix later.",
-      "filePath": "",
+      "filePath": "specs/006-docent-mode/spec.md",
       "position": {
         "x": 273.3290821891752,
         "y": -46.71727442708813
@@ -425,7 +425,7 @@
       "label": "Markdown view for Tours",
       "type": "Feature",
       "description": "When a tour is active, the user can toggle the left panel from the graph to a live-rendered markdown document showing the tour title, description, and each waypoint stop in sequence (with docent narratives as blockquotes).",
-      "filePath": "",
+      "filePath": "specs/007-tour-markdown-view/spec.md",
       "position": {
         "x": 600.1767112796243,
         "y": 294.2033783446183
@@ -436,7 +436,7 @@
       "label": "tour-markdown.ts",
       "type": "Code Component",
       "description": "Pure utility module with four exported functions. tourSlug(name) converts a tour name to a URL/filename-safe slug (lowercase, hyphens, strips non-alphanumeric). tourByline(tour) builds the \"By <author> · Updated <date>\" line shown under the tour title in the markdown view. generateTourMarkdown(tour, waypoints, context) produces the markdown export string for a single tour, used by the \"Export tour\" button. generateFullMapMarkdown(waypoints, context) produces a markdown export of all waypoints grouped by type (alphabetical within each group), used by the \"Export full map\" button. Both export functions take an optional project name and repo URL, so exports carry the project's name and link file paths to GitHub. Both are used by TourBar to generate the browser Blob download.",
-      "filePath": "",
+      "filePath": "app/lib/tour-markdown.ts",
       "position": {
         "x": 1398.8948298445534,
         "y": 150.9863949995492
@@ -447,7 +447,7 @@
       "label": "TourMarkdownView",
       "type": "Code Component",
       "description": "Read-only client component that renders an active tour as flowing prose. Shows the tour title as H1, description as intro paragraph, then each waypoint stop in sequence — label as H2, description, notes, filePath as inline code, and docent narrative as an amber blockquote. Scrollable. No edit controls. [written by claude]",
-      "filePath": "",
+      "filePath": "app/components/TourMarkdownView.tsx",
       "position": {
         "x": 1201.4198975681393,
         "y": 203.07232245949817
@@ -459,7 +459,7 @@
       "type": "Feature",
       "description": "Text search input on the graph panel that hides non-matching waypoint nodes (and their edges) by label on the graph canvas (no waypoint made for this). Works alongside a type filter toggle which was added at the same time by Claude Code in this commit (bonus!)",
       "notes": "Follows the same filter pattern as type filtering — state lives in CognitiveToursApp, filtered nodes passed to WaypointGraph. Both filters can be active simultaneously.",
-      "filePath": "",
+      "filePath": "app/components/WaypointGraph.tsx",
       "position": {
         "x": 985.6926208762516,
         "y": -261.84267812184896
@@ -471,7 +471,7 @@
       "type": "Test",
       "description": "Nineteen automated tests in tests/basic.spec.ts. They cover creating and deleting waypoints; tour navigation, docent narrative and stop focus/spotlight; Exit tour and the Markdown View (author/date byline, jumping to the current stop); the filter panel closing on a canvas click; the project name pill and exports; VS Code and GitHub file links; and downloading the site's map as a backup. Run locally with npx playwright test, which starts its own dev server on localhost:3000 against the isolated prisma/test.db (see CLAUDE.md for more details).",
       "notes": "Acceptance tests perhaps to be written using Playwright: (1) persistence — create waypoint, refresh, verify present; (2) tour navigation — step through all waypoints, verify highlight; (3) delete cascade — delete waypoint, verify removed from graph, edges, and tours.",
-      "filePath": "",
+      "filePath": "tests/basic.spec.ts",
       "position": {
         "x": 393.6481544072435,
         "y": 40.04161312447152
@@ -516,7 +516,7 @@
       "type": "AI Instruction",
       "description": "Two skills: \n1) /audit-waypoints checks Code Component, ADR and Test waypoint descriptions against their linked files; and 2) /audit-tours checks tours for coverage gaps, stale or non-bridging narratives, redundant edges and missing stops. \n\nPresents findings and nudges the user to update the graph manually (copying suggestions if they resonate) - does not auto make the changes.\n\nBoth read the live site.",
       "notes": "Deliberately scoped to verifiable facts only, not interpretive language — flags a stale \"8 types\" claim, but wouldn't touch \"this is the brain of the app.\" Distinguishing mechanical fact-corrections (safe to batch-approve) from conceptual drift (worth rewriting by hand, since accepting a rewritten story risks the same understanding-outsourcing concern as AI Suggest) is left as a judgment call for whoever runs it — not something the skill itself decides. The skills never write to the map; any write would be a separate, deliberate request, outside the skills.",
-      "filePath": "",
+      "filePath": ".claude/skills/audit-tours/SKILL.md",
       "position": {
         "x": -155.07164207607968,
         "y": -232.2685031590616
@@ -622,7 +622,7 @@
       "label": "Export Tour tests",
       "type": "Test",
       "description": "unit tests for the markdown export",
-      "filePath": "",
+      "filePath": "tests/basic.spec.ts",
       "position": {
         "x": 1073.308105380368,
         "y": 356.8748525310935
@@ -634,7 +634,7 @@
       "type": "ADR",
       "description": "A stopgap for getting a site and database per team in my course (and for demos/tests).  LaterI would like to have just one database with team-scoped rows.\n\nReason I did it this way: time and ease of deployment\n\nDetails in the linked ADR",
       "notes": "9 sites, 9 databases. For example, a team called Acme would get the site cognitive-tours-acme and the database ct-acme. The full table is in CLAUDE.md, under \"Team sites\".\n\nFacts from Claude Nov 3:\n\nSame code everywhere. One push to main deploys all 9. Only the environment variables differ:\nTURSO_DATABASE_URL and TURSO_AUTH_TOKEN: which database the site uses;\nSEED_ON_EMPTY=false: a team starts with an empty map (app/api/data/route.ts, from 46f4f82);\nNEXT_PUBLIC_PROJECT_NAME: the \"Project:\" label (a0d73f3);\nNEXT_PUBLIC_REPO_URL, optional: links file paths to the team's GitHub repo (7db0dd8).\nNo team code at all. There is no team id, no login and no filtering. A team's data is separate because it's physically in a different database.",
-      "filePath": "",
+      "filePath": "docs/adr/008-one-site-per-team.md",
       "position": {
         "x": -415.2544291014729,
         "y": -760.1997420662208
@@ -646,7 +646,7 @@
       "type": "ADR",
       "description": "Deferred: the intended direction\n\nNot needed yet: I expect only 2 or 3 outside users, so one site each is enough.",
       "notes": "Intended direction, but not before there are more than 2 or 3 outside users\".",
-      "filePath": "",
+      "filePath": "docs/adr/007-single-database-team-scoping.md",
       "position": {
         "x": -5.609769144013299,
         "y": -823.6440437828127
@@ -658,7 +658,7 @@
       "type": "Feature",
       "description": "Each team gets their own clean site and won't be confused by other team sites.",
       "notes": "Facts from Claude, Nov 3\n\nEach team gets their own clean site and won't be confused by other team sites.its own link, opening on an empty map (app/api/data/route.ts, SEED_ON_EMPTY=false);\na \"Project:\" label in the header, tab title and exports (app/lib/project.ts);\noptionally, file paths that open in the team's GitHub repo (app/lib/repo.ts).\n\nYes, that's your description. It says what a team gets (a clean site of its own) and why that matters (no confusion with other teams). Two optional additions:\n\nHow a team knows it's on the right site: e.g. the \"Project: Acme\" label in the header and tab title (app/lib/project.ts). That's the visible part of \"won't be confused\".\nIt's not only about confusion; it's also protection. One team can't change another team's map, because each site has its own database (ADR 008).",
-      "filePath": "",
+      "filePath": "app/lib/project.ts",
       "position": {
         "x": -140.17032299024748,
         "y": -680.3099727770444
@@ -681,7 +681,7 @@
       "type": "ADR",
       "description": "The Claude Code skills (suggest and audit, for waypoints and tours) only should read the map and never change it. The suggest skills ask questions of the user first; I write every description and narrative in the app, and Claude gives only the facts (label, type, file path, edges, stop order). Claude drafts text only when I ask it too, and the draft is marked in Notes. Why: writing the waypoint is how I build understanding, and a waypoint Claude wrote would look like understanding without being it (\"AI as scaffold, not substitute\"). It also keeps the skills always safe to run. (Claude drafted this description - I note the irony)",
       "notes": "I sometimes ask Claude to override my instruction and suggest text without asking me questions or forcing me to draft - but with this map - I have never asked it to write to my database (but I have done so for other maps - but at the cost of not building any comprehension!).  The drafting step also costs in comprehension\n\nReverses my earlier idea (Open Question \"how to connect cognitive tours to claude code\") that Claude would add waypoints to the database. Decided Oct 21 when the suggest skills were built (779686e); provenance line added Nov 3 (4a80816). Description drafted with Claude's help, Nov 3.",
-      "filePath": "",
+      "filePath": ".claude/skills/suggest-waypoint/SKILL.md",
       "position": {
         "x": -411.6882767589862,
         "y": -242.8877945792211
@@ -703,7 +703,7 @@
       "type": "AI Instruction",
       "description": "Two skills, /suggest-waypoint and /suggest-tour, that help me record work as I go. They find what's worth a waypoint (decisions first), ask me questions, and give the facts (label, type, file path, edges, stop order). I write the descriptions and narratives. They never change the map. /suggest-tour's file is .claude/skills/suggest-tour/SKILL.md.",
       "notes": "Description drafted with Claude's help, Nov 3.",
-      "filePath": "",
+      "filePath": ".claude/skills/suggest-waypoint/SKILL.md",
       "position": {
         "x": -154.015081443079,
         "y": -313.8995451557827

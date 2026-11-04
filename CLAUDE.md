@@ -282,7 +282,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   | Site | Vercel project | Turso database | NEXT_PUBLIC_PROJECT_NAME | NEXT_PUBLIC_REPO_URL |
   |---|---|---|---|---|
   | Mine | cognitive-tours (address in `MY_SITE_URL`; not written here) | cognitive-tours | (unset) | (unset) |
-  | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | (unset) |
+  | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | https://github.com/margaretstorey/cognitive-tours |
 
   **Your own site's address is kept out of the repo** (Nov 3): it 
   lives only in `MY_SITE_URL`, in your local `.env` and in the 
@@ -299,10 +299,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   paper and for letting others try the tool, so they never edit your 
   own map. **Since Nov 4 it holds a cleaned copy of your own map**, 
   matching the paper (§IV: "A Research Story Behind Cognitive Tours" 
-  on this URL) and the demo video. In the copy, every repo file path is 
-  blanked (the repo is private, so links would 404; the public 
-  ResearchGate link stays), your private site address and the 
-  student site addresses are taken out, and the deleted Open Question 
+  on this URL) and the demo video. In the copy, file paths are kept and 
+  link to this repo (`NEXT_PUBLIC_REPO_URL`), to show the file-link 
+  features; **they 404 until the repo is public**, and if a cleaned 
+  snapshot is published as a new repo instead, point 
+  `NEXT_PUBLIC_REPO_URL` at it and redeploy the demo. Your private site 
+  address and the student site addresses are taken out, and the deleted Open Question 
   "Should waypoint types be configurable rather than hardcoded?" is put 
   back as Research Story's stop 10, from `backups/backup-2026-10-23b.json` 
   (your own map still needs it back). Tours keep their original 
