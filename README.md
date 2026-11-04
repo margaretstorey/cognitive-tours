@@ -5,6 +5,10 @@
 A software comprehension tool where developers create waypoints and guided 
 tours to navigate intent, decisions, and code together.
 
+**Status:** a research prototype, built by its author with AI assistance 
+(Claude Code), and used on itself: the map and tours describe how it was 
+built. Feedback and ideas are welcome.
+
 The core thesis: understanding cannot be outsourced or automated. Tours you 
 create yourself repair your own cognitive debt, tours you create for others are sharing some
 of your understanding with others. AI is a scaffold, an amplifier, not a 

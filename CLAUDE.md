@@ -242,7 +242,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   - **Applying a schema migration to production (Turso).** Vercel builds 
   don't run migrations. Before merging a branch with a new migration to 
   `main`: (0) sign in to the Turso CLI with `turso auth login`, using 
-  the **mastorey@gmail.com** account (not the UVic address), then 
+  your **personal** Turso account (not the UVic one; the address is in 
+  `CLAUDE.local.md`), then 
   `turso db list` to get `<db-name>` (currently `cognitive-tours`); 
   (1) back up **every site** with `npx tsx scripts/backup-all-sites.ts` 
   (yours to backups/backup-YYYY-MM-DD.json, teams' to 
@@ -510,11 +511,12 @@ Full constitution: .specify/memory/constitution.md
 - **Triple Debt paper** — cognitive debt + intent debt + technical debt
 - **TagSEA** (2006) — predecessor, waypoints and routes in Eclipse
 - **Tours Eclipse plugin** (2006) — direct ancestor of tour concept
-- **Russ Miles** — diagnostic legibility, chaos engineering (student collaboration)
-- **Cat Hicks** — learning science, developer psychology (potential collaborator)
-- **DORA team** — practitioner reach, industry validation (in progress)
-- **Rahul Garg / Lattice** — complementary tool (Martin Fowler contributor, engaged on LinkedIn)
-- **Cognitive Tours paper** — in early planning, targeting NIER or CHASE track at ICSE (deadline TBD)
+- **Habitat engineering** — Russ Miles, *The Sovereign Engineer*, and the AI Literacy Superpowers plugin: environments that make good AI output the default (related; intent for the agent)
+- **Lattice** — Rahul Garg's open-source skills for AI coding assistants, from his martinfowler.com series on reducing friction in AI-assisted development (related; context for the agent)
+- **SpecStory** — saves AI coding conversations as Markdown ("Intent is the new source code"); captures intent automatically, without curation
+- **/grill-me** (Matt Pocock) — a Claude Code skill where the AI interviews you about a plan before writing code; questions first, like the suggest skills, but for the agent's benefit
+- **DeepWiki, Google Code Wiki** — AI-generated repository wikis, the opposite approach (AI writes the understanding)
+- **ICSE 2027 demo paper** — *Cognitive Tours: Making Understanding a Team Deliverable in AI-Assisted Development*, under review: `docs/papers/icse2027demo.pdf`. Changes planned for the arXiv version: Worklist `reminder-arxiv-revision`
 - **Missing Stop Sign blog post** (June 9, margaretstorey.com) — intent debt explained via the out-of-town-driver metaphor; first in a series
 - **LACY - cognitive tours for onboarding**, to be presented at FSE 2026. Focused on code, semi-automated. See [here](https://arxiv.org/pdf/2603.25391)
 - **Narrative driven development** https://specdriven.com/dialects/narrative-driven 
@@ -675,12 +677,16 @@ Full constitution: .specify/memory/constitution.md
 
 ---
 
-## What Margaret-Anne is confused about
+## Open problems
 
-- How to keep waypoints and tours in sync as the code evolves (partially solved with the backup script/audit skill)
-- How the cognitive layer (this document + the app's waypoints) connects to
-  the intent layer (Spec Kit) and technical layer (code) in a sustainable way (partially addressed but still requires a lot of manual work but then it is tool such as speckit agnostic)
-- See also open questions in the Cognitive Tours db! 
+- How to keep waypoints and tours in sync as the code evolves. Partly
+  addressed by the audit and suggest skills and the backups; the fixes
+  are still made by hand, on purpose.
+- How the cognitive layer (this document and the app's waypoints)
+  connects to the intent layer (Spec Kit) and the technical layer (code)
+  in a sustainable way. Partly addressed, but it still takes a lot of
+  manual work; the approach doesn't depend on Spec Kit or any one tool.
+- See also the Open Question waypoints in the Cognitive Tours map.
 
 ---
 
