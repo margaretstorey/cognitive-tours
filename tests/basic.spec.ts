@@ -4,6 +4,7 @@ import { generateFullMapMarkdown, generateTourMarkdown } from '../app/lib/tour-m
 import type { Tour, Waypoint } from '../app/lib/types';
 import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo } from '../app/lib/repo';
 import { vscodeLink } from '../app/lib/code-folder';
+import { getSites } from '../app/lib/sites';
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
@@ -304,10 +305,10 @@ test.describe('project name', () => {
     const wp: Waypoint = { id: 'w1', label: 'A waypoint', type: 'Feature', position: { x: 0, y: 0 } };
     const tour: Tour = { id: 't1', name: 'A tour', description: '', stops: [{ waypointId: 'w1' }] };
 
-    expect(generateTourMarkdown(tour, [wp], { projectName: 'Finito' })).toContain('*Project: Finito*');
+    expect(generateTourMarkdown(tour, [wp], { projectName: 'Acme' })).toContain('*Project: Acme*');
     expect(generateTourMarkdown(tour, [wp])).not.toContain('Project:');
 
-    expect(generateFullMapMarkdown([wp], { projectName: 'Finito' })).toMatch(/^# Full Map: Finito$/m);
+    expect(generateFullMapMarkdown([wp], { projectName: 'Acme' })).toMatch(/^# Full Map: Acme$/m);
     expect(generateFullMapMarkdown([wp])).toMatch(/^# Full Map$/m);
   });
 });
@@ -348,7 +349,7 @@ test.describe('code folder setting', () => {
 
 test.describe('GitHub repo links', () => {
   const label = 'Repo Link Waypoint';
-  const finito = 'https://github.com/finito-startup/finito';
+  const acme = 'https://github.com/acme-startup/acme';
 
   test.afterEach(async ({ request }) => {
     const { waypoints } = await (await request.get('/api/data')).json();
@@ -358,19 +359,19 @@ test.describe('GitHub repo links', () => {
 
   test('normalizes the repo addresses people paste', () => {
     for (const input of [
-      finito, `${finito}/`, `${finito}.git`, `${finito}/tree/main/app`, 'github.com/finito-startup/finito',
-      'git@github.com:finito-startup/finito.git',
+      acme, `${acme}/`, `${acme}.git`, `${acme}/tree/main/app`, 'github.com/acme-startup/acme',
+      'git@github.com:acme-startup/acme.git',
     ]) {
-      expect(normalizeGitHubRepo(input), input).toBe(finito);
+      expect(normalizeGitHubRepo(input), input).toBe(acme);
     }
-    for (const bad of ['https://gitlab.com/x/y', 'finito', 'https://github.com/finito-startup', '']) {
+    for (const bad of ['https://gitlab.com/x/y', 'acme', 'https://github.com/acme-startup', '']) {
       expect(normalizeGitHubRepo(bad), bad).toBeNull();
     }
   });
 
   test('exports link file paths to GitHub only when a repo is known', () => {
     const wp: Waypoint = { id: 'w1', label: 'A', type: 'Code Component', filePath: 'app/page.tsx', position: { x: 0, y: 0 } };
-    expect(generateFullMapMarkdown([wp], { repoUrl: finito })).toContain(`[\`app/page.tsx\`](${finito}/blob/HEAD/app/page.tsx)`);
+    expect(generateFullMapMarkdown([wp], { repoUrl: acme })).toContain(`[\`app/page.tsx\`](${acme}/blob/HEAD/app/page.tsx)`);
     expect(generateFullMapMarkdown([wp])).toContain('`app/page.tsx`');
     expect(generateFullMapMarkdown([wp])).not.toContain('github.com');
   });
@@ -389,18 +390,18 @@ test.describe('GitHub repo links', () => {
     await page.getByRole('button', { name: "Set your team's GitHub repo" }).click();
     const input = page.getByLabel("Your team's GitHub repo");
 
-    await input.fill('finito');
+    await input.fill('acme');
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText("That doesn't look like a GitHub repo link.")).toBeVisible();
 
-    await input.fill(`${finito}.git`);
+    await input.fill(`${acme}.git`);
     await page.getByRole('button', { name: 'Save' }).click();
     const link = page.getByRole('link', { name: 'View on GitHub' });
-    await expect(link).toHaveAttribute('href', `${finito}/blob/HEAD/app/page.tsx`);
+    await expect(link).toHaveAttribute('href', `${acme}/blob/HEAD/app/page.tsx`);
 
     await page.reload();
     await page.getByText(label).click();
-    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute('href', `${finito}/blob/HEAD/app/page.tsx`);
+    await expect(page.getByRole('link', { name: 'View on GitHub' })).toHaveAttribute('href', `${acme}/blob/HEAD/app/page.tsx`);
 
     // Removing the personal setting falls back to the site's (none in tests).
     await page.getByRole('button', { name: 'change repo' }).click();
@@ -411,7 +412,7 @@ test.describe('GitHub repo links', () => {
 });
 
 test.describe('full links as file paths', () => {
-  const notes = 'https://github.com/finito-startup/customer-notes/blob/main/acme.md';
+  const notes = 'https://github.com/acme-startup/customer-notes/blob/main/acme.md';
   const doc = 'https://docs.example.com/interviews/acme';
   const labels = ['GitHub Link Waypoint', 'Doc Link Waypoint'];
 
@@ -426,7 +427,7 @@ test.describe('full links as file paths', () => {
     expect(isLinkPath(notes)).toBe(true);
     expect(isLinkPath('src/app.tsx')).toBe(false);
     expect(githubFileLink(null, notes)).toBe(notes);
-    expect(githubFileLink('https://github.com/finito-startup/finito', notes)).toBe(notes);
+    expect(githubFileLink('https://github.com/acme-startup/acme', notes)).toBe(notes);
     expect(vscodeLink('/Users/you/repo', notes)).toBeNull();
     expect(linkLabel(notes)).toBe('View on GitHub');
     expect(linkLabel(doc)).toBe('Open link');
@@ -561,5 +562,25 @@ test.describe('search highlights instead of hiding', () => {
     await expect(search).toHaveValue('');
     await expect(page.getByTestId('search-counter')).toHaveCount(0);
     await expect(page.locator('[data-current-match]')).toHaveCount(0);
+  });
+});
+
+test.describe('site list comes from SITE_NAMES', () => {
+  const saved = process.env.SITE_NAMES;
+  test.afterEach(() => {
+    if (saved === undefined) delete process.env.SITE_NAMES;
+    else process.env.SITE_NAMES = saved;
+  });
+
+  test('own site first, then the names, without duplicates', () => {
+    process.env.SITE_NAMES = ' test, acme ,demo,acme,';
+    expect(getSites()).toEqual([null, 'test', 'acme', 'demo']);
+  });
+
+  test('fails loudly when unset or invalid', () => {
+    delete process.env.SITE_NAMES;
+    expect(() => getSites()).toThrow(/SITE_NAMES is not set/);
+    process.env.SITE_NAMES = 'test,Bad Name';
+    expect(() => getSites()).toThrow(/invalid names: Bad Name/);
   });
 });

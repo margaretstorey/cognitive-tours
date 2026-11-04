@@ -247,10 +247,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (1) back up **every site** with `npx tsx scripts/backup-all-sites.ts` 
   (yours to backups/backup-YYYY-MM-DD.json, teams' to 
   backups/teams/<team>-YYYY-MM-DD.json); 
-  (2) run the migration on **every database** in the Team sites list, 
-  stopping at the first failure:
+  (2) run the migration on **every database**, stopping at the first 
+  failure. The list comes from `SITE_NAMES` in `.env` (yours is 
+  `cognitive-tours`, every other site's is `ct-<name>`; the full list is 
+  in `CLAUDE.local.md`):
   ```
-  for db in cognitive-tours ct-test ct-finito ct-vitalitree ct-evernear ct-elevate ct-poold ct-ciara ct-demo; do
+  for db in cognitive-tours $(grep '^SITE_NAMES=' .env | cut -d= -f2 | tr ',' '\n' | sed 's/^/ct-/'); do
     echo "== $db"; turso db shell "$db" < prisma/migrations/<new>/migration.sql || break
   done
   ```
@@ -268,16 +270,18 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   Vercel project and Turso database, all deploying from this repo's 
   `main`; only the env vars differ. Your own site is untouched.
 
+  **The team sites aren't listed in the repo** (Nov 4): a site's address 
+  is `cognitive-tours-<name>.vercel.app` and the sites have no login, so 
+  a public copy must not list every student map. The names live in the 
+  server-only `SITE_NAMES` setting (comma-separated), in your `.env` and 
+  in the cognitive-tours Vercel project (for the nightly backup), read by 
+  `getSites()` in `app/lib/sites.ts`. The full table (every site, Vercel 
+  project, database and setting) is in **`CLAUDE.local.md`**, which git 
+  ignores and Claude Code reads locally. The public ones:
+
   | Site | Vercel project | Turso database | NEXT_PUBLIC_PROJECT_NAME | NEXT_PUBLIC_REPO_URL |
   |---|---|---|---|---|
   | Mine | cognitive-tours (address in `MY_SITE_URL`; not written here) | cognitive-tours | (unset) | (unset) |
-  | Test (what students see) | cognitive-tours-test | ct-test | Test team | (unset) |
-  | Finito | cognitive-tours-finito | ct-finito | Finito | (unset) |
-  | Vitalitree | cognitive-tours-vitalitree | ct-vitalitree | Vitalitree | (unset) |
-  | Evernear | cognitive-tours-evernear | ct-evernear | Evernear | (unset) |
-  | Elevate | cognitive-tours-elevate | ct-elevate | Elevate | (unset) |
-  | Poold | cognitive-tours-poold | ct-poold | Poold | (unset) |
-  | Ciara (trying it out) | cognitive-tours-ciara | ct-ciara | Ciara | (unset) |
   | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | (unset) |
 
   **Your own site's address is kept out of the repo** (Nov 3): it 
@@ -319,20 +323,23 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   their filenames; baked in at build time, so changing it needs a 
   redeploy). Sites are at `<vercel project>.vercel.app`. 
   `NEXT_PUBLIC_REPO_URL` (optional, e.g. 
-  `https://github.com/finito-startup/finito`) gives every file link a 
+  `https://github.com/acme-startup/acme`) gives every file link a 
   "View on GitHub" and makes the Project label link to the repo; when 
   it's unset, any student can set it for their own browser from the 
   waypoint panel ("Set your team's GitHub repo"), which is the plan for 
-  now. Finito's repo is https://github.com/finito-startup/finito (private). **How changes reach every site:** 
+  now. **How changes reach every site:** 
   code: one push to `main` deploys all of them; afterwards, check each 
   project's Deployments tab for the new build (see the Vercel Git 
   disconnect known issue). Schema: the migration loop above, never just 
   `cognitive-tours`. Backups: each site's `/api/data`, with team 
   backups in `backups/teams/` (gitignored, so student work never lands 
-  in the repo). **Adding a team:** add its database and site to this 
-  table, to the migration loop *and* to `SITES` in 
-  `app/lib/sites.ts` (used by both the backup script and the nightly 
-  backup).
+  in the repo). **Adding a team:** add its name to `SITE_NAMES` in 
+  `.env` *and* in the cognitive-tours Vercel project (then redeploy 
+  cognitive-tours so the nightly backup sees it), and add its row to the 
+  table in `CLAUDE.local.md`. The migration loop and the backup and 
+  restore scripts pick it up from `SITE_NAMES`. If `SITE_NAMES` is 
+  missing, the backup script and the nightly backup stop with an error 
+  rather than back up fewer sites.
   - **Rotate any credential immediately if it's ever pasted into chat, docs, commit messages, or committed by mistake** — treat exposure to any external system (including this chat) as equivalent to a real leak. Sequence: generate new → invalidate all → generate final → update Vercel → update local `.env` → redeploy. See known issue below re: confirming redeploy actually triggers.
 
 

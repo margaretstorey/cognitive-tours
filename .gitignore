@@ -46,6 +46,9 @@ next-env.d.ts
 prisma/dev.db
 prisma/dev.db-journal
 
+# Private project facts (team site addresses), read by Claude Code locally
+CLAUDE.local.md
+
 # Bram (local agent tooling)
 resources/
 .claude/bram-conventions.md

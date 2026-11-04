@@ -159,7 +159,7 @@ export default function TourBar({
 
   const { repoUrl } = useRepoUrl();
 
-  // e.g. "finito-" on a team site, so downloads from different teams don't collide.
+  // e.g. "acme-" on a team site, so downloads from different teams don't collide.
   const filePrefix = PROJECT_NAME ? `${tourSlug(PROJECT_NAME)}-` : '';
 
   const downloadFile = (content: string, filename: string, type = 'text/markdown') => {

@@ -21,9 +21,10 @@
  * Everything written to the site after the backup is lost.
  */
 
+import 'dotenv/config'; // SITE_NAMES (see app/lib/sites.ts)
 import * as path from 'path';
 import * as fs from 'fs';
-import { SITES } from '../app/lib/sites';
+import { getSites } from '../app/lib/sites';
 import type { Waypoint, WaypointEdge, Tour } from '../app/lib/types';
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
@@ -40,10 +41,20 @@ function fail(message: string): never {
   process.exit(1);
 }
 
-// "mine" is the user's own site (null in SITES); its database is
-// cognitive-tours, and every team site's is ct-<name> (CLAUDE.md → Team sites).
+// The names to choose from: "mine" for the user's own site (null in
+// getSites()), then each name in SITE_NAMES.
+function siteNames(): string[] {
+  try {
+    return getSites().map(s => s ?? 'mine');
+  } catch (err) {
+    fail(err instanceof Error ? err.message : String(err));
+  }
+}
+
+// "mine" is the user's own site; its database is cognitive-tours, and every
+// other site's is ct-<name> (CLAUDE.local.md → Team sites).
 function databaseFor(site: string): string {
-  const names = SITES.map(s => s ?? 'mine');
+  const names = siteNames();
   if (!names.includes(site)) fail(`Unknown site "${site}". Use one of: ${names.join(', ')}`);
   return site === 'mine' ? 'cognitive-tours' : `ct-${site}`;
 }
@@ -146,7 +157,7 @@ function restoreSql(backup: Backup, source: string, site: string): string {
 function main() {
   const [backupArg, site] = process.argv.slice(2);
   if (!backupArg || !site) {
-    fail('Usage: npx tsx scripts/restore-production-from-backup.ts <backup.json> <site>   (site: mine, demo, finito, ...)');
+    fail(`Usage: npx tsx scripts/restore-production-from-backup.ts <backup.json> <site>   (site: ${siteNames().join(', ')})`);
   }
   const database = databaseFor(site);
   const backup = loadBackup(backupArg);

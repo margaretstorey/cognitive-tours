@@ -54,7 +54,9 @@ be given a site (or use the demo).
 - **One site can be restored without touching the others**
   (`scripts/restore-production-from-backup.ts`, `docs/RESTORE.md`).
 - Adding a site is configuration, not code: a database, a token, a Vercel
-  project and a row in `SITES` (`app/lib/sites.ts`).
+  project and its name in the `SITE_NAMES` setting, read by `getSites()`
+  in `app/lib/sites.ts`. (Since Nov 4 the names are kept out of the repo,
+  because each name gives a site's address and the sites have no login.)
 
 **Negative** (the costs ADR 007 predicted when it rejected this option):
 - **Schema changes multiply.** Every migration has to run on every database

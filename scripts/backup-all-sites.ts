@@ -12,10 +12,10 @@
  * are never overwritten: a second run the same day adds b, c, ...
  */
 
-import 'dotenv/config'; // MY_SITE_URL, your own site's address (see app/lib/sites.ts)
+import 'dotenv/config'; // MY_SITE_URL and SITE_NAMES (see app/lib/sites.ts)
 import * as path from 'path';
 import * as fs from 'fs';
-import { SITES, siteUrl, isSiteBackup } from '../app/lib/sites';
+import { getSites, siteUrl, isSiteBackup } from '../app/lib/sites';
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const BACKUPS_DIR = path.resolve(PROJECT_ROOT, 'backups');
@@ -58,6 +58,7 @@ async function backupSite(name: string | null, date: string): Promise<void> {
 
 async function main() {
   const date = today();
+  const SITES = getSites();
   let failed = 0;
   for (const name of SITES) {
     try {

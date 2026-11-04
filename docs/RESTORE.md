@@ -2,7 +2,7 @@
 
 What to do when a Cognitive Tours map has been damaged: waypoints deleted,
 tours wiped, junk added, or a whole site emptied. Follow the steps in order.
-If anything is unclear, ask Claude in this repo ("help me restore Finito")
+If anything is unclear, ask Claude in this repo ("help me restore a team's site")
 and go through it together.
 
 ## 1. First: don't panic, and back up what's there now
@@ -48,7 +48,7 @@ so resetting it always puts back the same map.
    that has it open. An old tab still shows the damaged map, and saving
    from it could put deleted things back.
 
-## 4. Restore a student site (for example Finito)
+## 4. Restore a student site (for example a team called Acme)
 
 There's no fixed good copy for a team, because their map keeps growing.
 You put back a backup from **before** the damage, and **anything the team
@@ -56,20 +56,20 @@ added after that backup is lost.**
 
 1. **Tell the team first**, and ask them to stop editing until you're done.
 2. **Choose the backup:** the most recent one from before the damage.
-   - On your Mac: `ls backups/teams/finito-*` (a date per file; `b`, `c`
+   - On your Mac: `ls backups/teams/acme-*` (a date per file; `b`, `c`
      are later the same day).
    - Or a nightly one (see 6).
 3. Make the restore file. It prints what it will put back, plus the exact
    command for the next step:
    ```
-   npx tsx scripts/restore-production-from-backup.ts backups/teams/finito-<date>.json finito
+   npx tsx scripts/restore-production-from-backup.ts backups/teams/acme-<date>.json acme
    ```
    Check the counts and tour names it lists. They should look like the
    team's map before the damage.
 4. Sign in to Turso if needed (`turso auth login`), then run the command
    it printed:
    ```
-   turso db shell ct-finito < backups/restore/finito-from-finito-<date>.sql
+   turso db shell ct-acme < backups/restore/acme-from-acme-<date>.sql
    ```
 5. Reload the team's site and check it with them.
 
@@ -113,23 +113,19 @@ lists what's wrong. If that happens, pick a different backup.
 |---|---|---|---|
 | Your own map | `mine` | `cognitive-tours` | the `MY_SITE_URL` line in `.env` |
 | Demo | `demo` | `ct-demo` | cognitive-tours-demo.vercel.app |
-| Test | `test` | `ct-test` | cognitive-tours-test.vercel.app |
-| Finito | `finito` | `ct-finito` | cognitive-tours-finito.vercel.app |
-| Vitalitree | `vitalitree` | `ct-vitalitree` | cognitive-tours-vitalitree.vercel.app |
-| Evernear | `evernear` | `ct-evernear` | cognitive-tours-evernear.vercel.app |
-| Elevate | `elevate` | `ct-elevate` | cognitive-tours-elevate.vercel.app |
-| Poold | `poold` | `ct-poold` | cognitive-tours-poold.vercel.app |
-| Ciara | `ciara` | `ct-ciara` | cognitive-tours-ciara.vercel.app |
+| A team site | its name (e.g. `acme`) | `ct-<name>` (e.g. `ct-acme`) | cognitive-tours-<name>.vercel.app |
 
-The full list, including how a new team is added, is in `CLAUDE.md` →
-Team sites.
+The full list of team sites is kept out of the repo (anyone with a
+team's address can edit its map): it's in `CLAUDE.local.md` on your Mac,
+and the names are the `SITE_NAMES` line in `.env`. How a team is added is
+in `CLAUDE.md` → Team sites.
 
 ## 9. What was tested, and when
 
 On **Nov 3, 2026**:
 
 - **Seven practice restores on a copy of the local database:** the demo,
-  your map, Finito, Test, Poold, Evernear and an old July backup. Each was
+  your map, the test site, three student team sites and an old July backup. Each was
   read back through the app and was identical to its backup, including
   positions, tour order, narratives and dates.
 - **All 39 backups on disk** passed the script's checks.

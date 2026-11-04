@@ -1,23 +1,32 @@
 /**
- * Every Cognitive Tours site, mirroring CLAUDE.md → Team sites.
- * Used by scripts/backup-all-sites.ts and the nightly backup route.
- * Adding a site there means adding it here.
+ * Every Cognitive Tours site: the user's own (null), then each name in the
+ * server-only SITE_NAMES env var, a comma-separated list such as
+ * "test,demo,acme". Used by scripts/backup-all-sites.ts, the nightly backup
+ * route and scripts/restore-production-from-backup.ts.
  *
- * null is the user's own site. Its address is kept out of the repo, in the
- * server-only MY_SITE_URL env var (.env locally; the cognitive-tours Vercel
- * project for the nightly backup), so it can't be found in a public copy.
+ * The names are kept out of the repo (.env locally; the cognitive-tours
+ * Vercel project for the nightly backup) because a site's address is
+ * cognitive-tours-<name>.vercel.app and the sites have no login: a public
+ * copy of the repo must not list every student team's map. The full table
+ * lives in CLAUDE.local.md, which git ignores.
+ *
+ * The user's own address is kept out the same way, in MY_SITE_URL.
+ *
+ * Read when called, not when this file loads, so the team projects (which
+ * build this same code without SITE_NAMES) still build.
  */
-export const SITES: (string | null)[] = [
-  null,
-  'test',
-  'finito',
-  'vitalitree',
-  'evernear',
-  'elevate',
-  'poold',
-  'ciara',
-  'demo',
-];
+const SITE_NAME = /^[a-z0-9][a-z0-9-]*$/;
+
+export function getSites(): (string | null)[] {
+  const raw = process.env.SITE_NAMES?.trim();
+  // No fallback: a missing setting should fail loudly rather than quietly
+  // back up fewer sites than there are.
+  if (!raw) throw new Error('SITE_NAMES is not set; add the comma-separated site names to .env');
+  const names = raw.split(',').map(s => s.trim()).filter(Boolean);
+  const bad = names.filter(n => !SITE_NAME.test(n));
+  if (bad.length > 0) throw new Error(`SITE_NAMES has invalid names: ${bad.join(', ')}`);
+  return [null, ...new Set(names)];
+}
 
 export function siteUrl(name: string | null): string {
   if (name) return `https://cognitive-tours-${name}.vercel.app`;

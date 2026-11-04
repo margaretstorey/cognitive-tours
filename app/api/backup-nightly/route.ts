@@ -1,5 +1,5 @@
 import { put } from '@vercel/blob';
-import { SITES, siteUrl, isSiteBackup } from '@/app/lib/sites';
+import { getSites, siteUrl, isSiteBackup } from '@/app/lib/sites';
 
 /**
  * Nightly backup of every site, triggered by the cron in vercel.json.
@@ -24,6 +24,16 @@ export async function GET(request: Request) {
   const date = new Date().toISOString().slice(0, 10);
   const saved: { site: string; waypoints: number; edges: number; tours: number }[] = [];
   const failed: { site: string; error: string }[] = [];
+
+  // SITE_NAMES (and MY_SITE_URL) are set on the cognitive-tours project only.
+  let SITES: (string | null)[];
+  try {
+    SITES = getSites();
+  } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
+    console.log(JSON.stringify({ nightlyBackup: date, error }));
+    return Response.json({ date, error }, { status: 500 });
+  }
 
   // One failing site doesn't stop the rest.
   for (const name of SITES) {
