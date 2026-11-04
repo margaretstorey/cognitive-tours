@@ -9,7 +9,7 @@ import WaypointDetail from './WaypointDetail';
 import TourBar from './TourBar';
 import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
-import { PROJECT_NAME } from '@/app/lib/project';
+import { PROJECT_NAME, SITE_COLOR, SITE_NOTICE } from '@/app/lib/project';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 import { githubFileLink, linkLabel, useRepoUrl } from '@/app/lib/repo';
 
@@ -509,9 +509,20 @@ export default function CognitiveToursApp() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <div className="relative px-4 py-2 border-b border-gray-200 bg-black shrink-0 text-center">
+      {/* NEXT_PUBLIC_SITE_COLOR and NEXT_PUBLIC_SITE_NOTICE (app/lib/project.ts)
+          let a site, e.g. a demo, look different so nobody mistakes which one they're on. */}
+      <div
+        data-testid="app-header"
+        className={`relative px-4 py-2 border-b border-gray-200 shrink-0 text-center ${SITE_COLOR ? '' : 'bg-black'}`}
+        style={SITE_COLOR ? { backgroundColor: SITE_COLOR } : undefined}
+      >
         <h1 className="text-4xl font-bold text-white">Cognitive Tours</h1>
         <p className="text-lg font-bold text-gray-200 mt-1">Understanding as a Deliverable</p>
+        {SITE_NOTICE && (
+          <p data-testid="site-notice" role="note" className="text-sm font-semibold text-yellow-200 mt-1">
+            {SITE_NOTICE}
+          </p>
+        )}
         {PROJECT_NAME && (
           // Pinned in the header's empty left side so it adds no height.
           (() => {

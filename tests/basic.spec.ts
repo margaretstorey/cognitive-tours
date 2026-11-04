@@ -5,6 +5,7 @@ import type { Tour, Waypoint } from '../app/lib/types';
 import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo } from '../app/lib/repo';
 import { vscodeLink } from '../app/lib/code-folder';
 import { getSites } from '../app/lib/sites';
+import { parseSiteColor, parseSiteNotice } from '../app/lib/project';
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
@@ -294,6 +295,26 @@ test.describe('tour live indicators', () => {
 });
 
 test.describe('project name', () => {
+  test('no notice and a black header when the site settings are unset', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Cognitive Tours' })).toBeVisible();
+    await expect(page.getByTestId('site-notice')).toHaveCount(0);
+    await expect(page.getByTestId('app-header')).toHaveClass(/bg-black/);
+  });
+
+  test('site notice and colour settings are cleaned up or ignored', () => {
+    expect(parseSiteNotice(undefined)).toBeNull();
+    expect(parseSiteNotice('   ')).toBeNull();
+    expect(parseSiteNotice('  Demo site:\n  edits may be lost. ')).toBe('Demo site: edits may be lost.');
+    expect(parseSiteNotice('x'.repeat(400))).toHaveLength(300);
+
+    expect(parseSiteColor('#7f1d1d')).toBe('#7f1d1d');
+    expect(parseSiteColor(' #abc ')).toBe('#abc');
+    for (const bad of [undefined, '', 'red', '7f1d1d', '#12345', 'url(x)', '#7f1d1d; color: red']) {
+      expect(parseSiteColor(bad), String(bad)).toBeNull();
+    }
+  });
+
   test('no project pill when NEXT_PUBLIC_PROJECT_NAME is unset', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Cognitive Tours' })).toBeVisible();

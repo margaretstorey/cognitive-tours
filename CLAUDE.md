@@ -337,7 +337,17 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   "View on GitHub" and makes the Project label link to the repo; when 
   it's unset, any student can set it for their own browser from the 
   waypoint panel ("Set your team's GitHub repo"), which is the plan for 
-  now. **How changes reach every site:** 
+  now. Two more optional settings make a site easy to tell apart (Nov 4; 
+  both baked in at build time, so changing one needs a redeploy): 
+  `NEXT_PUBLIC_SITE_NOTICE`, a line of text under the header title, and 
+  `NEXT_PUBLIC_SITE_COLOR`, the header's background as a hex colour 
+  (anything else is ignored; keep it dark, the text is white). The demo 
+  and demo-flask use dark red `#7f1d1d` with "Demonstration site: … 
+  Anyone can edit it; changes may be lost."; Demo 1–9 use dark blue 
+  `#1e3a8a` with "Demonstration sandbox: try writing waypoints and 
+  tours. …". Team sites and your own site set neither (black header). 
+  Don't promise a reset in a notice unless `demo-site-nightly-reset` 
+  exists. **How changes reach every site:** 
   code: one push to `main` deploys all of them; afterwards, check each 
   project's Deployments tab for the new build (see the Vercel Git 
   disconnect known issue). Schema: the migration loop above, never just 
