@@ -284,7 +284,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   | Mine | cognitive-tours (address in `MY_SITE_URL`; not written here) | cognitive-tours | (unset) | (unset) |
   | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | https://github.com/margaretstorey/cognitive-tours |
   | Demo, Flask (public, brownfield) | cognitive-tours-demo-flask | ct-demo-flask | Flask (demo) | https://github.com/margaretstorey/flask |
-  | Demo 1 … Demo 9 (public, blank, to try authoring) | cognitive-tours-demo1 … demo9 | ct-demo1 … ct-demo9 | Demo 1 … Demo 9 | (unset) |
+  | Sandbox 1 … Sandbox 9 (public, blank, to try authoring) | cognitive-tours-sandbox1 … sandbox9 | ct-sandbox1 … ct-sandbox9 | Sandbox 1 … Sandbox 9 | (unset) |
 
   **Your own site's address is kept out of the repo** (Nov 3): it 
   lives only in `MY_SITE_URL`, in your local `.env` and in the 
@@ -317,9 +317,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `docs/design.rst` is the source for ADR waypoints). **That map now 
   has its own site, demo-flask** (Nov 4), with `backups/demo-flask.json` 
   as its reset copy (`scripts/restore-production-from-backup.ts 
-  backups/demo-flask.json demo-flask`). **Demo 1 to Demo 9** (Nov 4) are 
-  blank sites (`SEED_ON_EMPTY=false`) for people to try writing 
-  waypoints and tours; reset one by restoring an empty backup. All ten 
+  backups/demo-flask.json demo-flask`). **Sandbox 1 to Sandbox 9** (Nov 4; first made as demo1–9 and
+  recreated under these names the same day) are blank sites (`SEED_ON_EMPTY=false`) for people to try writing 
+  waypoints and tours; they never reset (empty one by restoring an
+  empty backup). All ten 
   are in `SITE_NAMES`, so they're backed up and migrated with the rest: 
   every push to `main` now builds 19 sites. Anyone can edit the demo, so back it 
   up before sharing the link; resetting it means restoring 
@@ -343,9 +344,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `NEXT_PUBLIC_SITE_COLOR`, the header's background as a hex colour 
   (anything else is ignored; keep it dark, the text is white). The demo 
   and demo-flask use dark red `#7f1d1d` with "Demonstration site: … 
-  Anyone can edit it; changes may be lost."; Demo 1–9 use dark blue 
-  `#1e3a8a` with "Demonstration sandbox: try writing waypoints and 
-  tours. …". Team sites and your own site set neither (black header). 
+  Anyone can edit it; changes may be lost."; the sandboxes use dark blue 
+  `#1e3a8a` with "Sandbox: try writing waypoints and tours. …". Team sites and your own site set neither (black header). 
   **The main demo resets itself every night** (Nov 4; only that one, by 
   the user's choice): a second cron (`vercel.json` → `/api/reset-nightly`, 
   08:00 UTC, i.e. midnight Pacific in winter and 1 a.m. in summer) 
