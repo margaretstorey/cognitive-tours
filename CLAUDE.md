@@ -346,18 +346,20 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   Anyone can edit it; changes may be lost."; Demo 1–9 use dark blue 
   `#1e3a8a` with "Demonstration sandbox: try writing waypoints and 
   tours. …". Team sites and your own site set neither (black header). 
-  **The demos reset themselves every night** (Nov 4): a second cron 
-  (`vercel.json` → `/api/reset-nightly`, 08:00 UTC, i.e. midnight Pacific 
-  in winter and 1 a.m. in summer) replaces the whole map on any site that 
-  sets `RESET_NIGHTLY_FROM` (`demo-canonical` on demo, `demo-flask` on 
-  demo-flask, `empty` on Demo 1–9) **and** whose 
-  `NEXT_PUBLIC_PROJECT_NAME` contains the word "demo"; it also needs that 
-  project's `CRON_SECRET`. Team sites and your own site set neither, so 
-  the route does nothing there (204). The reset copies are the committed 
-  `backups/demo-canonical.json` and `backups/demo-flask.json`, bundled at 
-  build time, so refreshing either and pushing changes what the next 
-  reset puts back. Check a night's run in that project's Vercel logs 
-  (`nightlyReset`). The demo notices say so. **How changes reach every site:** 
+  **The main demo resets itself every night** (Nov 4; only that one, by 
+  the user's choice): a second cron (`vercel.json` → `/api/reset-nightly`, 
+  08:00 UTC, i.e. midnight Pacific in winter and 1 a.m. in summer) 
+  replaces the whole map on a site that sets `RESET_NIGHTLY_FROM` **and** 
+  whose `NEXT_PUBLIC_PROJECT_NAME` contains the word "demo"; it also needs 
+  that project's `CRON_SECRET`. Only cognitive-tours-demo sets them 
+  (`RESET_NIGHTLY_FROM=demo-canonical`), so it goes back to the committed 
+  `backups/demo-canonical.json`, bundled at build time: refreshing that 
+  file and pushing changes what the next reset puts back. demo-flask and 
+  the blank sites don't reset (they could opt in with `demo-flask` or 
+  `empty`); team sites and your own site never do, and the route does 
+  nothing there (204). Check a night's run in the demo's Vercel logs 
+  (`nightlyReset`). Only the main demo's notice promises a reset; the 
+  others say "changes may be lost". **How changes reach every site:** 
   code: one push to `main` deploys all of them; afterwards, check each 
   project's Deployments tab for the new build (see the Vercel Git 
   disconnect known issue). Schema: the migration loop above, never just 
