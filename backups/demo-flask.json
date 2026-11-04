@@ -1,0 +1,359 @@
+{
+  "waypoints": [
+    {
+      "id": "w-1792734410084",
+      "label": "app.py",
+      "type": "Code Component",
+      "filePath": "src/flask/app.py",
+      "position": {
+        "x": 70.7053430318137,
+        "y": 651.9306191255915
+      }
+    },
+    {
+      "id": "w-1792734880202",
+      "label": "Design Decisions in Flask",
+      "type": "ADR",
+      "filePath": "docs/design.rst",
+      "position": {
+        "x": -194.10787105612536,
+        "y": 625.6198783779815
+      }
+    },
+    {
+      "id": "w-flaskr-goal",
+      "label": "Let people share short blog posts",
+      "type": "Goal",
+      "notes": "Flaskr is the small blog app built step by step in Flask's tutorial (docs/tutorial/). Users register and log in, then write, edit and delete their own posts; anyone can read them.",
+      "filePath": "docs/tutorial/index.rst",
+      "position": {
+        "x": -175.70965254005046,
+        "y": -90.9932406181908
+      }
+    },
+    {
+      "id": "w-flaskr-need",
+      "label": "Only the author can change their posts",
+      "type": "User Need",
+      "notes": "Enforced in two places: login_required (you must be logged in) and get_post's author check in blog.py (you must be the post's author). Tested by test_author_required in tests/test_blog.py.",
+      "position": {
+        "x": 350,
+        "y": 0
+      }
+    },
+    {
+      "id": "w-flaskr-adr-factory",
+      "label": "Build the app in a factory function",
+      "type": "ADR",
+      "notes": "create_app(test_config=None) in flaskr/__init__.py builds and returns the app. Tests pass their own config, such as a temporary database (see tests/conftest.py). Rationale: docs/tutorial/factory.rst.",
+      "filePath": "examples/tutorial/flaskr/__init__.py",
+      "position": {
+        "x": -150.78424400106434,
+        "y": 367.2936723102363
+      }
+    },
+    {
+      "id": "w-flaskr-adr-blueprints",
+      "label": "Split features into blueprints",
+      "type": "ADR",
+      "notes": "Two blueprints: auth (under /auth) and blog (no prefix, so it serves /). Both are registered in create_app. Rationale: docs/tutorial/views.rst.",
+      "filePath": "examples/tutorial/flaskr/auth.py",
+      "position": {
+        "x": 346.7987022369705,
+        "y": 249.7856369768371
+      }
+    },
+    {
+      "id": "w-flaskr-adr-sqlite",
+      "label": "Plain SQLite, no ORM",
+      "type": "ADR",
+      "notes": "Python's built-in sqlite3 with hand-written SQL. Tables (user, post) are in flaskr/schema.sql; flask init-db creates them. One connection per request, kept on g and closed at teardown. Rationale: docs/tutorial/database.rst.",
+      "filePath": "examples/tutorial/flaskr/db.py",
+      "position": {
+        "x": 482.300541087472,
+        "y": 130.52597731384083
+      }
+    },
+    {
+      "id": "w-flaskr-auth",
+      "label": "Login and registration",
+      "type": "Code Component",
+      "notes": "Passwords are stored hashed (generate_password_hash, line 68). Logging in stores the user's id in the session (line 104); load_logged_in_user (line 32) puts that user in g.user before every request.",
+      "filePath": "examples/tutorial/flaskr/auth.py",
+      "position": {
+        "x": 933.8393072709148,
+        "y": 334.18650365365045
+      }
+    },
+    {
+      "id": "w-flaskr-blog",
+      "label": "Blog views",
+      "type": "Code Component",
+      "notes": "Routes: / (index), /create, /<id>/update and /<id>/delete. get_post (line 28) returns 404 if the post doesn't exist and 403 if you aren't its author (line 55).",
+      "filePath": "examples/tutorial/flaskr/blog.py",
+      "position": {
+        "x": 1141.149299234711,
+        "y": 233.93683077832395
+      }
+    },
+    {
+      "id": "w-flaskr-login-required",
+      "label": "login_required",
+      "type": "Code Component",
+      "notes": "A decorator in auth.py (line 19): if g.user is None, it redirects to the login page. Used on create, update and delete in blog.py.",
+      "filePath": "examples/tutorial/flaskr/auth.py",
+      "position": {
+        "x": 1277.4178882390308,
+        "y": 430.5127161322453
+      }
+    },
+    {
+      "id": "w-flaskr-tests",
+      "label": "Tests use a fresh app per test",
+      "type": "Test",
+      "notes": "The app fixture in conftest.py makes a temporary database file, calls create_app({'TESTING': True, 'DATABASE': db_path}) for each test, then deletes the file. Run pytest from examples/tutorial.",
+      "filePath": "examples/tutorial/tests/conftest.py",
+      "position": {
+        "x": 164.30632382362091,
+        "y": 423.20559213654633
+      }
+    },
+    {
+      "id": "w-flaskr-risk-secret",
+      "label": "Default secret key is 'dev'",
+      "type": "Risk",
+      "notes": "create_app sets SECRET_KEY to 'dev'. The key signs the session cookie, so anyone who knows it could forge a login. docs/tutorial/deploy.rst says to override it in instance/config.py.",
+      "filePath": "examples/tutorial/flaskr/__init__.py",
+      "position": {
+        "x": -153.5716605391857,
+        "y": 163.35822469759205
+      }
+    },
+    {
+      "id": "w-flaskr-feat-accounts",
+      "label": "Accounts: register and log in",
+      "type": "Feature",
+      "filePath": "examples/tutorial/flaskr/auth.py",
+      "position": {
+        "x": 704.2769755923414,
+        "y": -18.52958296018435
+      }
+    },
+    {
+      "id": "w-flaskr-feat-posts",
+      "label": "Write, edit and delete your own posts",
+      "type": "Feature",
+      "filePath": "examples/tutorial/flaskr/blog.py",
+      "position": {
+        "x": 927.2668009615484,
+        "y": 109.4339022894442
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-1792734893617",
+      "source": "w-1792734880202",
+      "target": "w-1792734410084",
+      "label": "leads-to"
+    },
+    {
+      "id": "e-flaskr-1",
+      "source": "w-flaskr-goal",
+      "target": "w-flaskr-need",
+      "label": "motivates"
+    },
+    {
+      "id": "e-flaskr-3",
+      "source": "w-flaskr-adr-factory",
+      "target": "w-flaskr-tests",
+      "label": "leads-to"
+    },
+    {
+      "id": "e-flaskr-4",
+      "source": "w-flaskr-adr-blueprints",
+      "target": "w-flaskr-auth",
+      "label": "leads-to"
+    },
+    {
+      "id": "e-flaskr-5",
+      "source": "w-flaskr-adr-blueprints",
+      "target": "w-flaskr-blog",
+      "label": "leads-to"
+    },
+    {
+      "id": "e-flaskr-6",
+      "source": "w-flaskr-adr-sqlite",
+      "target": "w-flaskr-blog",
+      "label": "leads-to"
+    },
+    {
+      "id": "e-flaskr-8",
+      "source": "w-flaskr-tests",
+      "target": "w-flaskr-auth",
+      "label": "validates"
+    },
+    {
+      "id": "e-flaskr-9",
+      "source": "w-flaskr-risk-secret",
+      "target": "w-flaskr-auth",
+      "label": "threatens"
+    },
+    {
+      "id": "e-flaskr-10",
+      "source": "w-flaskr-need",
+      "target": "w-flaskr-feat-posts",
+      "label": "supported-by"
+    },
+    {
+      "id": "e-flaskr-11",
+      "source": "w-flaskr-need",
+      "target": "w-flaskr-feat-accounts",
+      "label": "supported-by"
+    },
+    {
+      "id": "e-flaskr-12",
+      "source": "w-flaskr-feat-posts",
+      "target": "w-flaskr-blog",
+      "label": "implemented-by"
+    },
+    {
+      "id": "e-flaskr-13",
+      "source": "w-flaskr-feat-accounts",
+      "target": "w-flaskr-auth",
+      "label": "implemented-by"
+    },
+    {
+      "id": "e-flaskr-14",
+      "source": "w-flaskr-auth",
+      "target": "w-flaskr-login-required",
+      "label": "contains"
+    },
+    {
+      "id": "e-flaskr-15",
+      "source": "w-flaskr-blog",
+      "target": "w-flaskr-login-required",
+      "label": "uses"
+    },
+    {
+      "id": "e-flaskr-16",
+      "source": "w-flaskr-adr-sqlite",
+      "target": "w-flaskr-auth",
+      "label": "leads-to"
+    },
+    {
+      "id": "e-flaskr-17",
+      "source": "w-flaskr-tests",
+      "target": "w-flaskr-feat-posts",
+      "label": "validates"
+    },
+    {
+      "id": "e-flaskr-18",
+      "source": "w-flaskr-risk-secret",
+      "target": "w-flaskr-need",
+      "label": "threatens"
+    },
+    {
+      "id": "e-flaskr-19",
+      "source": "w-flaskr-adr-factory",
+      "target": "w-1792734410084",
+      "label": "uses"
+    }
+  ],
+  "tours": [
+    {
+      "id": "t-flaskr-only-you",
+      "name": "How does flaskr make sure only you can edit your post?",
+      "description": "",
+      "author": "Claude",
+      "createdAt": "2026-10-23T06:03:49.326Z",
+      "updatedAt": "2026-10-23T06:24:18.195Z",
+      "stops": [
+        {
+          "waypointId": "w-flaskr-need",
+          "narrative": "That's the promise. Next: the code that keeps it, in the blog views."
+        },
+        {
+          "waypointId": "w-flaskr-blog",
+          "narrative": "get_post checks that you're the author, but only works once you're logged in. Next: how login_required makes sure you are."
+        },
+        {
+          "waypointId": "w-flaskr-login-required",
+          "narrative": "End of the tour. To see both checks tested, read test_author_required in tests/test_blog.py."
+        }
+      ]
+    },
+    {
+      "id": "t-flaskr-why-built",
+      "name": "Why is flaskr built this way?",
+      "description": "",
+      "author": "Claude",
+      "createdAt": "2026-10-23T06:21:27.931Z",
+      "updatedAt": "2026-10-23T06:24:18.766Z",
+      "stops": [
+        {
+          "waypointId": "w-flaskr-goal",
+          "narrative": "To serve that goal, flaskr makes a few structural decisions. First: how the app gets created."
+        },
+        {
+          "waypointId": "w-flaskr-adr-factory",
+          "narrative": "Because the app is made by a function, tests can make their own. Next: what that buys the tests."
+        },
+        {
+          "waypointId": "w-flaskr-tests",
+          "narrative": "That is the payoff of the factory. Next decision: how the code is divided up."
+        },
+        {
+          "waypointId": "w-flaskr-adr-blueprints",
+          "narrative": "Each blueprint owns its own routes. Next decision: where the data lives."
+        },
+        {
+          "waypointId": "w-flaskr-adr-sqlite",
+          "narrative": "Simple choices keep the tutorial small, but some defaults are not safe to ship. Last stop: a risk."
+        },
+        {
+          "waypointId": "w-flaskr-risk-secret",
+          "narrative": "End of the tour. Which of these decisions would you change for a real product, and why?"
+        }
+      ]
+    },
+    {
+      "id": "t-flaskr-start-here",
+      "name": "Start here: how to read this map",
+      "description": "New to Cognitive Tours? This tour walks through flaskr, the small blog app from Flask's tutorial, and shows you how to use the map as you go.",
+      "author": "Claude",
+      "createdAt": "2026-10-24T03:45:37.821Z",
+      "updatedAt": "2026-10-24T03:45:37.821Z",
+      "stops": [
+        {
+          "waypointId": "w-flaskr-goal",
+          "narrative": "A tour is a guided path through a project's map, written by someone who understands it. This first stop is flaskr's goal. Press Next to go on, or Escape to leave the tour at any time. Next: the user need behind the goal."
+        },
+        {
+          "waypointId": "w-flaskr-need",
+          "narrative": "Goals and user needs are the why: the intent behind the code, which the code itself doesn't record. Next: the feature that meets this need."
+        },
+        {
+          "waypointId": "w-flaskr-feat-posts",
+          "narrative": "Features are what the app does for people. The lines between waypoints are labelled with how they relate, like implemented-by. Next: a design decision behind the code."
+        },
+        {
+          "waypointId": "w-flaskr-adr-blueprints",
+          "narrative": "An ADR records a decision and why it was made. This one comes from Flask's own docs. Next: the code it led to."
+        },
+        {
+          "waypointId": "w-flaskr-blog",
+          "narrative": "Code waypoints link to their file. Click the file link in the panel to open blog.py on GitHub, or Copy path to find it in your editor. Next: something that could go wrong."
+        },
+        {
+          "waypointId": "w-flaskr-risk-secret",
+          "narrative": "Risks belong on the map too: what someone changing this code should know before they ship it. Next: how the code is tested."
+        },
+        {
+          "waypointId": "w-flaskr-tests",
+          "narrative": "That's the tour. Click Exit tour to see the whole map, try Filter → Intent Layer to see only the why, or pick another tour. Then add a waypoint for something you figured out, or make your own tour with + New Tour."
+        }
+      ]
+    }
+  ]
+}

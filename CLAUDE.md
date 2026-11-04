@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: November 3 2026
+Last updated: November 4 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -278,7 +278,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   | Elevate | cognitive-tours-elevate | ct-elevate | Elevate | (unset) |
   | Poold | cognitive-tours-poold | ct-poold | Poold | (unset) |
   | Ciara (trying it out) | cognitive-tours-ciara | ct-ciara | Ciara | (unset) |
-  | Demo (public, brownfield) | cognitive-tours-demo | ct-demo | Flask (demo) | https://github.com/margaretstorey/flask |
+  | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | (unset) |
 
   **Your own site's address is kept out of the repo** (Nov 3): it 
   lives only in `MY_SITE_URL`, in your local `.env` and in the 
@@ -293,11 +293,24 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
   The Demo site (Oct 22) is the public demo for the ICSE 2027 demo 
   paper and for letting others try the tool, so they never edit your 
-  own map. Its map tours the user's fork of Flask (cloned at `~/flask`; 
-  `docs/design.rst` is the source for ADR waypoints). Anyone can edit 
-  it, so back it up before sharing the link; resetting it means 
-  restoring `backups/demo-canonical.json` (see "Restoring a site from 
-  a backup" above).
+  own map. **Since Nov 4 it holds a cleaned copy of your own map**, 
+  matching the paper (§IV: "A Research Story Behind Cognitive Tours" 
+  on this URL) and the demo video. In the copy, every repo file path is 
+  blanked (the repo is private, so links would 404; the public 
+  ResearchGate link stays), your private site address and the 
+  student site addresses are taken out, and the deleted Open Question 
+  "Should waypoint types be configurable rather than hardcoded?" is put 
+  back as Research Story's stop 10, from `backups/backup-2026-10-23b.json` 
+  (your own map still needs it back). Tours keep their original 
+  authors and dates. To refresh the copy later, redo it from a fresh 
+  backup with the same clean-up, then check the copy for the private 
+  address, `vercel.app` and team site names before loading it. Until 
+  Nov 4 the demo toured the user's fork of Flask (cloned at `~/flask`; 
+  `docs/design.rst` is the source for ADR waypoints); that map is kept 
+  in `backups/demo-flask.json`. Anyone can edit the demo, so back it 
+  up before sharing the link; resetting it means restoring 
+  `backups/demo-canonical.json` (see "Restoring a site from a backup" 
+  above).
 
   Team projects set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, 
   `SEED_ON_EMPTY=false` (a new team starts with an empty map instead of 

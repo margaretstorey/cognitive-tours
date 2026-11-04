@@ -1,357 +1,1466 @@
 {
   "waypoints": [
     {
-      "id": "w-1792734410084",
-      "label": "app.py",
-      "type": "Code Component",
-      "filePath": "src/flask/app.py",
-      "position": {
-        "x": 70.7053430318137,
-        "y": 651.9306191255915
-      }
-    },
-    {
-      "id": "w-1792734880202",
-      "label": "Design Decisions in Flask",
-      "type": "ADR",
-      "filePath": "docs/design.rst",
-      "position": {
-        "x": -194.10787105612536,
-        "y": 625.6198783779815
-      }
-    },
-    {
-      "id": "w-flaskr-goal",
-      "label": "Let people share short blog posts",
-      "type": "Goal",
-      "notes": "Flaskr is the small blog app built step by step in Flask's tutorial (docs/tutorial/). Users register and log in, then write, edit and delete their own posts; anyone can read them.",
-      "filePath": "docs/tutorial/index.rst",
-      "position": {
-        "x": -175.70965254005046,
-        "y": -90.9932406181908
-      }
-    },
-    {
-      "id": "w-flaskr-need",
-      "label": "Only the author can change their posts",
+      "id": "w02",
+      "label": "New developers need guided onboarding into intent",
       "type": "User Need",
-      "notes": "Enforced in two places: login_required (you must be logged in) and get_post's author check in blog.py (you must be the post's author). Tested by test_author_required in tests/test_blog.py.",
+      "description": "A new developer joining a project built (with or without AI assistance) may find the code works but can't understand why decisions were made. Onboarding often relies on whoever wrote the code being available to explain it — and even they may have forgotten. Cognitive Tours addresses this by letting the team leave navigable trails of understanding behind as they build out the system that can be used for onboarding.",
+      "notes": "",
+      "filePath": "",
       "position": {
-        "x": 350,
-        "y": 0
+        "x": -635.8601053975508,
+        "y": 59.23392526392776
       }
     },
     {
-      "id": "w-flaskr-adr-factory",
-      "label": "Build the app in a factory function",
+      "id": "w04",
+      "label": "Waypoints",
+      "type": "Feature",
+      "description": "A Waypoint is a meaningful place in a software project — a user need, a design decision, a risky area, a key component, a test, or an open question. Waypoints are the nodes of the understanding map and they are typed.",
+      "notes": "Waypoints can be filtered by type. There is a small ontology of waypoint types that include waypoints to represent data about user needs (e.g., from customer interviews), proposed features, decisions made, code components, tests, AI instructions, and open questions/ideas.",
+      "filePath": "",
+      "position": {
+        "x": 201.8684475431208,
+        "y": -179.58163738323833
+      }
+    },
+    {
+      "id": "w06",
+      "label": "Tours",
+      "type": "Feature",
+      "description": "Tours are ordered sequences of waypoints. Docent mode adds a narrative field to each stop so the tour can guide the reader between waypoints.\n\nA tour can represent any ordered narrative: onboarding, a prioritized backlog, a sprint, or a roadmap. It supports navigation across waypoints to tell the story.",
+      "notes": "Originated in TagSEA Routes (2006) and the Tours Eclipse plugin",
+      "filePath": "",
+      "position": {
+        "x": 73.56944496832185,
+        "y": 88.07160131905654
+      }
+    },
+    {
+      "id": "w07",
+      "label": "Waypoint File Links",
+      "type": "Feature",
+      "description": "Waypoints can optionally link to a file or document. A plain path is relative to the project: clicking it copies it, \"Open in VS Code\" opens it using the code folder each browser remembers, and \"View on GitHub\" appears when the site (or your browser) has the team's repo set. A full https:// link is used as is (\"View on GitHub\" or \"Open link\"), so a waypoint can point to material outside the repo, like interview notes. This connects intent artifacts to the code and evidence they describe, closing the loop between why and where.\n\nDescription drafted with Claude's help, Nov 3.",
+      "notes": "File preview in the detail panel isn't built yet; see the Open Question \"How to show file contents in the detail panel?\". Description drafted with Claude's help, Nov 3.",
+      "filePath": "",
+      "position": {
+        "x": 342.75803233010527,
+        "y": 163.10582465899267
+      }
+    },
+    {
+      "id": "w08",
+      "label": "Use React Flow for graph visualization",
       "type": "ADR",
-      "notes": "create_app(test_config=None) in flaskr/__init__.py builds and returns the app. Tests pass their own config, such as a temporary database (see tests/conftest.py). Rationale: docs/tutorial/factory.rst.",
-      "filePath": "examples/tutorial/flaskr/__init__.py",
+      "description": "Decision: use @xyflow/react for the graph canvas. Saves weeks of custom graph work. React Flow is TypeScript-first, mature, and handles node rendering, edge routing, drag-to-connect, and pan/zoom out of the box.",
+      "notes": "One limitation: edge deletion via keyboard is unreliable on Mac — requires a workaround.",
+      "filePath": "",
       "position": {
-        "x": -150.78424400106434,
-        "y": 367.2936723102363
+        "x": -141.80748641913766,
+        "y": -432.359421233737
       }
     },
     {
-      "id": "w-flaskr-adr-blueprints",
-      "label": "Split features into blueprints",
+      "id": "w10",
+      "label": "SQLite + Prisma for persistence",
       "type": "ADR",
-      "notes": "Two blueprints: auth (under /auth) and blog (no prefix, so it serves /). Both are registered in create_app. Rationale: docs/tutorial/views.rst.",
-      "filePath": "examples/tutorial/flaskr/auth.py",
+      "description": "Decision: use SQLite via Prisma ORM for local persistence. Rationale: single-user app with no need for a server database. SQLite runs in-process, requires no setup, and Prisma provides type-safe queries and migrations.",
+      "notes": "For cloud deployment, Turso (a hosted libSQL service) is used instead of a local SQLite file. Both are SQLite-compatible via Prisma. See the \"Use Turso for cloud persistence\" ADR.",
+      "filePath": "",
       "position": {
-        "x": 346.7987022369705,
-        "y": 249.7856369768371
+        "x": -239.05129873450528,
+        "y": -566.4162274668331
       }
     },
     {
-      "id": "w-flaskr-adr-sqlite",
-      "label": "Plain SQLite, no ORM",
+      "id": "w11",
+      "label": "Optimistic updates for all mutations",
       "type": "ADR",
-      "notes": "Python's built-in sqlite3 with hand-written SQL. Tables (user, post) are in flaskr/schema.sql; flask init-db creates them. One connection per request, kept on g and closed at teardown. Rationale: docs/tutorial/database.rst.",
-      "filePath": "examples/tutorial/flaskr/db.py",
+      "description": "Decision: all mutations update the UI immediately without waiting for database confirmation. On failure, the UI reverts and shows an error banner. Rationale: makes the graph feel responsive and natural for interactive use.",
+      "notes": "More details on The decision: Optimistic updates for all mutations\nWhen you do something in the app — create a waypoint, delete an edge, update a tour — there are two possible approaches:\nPessimistic (wait for confirmation):\n\nUser clicks \"Delete waypoint\"\nApp sends request to database\nApp WAITS for database to confirm deletion\nOnly then does the node disappear from the graph\nFeels slow — there's a visible delay\n\nOptimistic (assume success):\n\nUser clicks \"Delete waypoint\"\nNode IMMEDIATELY disappears from the graph\nApp sends request to database in the background\nIf database confirms — nothing changes, already done\nIf database FAILS — node reappears and error banner shows\nFeels instant\n\nWhy this matters for Cognitive Tours:\nThe graph is interactive — you're dragging nodes, connecting edges, clicking around. Any visible delay would feel jarring. Optimistic updates make the app feel responsive and natural.\n\nPoints to the source code that implements this decision but this records it.\n\nThe risk:\nVery occasionally a write fails silently — you think you deleted something but it's still in the database. The error banner handles this.",
+      "filePath": "",
       "position": {
-        "x": 482.300541087472,
-        "y": 130.52597731384083
+        "x": 550.8060939665113,
+        "y": -528.5344966113994
       }
     },
     {
-      "id": "w-flaskr-auth",
-      "label": "Login and registration",
+      "id": "w12",
+      "label": "CognitiveToursApp — root state component",
       "type": "Code Component",
-      "notes": "Passwords are stored hashed (generate_password_hash, line 68). Logging in stores the user's id in the session (line 104); load_logged_in_user (line 32) puts that user in g.user before every request.",
-      "filePath": "examples/tutorial/flaskr/auth.py",
+      "description": "The single \"use client\" root that owns all app state (waypoints, edges, tours, selection, active tour, load state, error message). All mutation handlers are defined here and passed as props. Keeps state management simple — no global stores.",
+      "notes": "Tour stops are represented as TourStop objects (not bare waypoint IDs), which carry each stop's docent narrative alongside its waypoint reference.",
+      "filePath": "",
       "position": {
-        "x": 933.8393072709148,
-        "y": 334.18650365365045
+        "x": 450.7742091766767,
+        "y": -143.58404558434825
       }
     },
     {
-      "id": "w-flaskr-blog",
-      "label": "Blog views",
+      "id": "w13",
+      "label": "WaypointGraph — React Flow canvas",
       "type": "Code Component",
-      "notes": "Routes: / (index), /create, /<id>/update and /<id>/delete. get_post (line 28) returns 404 if the post doesn't exist and 403 if you aren't its author (line 55).",
-      "filePath": "examples/tutorial/flaskr/blog.py",
+      "description": "The left-panel component that renders the understanding map as an interactive graph. Uses React Flow with a custom WaypointNode type for type-coloured nodes and drag-to-connect handles. Supports pan, zoom, node drag, edge delete.",
+      "notes": "",
+      "filePath": "",
       "position": {
-        "x": 1141.149299234711,
-        "y": 233.93683077832395
+        "x": 1426.6750622251282,
+        "y": -399.5396218459125
       }
     },
     {
-      "id": "w-flaskr-login-required",
-      "label": "login_required",
+      "id": "w14",
+      "label": "WaypointDetail — right panel",
       "type": "Code Component",
-      "notes": "A decorator in auth.py (line 19): if g.user is None, it redirects to the login page. Used on create, update and delete in blog.py.",
-      "filePath": "examples/tutorial/flaskr/auth.py",
+      "description": "The right-panel component showing the selected waypoint's type badge, title, description, notes, and linked artifact (with clipboard copy). Edit, Delete, and Add Waypoint actions are pinned near the top when a waypoint is selected (Add Waypoint alone when none is selected). A \"Resume tour\" button appears at the top whenever a tour is suspended (user selected a node outside the current tour stop), regardless of what's currently shown below. Shows a \"Getting oriented\" empty state when nothing is selected, including the \"Select a tour to begin understanding, or create a new one\" prompt when no tour is active.",
+      "notes": "",
+      "filePath": "",
       "position": {
-        "x": 1277.4178882390308,
-        "y": 430.5127161322453
+        "x": 1524.0882699969002,
+        "y": -116.91848161685174
       }
     },
     {
-      "id": "w-flaskr-tests",
-      "label": "Tests use a fresh app per test",
+      "id": "w15",
+      "label": "TourBar",
+      "type": "Code Component",
+      "description": "The top-bar component with tour selector dropdown (switch tours or return to full map), waypoint-type Filter button/dropdown (hidden in markdown view), + New Tour, Edit tour (active tour only), Markdown/Graph view toggle, and Export buttons (Export full map in full-map mode, Export tour when a tour is active), plus the tour editor popup for creating and editing tours (name, description, ordered waypoint stops with up/down reordering and delete, per-stop narrative textarea). Prev/Next buttons, the step counter, and the docent narrative bar have moved out of TourBar into the Tour Controls panel (in CognitiveToursApp.tsx). Suspend/resume state (when a user selects an off-tour node) is also handled outside TourBar.",
+      "notes": "",
+      "filePath": "",
+      "position": {
+        "x": 1048.7847455643855,
+        "y": 68.38440714208586
+      }
+    },
+    {
+      "id": "w16",
+      "label": "WaypointForm — create/edit form",
+      "type": "Code Component",
+      "description": "Modal form for creating and editing waypoints. Fields: title, type (dropdown populated from all defined waypoint types), description, notes, and linked artifact (file path). Opened from the '+ Add Waypoint' button in the waypoint detail panel's pinned action row, the graph's 'Add first waypoint' empty-state button, or the detail panel's Edit action.",
+      "notes": "",
+      "filePath": "",
+      "position": {
+        "x": 976.4697104496496,
+        "y": -360.5450656860766
+      }
+    },
+    {
+      "id": "w17",
+      "label": "Core data types",
+      "type": "Code Component",
+      "description": "TypeScript interfaces for the entire app: WaypointType (union of 10 types), Waypoint, WaypointEdge, Tour, AppState. The single source of truth for what every entity is. All components and API routes import from here.",
+      "notes": "",
+      "filePath": "",
+      "position": {
+        "x": 255.93904185883156,
+        "y": -336.4110639847413
+      }
+    },
+    {
+      "id": "w18",
+      "label": "Prisma schema",
+      "type": "Code Component",
+      "description": "Defines the SQLite database structure: Waypoint, Edge, Tour, TourWaypoint (join table with order column for preserving tour waypoint sequence). The source of truth for persistence.",
+      "notes": "Includes a nullable narrative field on the TourWaypoint join table, allowing the same waypoint to carry different transition text depending on which tour it appears in.",
+      "filePath": "",
+      "position": {
+        "x": 850.691448463977,
+        "y": -445.91414376602813
+      }
+    },
+    {
+      "id": "w19",
+      "label": "db-mappers — Prisma to AppState translation",
+      "type": "Code Component",
+      "description": "The database stores waypoint positions as posX and posY columns. The app expects position as {x, y}. db-mappers translates between the two.",
+      "notes": "Docent: This is the last step before the data reaches the screen — it takes what's in the database and shapes it into what the app actually displays.",
+      "filePath": "",
+      "position": {
+        "x": 1074.6733378613253,
+        "y": -514.8491116367204
+      }
+    },
+    {
+      "id": "w21",
+      "label": "Manual tour navigation acceptance test",
       "type": "Test",
-      "notes": "The app fixture in conftest.py makes a temporary database file, calls create_app({'TESTING': True, 'DATABASE': db_path}) for each test, then deletes the file. Run pytest from examples/tutorial.",
-      "filePath": "examples/tutorial/tests/conftest.py",
+      "description": "Manual acceptance test: select \"How Cognitive Tours Work\" tour, advance through all steps, verify each step highlights the correct graph node and shows the correct detail content, confirm the last step shows \"Finish\".",
+      "notes": "",
+      "filePath": "",
       "position": {
-        "x": 164.30632382362091,
-        "y": 423.20559213654633
+        "x": 306.99054067293264,
+        "y": 329.01433152767845
       }
     },
     {
-      "id": "w-flaskr-risk-secret",
-      "label": "Default secret key is 'dev'",
+      "id": "w23",
+      "label": "SQLite not suitable for cloud deployment",
       "type": "Risk",
-      "notes": "create_app sets SECRET_KEY to 'dev'. The key signs the session cookie, so anyone who knows it could forge a login. docs/tutorial/deploy.rst says to override it in instance/config.py.",
-      "filePath": "examples/tutorial/flaskr/__init__.py",
+      "description": "SQLite runs locally and resets on Vercel deployments (ephemeral filesystem). For cloud deployment, migrate to Turso (SQLite-compatible, hosted) or PostgreSQL. Not a concern for local single-user use.",
+      "notes": "\"Before we could deploy, we hit a wall. Here's the problem that forced two architectural decisions...\"  read on\n\nMitigation: use Turso when ready to deploy\n\nUpdate: \nVercel's filesystem is ephemeral — every deployment wipes local files. This risk forced us to find a cloud-compatible database solution. Next: the deployment decision.\n\nHistory: \"But Vercel's filesystem is ephemeral — every deploy wipes local files. The SQLite database we'd built everything on simply couldn't survive in this environment.\"",
+      "filePath": "",
       "position": {
-        "x": -153.5716605391857,
-        "y": 163.35822469759205
+        "x": 194.44659204583107,
+        "y": -615.4166195926866
       }
     },
     {
-      "id": "w-flaskr-feat-accounts",
-      "label": "Accounts: register and log in",
-      "type": "Feature",
-      "filePath": "examples/tutorial/flaskr/auth.py",
+      "id": "w24",
+      "label": "Read the spec and constitution before writing components",
+      "type": "AI Instruction",
+      "description": "INSTRUCTION FOR AI AGENTS: Before writing any component or API route, read specs/001-shrimp-mvp/spec.md, plan.md, and the constitution at .specify/memory/constitution.md. Do not add props, state, or features not defined in the contracts. Follow Principle I (Simplicity) and Principle VIII (Human and Agent Readable).",
+      "notes": "I. Simplicity Over Complexity — YAGNI enforced\nII. Incremental Growth — one small verifiable step at a time\nIII. Intent Before Implementation — spec before code\nIV. Clean Readable TypeScript — strict mode, no any\nV. Minimal Clear UI — every element earns its place\nVI. Waypoints and Tours are Universal — not just for code\nVII. Flexible Navigation — code, intent, or both\nVIII. Human and Agent Readable — every waypoint meaningful to humans AND agents",
+      "filePath": "",
       "position": {
-        "x": 704.2769755923414,
-        "y": -18.52958296018435
+        "x": -407.52542857506353,
+        "y": -115.39744606151596
       }
     },
     {
-      "id": "w-flaskr-feat-posts",
-      "label": "Write, edit and delete your own posts",
-      "type": "Feature",
-      "filePath": "examples/tutorial/flaskr/blog.py",
+      "id": "w26",
+      "label": "How should waypoints be exported and shared?",
+      "type": "Open Question",
+      "description": "When a project's understanding map is ready to share, how does it leave Shrimp? Options: export to JSON, export to Markdown, publish as a read-only URL, push to GitHub wiki, or embed in a README. Not in scope for current phases.",
+      "notes": "",
+      "filePath": "",
       "position": {
-        "x": 927.2668009615484,
-        "y": 109.4339022894442
+        "x": 135.14582513139527,
+        "y": 626.5895959821909
+      }
+    },
+    {
+      "id": "w28",
+      "label": "How to show file contents in the detail panel?",
+      "type": "Open Question",
+      "description": "Phase 3 idea: add a \"File\" tab to the detail panel showing the contents of the linked file. Needs a server-side API route to read files safely. Should it show the full file or just relevant sections? How to handle large files?",
+      "notes": "Planned for Phase 4",
+      "filePath": "",
+      "position": {
+        "x": 574.3784023955809,
+        "y": 726.0916511353302
+      }
+    },
+    {
+      "id": "w29",
+      "label": "Mitigate and repair cognitive debt",
+      "type": "Goal",
+      "description": "The overarching purpose of Cognitive Tours — helping developers and teams construct and maintain shared understanding of software systems, so that cognitive and intent debt don't accumulate and paralyze them.\n\nStorey (2026): proposes a triple debt model for software health. Technical debt lives in code, cognitive debt lives in people (eroded shared understanding), intent debt lives in artifacts (missing rationale and goals). Cognitive Tours addresses cognitive and in part intent debt.",
+      "notes": "The research motivation for Cognitive Tours\n\nBackground: \n\nCheng, Desmond, Storey (2006) (see below): Tours is an Eclipse plugin that lets programmers give live technical presentations by combining slideware with guided navigation through code waypoints.  \"Like Routes, but with a tour guide equipped with a flashlight and a dimmer switch.\"",
+      "filePath": "https://www.researchgate.net/publication/4251316_Presentations_by_Programmers_for_Programmers",
+      "position": {
+        "x": -1181.0946928965782,
+        "y": -323.89254102951793
+      }
+    },
+    {
+      "id": "w-1780379099199",
+      "label": "Filter waypoints by type (to reduce clutter)",
+      "type": "Feature",
+      "description": "A filter button on the top left of the graph that has a list and toggles for each waypoint type.  Hides nodes of the selected types and their connected edges.  Default all types are shown.  State is saved in ShrimpAPp and passed to WaypointGraph.\n\nNo API changes — UI only.",
+      "notes": "ShrimpApp.tsx\n\nTodo: maybe connet this instead to a spec kit file",
+      "filePath": "",
+      "position": {
+        "x": 344.01519817391124,
+        "y": -268.919270012353
+      }
+    },
+    {
+      "id": "w-1780409255110",
+      "label": "Import Markdown Tours into Graph",
+      "type": "Open Question",
+      "description": "Could the skill output (markdown tour) be imported into the graph app to create clickable, navigable waypoints automatically? Would close the loop between the dialogue-based authoring approach and the visual navigation layer. Currently these are two separate workflows — import would make them complementary rather than parallel.",
+      "notes": "",
+      "filePath": "",
+      "position": {
+        "x": -537.9551452892754,
+        "y": 720.4274616805181
+      }
+    },
+    {
+      "id": "w-1780412091739",
+      "label": "Deep link to function or symbol in VS Code",
+      "type": "Open Question",
+      "description": "Currently waypoints link to a file via vscode://file/path. Could extend this to link to a specific function or symbol using vscode://file/path/to/file.ts#FunctionName. More precise than file-level links but adds maintenance overhead as code changes. Line numbers go stale; symbol names are more stable. Is the added precision worth the maintenance cost?\n\nFile path: app/components/WaypointDetail.tsx (where the VS Code link is rendered)\n\nEdges:\n\nConnect to WaypointDetail.tsx code component — that's where the link would be implemented\nConnect to File Path Links feature node — it's a direct enhancement of that feature",
+      "notes": "",
+      "filePath": "",
+      "position": {
+        "x": -545.3985649971271,
+        "y": 941.3968934393686
+      }
+    },
+    {
+      "id": "w-1780456413205",
+      "label": "How should waypoints stay in sync with code changes automatically?",
+      "type": "Open Question",
+      "description": "Right now your cognitive tours are static, manually maintained artifacts. Cat Hicks' skill updates automatically because it reads the codebase fresh each time.\nThe dream for Cognitive Tours would be:\n\nWhen a file gets renamed, waypoints that reference it update automatically\nWhen a new component is added, Claude Code prompts you to create a waypoint for it\nWhen a tour references a deleted waypoint, it flags the broken link\n\nThat's essentially live waypoints — connected to the codebase rather than just pointing at it. It's a significant research and engineering challenge but it's the right long-term direction.\nWorth adding as an Open Question waypoint once Claude Code finishes. Something like:\n\"How should waypoints stay in sync with code changes automatically?\"\nThat connects to your existing sync open question and also captures this specific trigger — file renames, component additions, deletions.",
+      "position": {
+        "x": -48.48790622385217,
+        "y": 774.8007597242769
+      }
+    },
+    {
+      "id": "w-1780457252868",
+      "label": "Use Turso for cloud persistence",
+      "type": "ADR",
+      "description": "SQLite runs locally but Vercel's filesystem is ephemeral. Turso is a hosted libSQL service (SQLite-compatible) that persists data across deployments. Both local and production now point to the same Turso database.",
+      "notes": "The fix — Turso, a hosted version of SQLite, extending the same Prisma layer we already had\n\nTurso is a hosted libSQL service — SQLite-compatible but lives in the cloud. Both local and production now point to the same database.",
+      "filePath": "",
+      "position": {
+        "x": 343.65522478856167,
+        "y": -741.9333824563785
+      }
+    },
+    {
+      "id": "w-1780457285601",
+      "label": "Deploy to Vercel",
+      "type": "ADR",
+      "description": "Hosting on Vercel for zero-config Next.js deployment. Auto-deploys on every push to main. Hosted at a .vercel.app address, with the cognitive.tours domain to be connected.",
+      "notes": "Note: Vercel gives us zero-config Next.js hosting with auto-deploy on every push to main. But deploying here exposed the SQLite problem. Next: how we solved the database.",
+      "filePath": "",
+      "position": {
+        "x": 4.281427891204572,
+        "y": -567.8746695842112
+      }
+    },
+    {
+      "id": "w-1780457780500",
+      "label": "db.ts - database client",
+      "type": "Code Component",
+      "description": "Creates the Prisma client with the correct adapter. Selects Turso (libSQL) vs. local SQLite by checking NODE_ENV === 'production' explicitly — not by whether TURSO_DATABASE_URL is set, since that variable is always present in .env. Throws if TURSO_DATABASE_URL is missing in production; otherwise uses DATABASE_URL via better-sqlite3 in development/test. The single place where the database connection is configured.",
+      "notes": "The single file that switches between local SQLite and Turso based on environment variables. This is where the deployment architecture lives in code.\n\nDocent: \"Here's where it all comes together: one file that decides which database to talk to, Turso in production, local SQLite in development.\"",
+      "filePath": "",
+      "position": {
+        "x": 650.7778679504131,
+        "y": -721.6896341726244
+      }
+    },
+    {
+      "id": "w-1780459509958",
+      "label": "How to automate Turso backups",
+      "type": "Open Question",
+      "description": "Currently backups are manual — visit /api/data and save the JSON. Should automate this with a scheduled export to GitHub or a file. Turso paid plan has built-in backup. Consider a simple cron job or GitHub Action that exports data weekly.",
+      "notes": "RESOLVED (Oct 20, faf1086): a nightly Vercel cron (/api/backup-nightly, about 3 a.m. Pacific) saves every site's /api/data to the private Blob store cognitive-tours-backups, under nightly/YYYY-MM-DD/<site>.json. Before class sessions, migrations or giving anyone new access, scripts/backup-all-sites.ts takes a manual copy too. Restoring follows docs/RESTORE.md, tested on Nov 3.\n\nDifferent from what was planned here: nightly, not weekly; a private Blob store, not GitHub, because team maps are student work and shouldn't land in the repo; and every site, not one, since the team sites arrived. Turso's built-in restore only reaches back 1 day on the current plan, so these files are the longer-term safety net.\n\nNotes drafted with Claude's help, Nov 3.",
+      "filePath": "",
+      "position": {
+        "x": -239.7374957654214,
+        "y": 1008.7907686877104
+      }
+    },
+    {
+      "id": "w-1780601252961",
+      "label": "Is this component doing too much (smell)?",
+      "type": "Risk",
+      "description": "The CognitiveToursApp.tsx Owns all app state and every mutation handler, and is also where the Tour Controls panel is built inline (badge, description/notes with expand/overflow tracking, linked artifact, suspend/resume, nav) rather than in its own component — unlike WaypointGraph, WaypointDetail, TourBar, and WaypointForm, which are each split out. At 717 lines, this is the strongest concrete case so far for the \"God class\" concern.\nNotes: Extraction candidate: pull the Tour Controls JSX + its purely-local state (stopTextExpanded, overflow tracking, stopLinkCopied) into its own  component, similar to WaypointDetail. tourSuspended, controlPanelCollapsed, currentStopWaypoint, and the nav handlers would stay lifted since they're  shared with the Waypoint panel.",
+      "filePath": "",
+      "position": {
+        "x": 483.7967767736651,
+        "y": -372.69425872762434
+      }
+    },
+    {
+      "id": "w-1780602355157",
+      "label": "Human and Agent Tours/Waypoints",
+      "type": "Open Question",
+      "description": "but how to integrate!",
+      "position": {
+        "x": -382.6584579713533,
+        "y": 613.9687181606827
+      }
+    },
+    {
+      "id": "w-1780602615172",
+      "label": "Create Tour Templates - Idea large",
+      "type": "Open Question",
+      "description": "DMG suggested using templates for the tours... prefills some information that is specific to a certain \"tour goal\" e.g., reentry\n\nThink also as meeting transciver applied to your change session\n\nMaybe think of this as two layers.... that you can switch between\n\nthink of the ai agent underneath the surface and pull up to the \"human\" surface...\n\nbut if something goes wrong I may need to go below the surface to see what happens (looks like a blackbox)",
+      "notes": "e.g. reentry \nonboard \nfeature change doc",
+      "position": {
+        "x": 498.8543362956395,
+        "y": 964.4787367719892
+      }
+    },
+    {
+      "id": "w-1781709594550",
+      "label": "Undo feature",
+      "type": "Open Question",
+      "description": "I have no undo whenI delete a tour",
+      "position": {
+        "x": 361.72703246194783,
+        "y": 638.0956347448141
+      }
+    },
+    {
+      "id": "w-1782491878877",
+      "label": "Catchup after a time away",
+      "type": "User Need",
+      "description": "After some time away, follow a tour previously created in a last session. It is easy to forget when the development happened so quickly.",
+      "position": {
+        "x": -622.072610965704,
+        "y": 195.17773561955053
+      }
+    },
+    {
+      "id": "w-1782544399313",
+      "label": "Auto-capture waypoints from AI conversation via inline tags",
+      "type": "Open Question",
+      "description": "see title - daniel german suggested this!",
+      "position": {
+        "x": -269.1164864715152,
+        "y": 715.114592831745
+      }
+    },
+    {
+      "id": "w-1782714501781",
+      "label": "Docent Annotations",
+      "type": "Feature",
+      "description": "Per-step narrative for tours. Authors write transition text for each stop in the tour editor. Readers see it in an amber bar below the tour bar.",
+      "notes": "This text generated by Claude ... (example of what an agent could do)\nLink to code not right... fix later.",
+      "filePath": "",
+      "position": {
+        "x": 273.3290821891752,
+        "y": -46.71727442708813
+      }
+    },
+    {
+      "id": "w-1782759848959",
+      "label": "Markdown view for Tours",
+      "type": "Feature",
+      "description": "When a tour is active, the user can toggle the left panel from the graph to a live-rendered markdown document showing the tour title, description, and each waypoint stop in sequence (with docent narratives as blockquotes).",
+      "filePath": "",
+      "position": {
+        "x": 600.1767112796243,
+        "y": 294.2033783446183
+      }
+    },
+    {
+      "id": "w-1782760519607",
+      "label": "tour-markdown.ts",
+      "type": "Code Component",
+      "description": "Pure utility module with four exported functions. tourSlug(name) converts a tour name to a URL/filename-safe slug (lowercase, hyphens, strips non-alphanumeric). tourByline(tour) builds the \"By <author> · Updated <date>\" line shown under the tour title in the markdown view. generateTourMarkdown(tour, waypoints, context) produces the markdown export string for a single tour, used by the \"Export tour\" button. generateFullMapMarkdown(waypoints, context) produces a markdown export of all waypoints grouped by type (alphabetical within each group), used by the \"Export full map\" button. Both export functions take an optional project name and repo URL, so exports carry the project's name and link file paths to GitHub. Both are used by TourBar to generate the browser Blob download.",
+      "filePath": "",
+      "position": {
+        "x": 1398.8948298445534,
+        "y": 150.9863949995492
+      }
+    },
+    {
+      "id": "w-1782760613840",
+      "label": "TourMarkdownView",
+      "type": "Code Component",
+      "description": "Read-only client component that renders an active tour as flowing prose. Shows the tour title as H1, description as intro paragraph, then each waypoint stop in sequence — label as H2, description, notes, filePath as inline code, and docent narrative as an amber blockquote. Scrollable. No edit controls. [written by claude]",
+      "filePath": "",
+      "position": {
+        "x": 1201.4198975681393,
+        "y": 203.07232245949817
+      }
+    },
+    {
+      "id": "w-1782769818163",
+      "label": "Search/Filter Bar",
+      "type": "Feature",
+      "description": "Text search input on the graph panel that hides non-matching waypoint nodes (and their edges) by label on the graph canvas (no waypoint made for this). Works alongside a type filter toggle which was added at the same time by Claude Code in this commit (bonus!)",
+      "notes": "Follows the same filter pattern as type filtering — state lives in CognitiveToursApp, filtered nodes passed to WaypointGraph. Both filters can be active simultaneously.",
+      "filePath": "",
+      "position": {
+        "x": 985.6926208762516,
+        "y": -261.84267812184896
+      }
+    },
+    {
+      "id": "w-1782778490775",
+      "label": "Playwright smoke tests",
+      "type": "Test",
+      "description": "Nineteen automated tests in tests/basic.spec.ts. They cover creating and deleting waypoints; tour navigation, docent narrative and stop focus/spotlight; Exit tour and the Markdown View (author/date byline, jumping to the current stop); the filter panel closing on a canvas click; the project name pill and exports; VS Code and GitHub file links; and downloading the site's map as a backup. Run locally with npx playwright test, which starts its own dev server on localhost:3000 against the isolated prisma/test.db (see CLAUDE.md for more details).",
+      "notes": "Acceptance tests perhaps to be written using Playwright: (1) persistence — create waypoint, refresh, verify present; (2) tour navigation — step through all waypoints, verify highlight; (3) delete cascade — delete waypoint, verify removed from graph, edges, and tours.",
+      "filePath": "",
+      "position": {
+        "x": 393.6481544072435,
+        "y": 40.04161312447152
+      }
+    },
+    {
+      "id": "w-1783472569435",
+      "label": "Full map mode",
+      "type": "Feature",
+      "description": "Whole graph reference view (not scoped to a tour).",
+      "notes": "Decision I made: I considered a separate page/view, decided instead to make it a modre within the existing graph view, reusing the type filters already built, rather than buiding new filtering logic\"",
+      "position": {
+        "x": 93.11049346108696,
+        "y": -374.8792176141485
+      }
+    },
+    {
+      "id": "w-1783472964316",
+      "label": "Waypoint panel collapse/auto-behaviour",
+      "type": "Feature",
+      "description": "The waypoint panel is collapsible, auto-re-expands on tour switch though and is shown by default on full map mode.",
+      "notes": "Originally planned as force-hide in markdown view mode; changed to user-controlled collapse with smart defaults instead, so the choice sits with the reader rather than being dictated by view mode. \n\nNote I didn't do this through speckit - I just specked it using Claude code so no file to link to.",
+      "position": {
+        "x": 1273.0563230415623,
+        "y": -18.77293302705495
+      }
+    },
+    {
+      "id": "w-1783476386172",
+      "label": "(Resolved) Do waypoint types map to Triple Debt layers by subject matter or by function?",
+      "type": "Open Question",
+      "description": "Attempting to group waypoint types into three layers (intent / technical / process) via border style surfaced a real ambiguity: some types resist clean placement depending on whether you sort by what the artifact is about (subject matter) or what job it does for debt repair (function). ADR is the clearest case — its subject is often technical (database choice, framework choice), but its function is explicitly intent-preserving (per the Triple Debt paper, writing ADRs pays down intent debt). Test has the reverse tension: it's executable, technical content, but once linked to a Feature, its function is to verify intended behavior — making it intent-adjacent despite being technical in form.",
+      "notes": "Working hypothesis: sort by function, not subject. Intent layer = artifacts whose job is preserving/verifying intent (Goal, User Need, ADR — and arguably Test). Technical layer = artifacts describing what exists (Feature, Code Component). Process layer = artifacts flagging concerns or unresolved work (Risk, Open Question, Todo, possibly AI Instruction). Left unresolved for now: Test may need to be dual-layer, or this whole ontology may need a fourth axis rather than forcing everything into three buckets. Worth revisiting once border-style layering is actually implemented — may become clearer in practice than in the abstract. Possibly worth a line in the blog series: some artifacts do double duty across debt types.\n\nRESOLVED (Session 13): Implemented as three filter presets in the \nwaypoint type filter panel (Intent Layer, Technical Layer, Other), \nconfirming the \"sort by function\" hypothesis below — but with real \ndivergences worth keeping on record rather than smoothing over:\n\n- ADR and Test both landed dual-layer (appearing in both Intent and \n  Technical presets), rather than being forced into one bucket. This \n  resolves the ambiguity more directly than \"sort by function alone\" — \n  ADR's technical subject and intent-preserving function can both be \n  true at once, so it's filed in both, not argued into one.\n- Feature ended up in Intent Layer, not Technical as hypothesized here. \n  Reasoning: Feature is what a User Need is \"supported by\" per existing \n  edge semantics, so it sits closer to the Goal→Need→Feature chain of \n  intent than to raw implementation.\n- The third bucket became \"Other\" (Open Question, Deprecated only), \n  narrower than the hypothesized \"Process\" layer. Risk moved into \n  Technical instead; Todo and AI Instruction weren't included as \n  hypothesized (AI Instruction went to Intent instead).\n\nSo: the tension anticipated here resolved by (a) sorting by function as \nguessed, and (b) allowing dual membership rather than forcing a fourth \naxis. Types stay single; only layer membership is dual where warranted. \n\"Some artifacts do double duty across debt types\" held up — still worth that blog post line.",
+      "position": {
+        "x": 118.40259735515224,
+        "y": 889.954935591309
+      }
+    },
+    {
+      "id": "w-1783496581817",
+      "label": "Audit waypoints and tours against the project code",
+      "type": "AI Instruction",
+      "description": "Two skills: \n1) /audit-waypoints checks Code Component, ADR and Test waypoint descriptions against their linked files; and 2) /audit-tours checks tours for coverage gaps, stale or non-bridging narratives, redundant edges and missing stops. \n\nPresents findings and nudges the user to update the graph manually (copying suggestions if they resonate) - does not auto make the changes.\n\nBoth read the live site.",
+      "notes": "Deliberately scoped to verifiable facts only, not interpretive language — flags a stale \"8 types\" claim, but wouldn't touch \"this is the brain of the app.\" Distinguishing mechanical fact-corrections (safe to batch-approve) from conceptual drift (worth rewriting by hand, since accepting a rewritten story risks the same understanding-outsourcing concern as AI Suggest) is left as a judgment call for whoever runs it — not something the skill itself decides. The skills never write to the map; any write would be a separate, deliberate request, outside the skills.",
+      "filePath": "",
+      "position": {
+        "x": -155.07164207607968,
+        "y": -232.2685031590616
+      }
+    },
+    {
+      "id": "w-1783541448884",
+      "label": "More tests",
+      "type": "Open Question",
+      "description": "Acceptance tests perhaps to be written using Playwright: (1) persistence — create waypoint, refresh, verify present; (2) tour navigation — step through all waypoints, verify highlight; (3) delete cascade — delete waypoint, verify removed from graph, edges, and tours.",
+      "position": {
+        "x": -28.28665425298968,
+        "y": 596.6720457751029
+      }
+    },
+    {
+      "id": "w-1783545776994",
+      "label": "Graph View for Tours",
+      "type": "Feature",
+      "description": "The default view for the app. Displays the understanding map as an interactive React Flow graph, scoped to the active tour when one is selected (dimming/hiding non-tour nodes) or showing everything when none is. Docent mode's amber narrative appears here, in the Tour Control Panel, when the current tour stop has narrative text.",
+      "notes": "Distinct from Full Map Mode, which shows the entire graph unscoped to any tour and does not support docent narrative, since there's no active tour stop for narrative to attach to.",
+      "position": {
+        "x": 602.053586312187,
+        "y": 187.61132039707095
+      }
+    },
+    {
+      "id": "w-1783545829711",
+      "label": "Export Full Map",
+      "type": "Feature",
+      "description": "Button in Full Map Mode (top-right) that exports all waypoints as a markdown document, grouped by type and alphabetical within each group, with waypoint IDs for reference. No narratives or stop numbers, since full map isn't a sequence. Reuses the tour export's underlying markdown-generation logic. Distinct from the tour export button, now labeled \"Export tour\" for clarity.",
+      "notes": "Could serve as a manual backup alongside /api/data, though not yet relied on for that purpose.",
+      "position": {
+        "x": 302.7096808603463,
+        "y": -423.3001474916589
+      }
+    },
+    {
+      "id": "w-1783546089293",
+      "label": "Export Tour",
+      "type": "Feature",
+      "description": "Button in tour view (top-right, alongside Markdown View toggle) that downloads a dated markdown snapshot of the active tour, its title, description, and each waypoint stop in sequence with docent narratives as blockquotes, to the tours/ folder for archiving. Labeled \"Export tour\" (renamed from the original \"Export\") for clarity now that Export Full Map exists as a separate feature.",
+      "notes": "Uses the same underlying markdown-generation logic (tour-markdown.ts) as Markdown View for Tours, but produces a downloaded file rather than an in-app rendered view. Distinct from Export Full Map, which exports all waypoints unscoped to any tour, grouped by type rather than sequence.",
+      "position": {
+        "x": 891.4536728485219,
+        "y": 353.35330896349376
+      }
+    },
+    {
+      "id": "w-1783548172868",
+      "label": "Waypoint edits should feel instant",
+      "type": "User Need",
+      "description": "Editing should be pleasant and fast to do. Creating documentation is painful - this should be a step to introduce friction and slow things down to make time for understanding but if it is unpleasant or tedious, hew waypoints won't be added.",
+      "notes": "Note for example it was easy to add this waypoint because of this interface.",
+      "position": {
+        "x": -394.015048076916,
+        "y": -475.88225030356426
+      }
+    },
+    {
+      "id": "w-1783548668250",
+      "label": "How should layer filtering work in true agent mode?",
+      "type": "Open Question",
+      "description": "The Intent/Technical/Other layer presets built for the filter panel are a human, visual interaction (click a button, see the graph reduce). An agent consuming waypoints programmatically would need the same filtering logic exposed as a query (e.g. an API parameter), not a UI action. Worth designing what that looks like.",
+      "notes": "Open question within the open question: should AI Instruction waypoints always be included for an agent regardless of requested layer (since they're direct guidance to it specifically, similar to how CLAUDE.md is always read regardless of task), or should they stay strictly Intent-layer-scoped like everything else? Relates to Principle VIII (Human and Agent Readable) and to the existing audit-waypoints skill, which already reads waypoint data programmatically and could be a natural first place to prototype layer-scoped queries.",
+      "position": {
+        "x": 582.3861265332312,
+        "y": 549.2683525947562
+      }
+    },
+    {
+      "id": "w-1783639775448",
+      "label": "Tour control panel in graph view",
+      "type": "Feature",
+      "description": "The navigation controls for the tours are moved to this new panel which also displays the description and notes and linked artifact, as well as the navigation text. Shown in graph view. Displays the current stop's docent narrative as an amber \"Next stop\" section.",
+      "position": {
+        "x": 1191.755672612876,
+        "y": -434.7423228123705
+      }
+    },
+    {
+      "id": "w-1785195716068",
+      "label": "Create tours from implicit tours",
+      "type": "Open Question",
+      "description": "Use the implicit tree of navigation created when you add new waypoints after a session - use that to prune to a tour (note Kent also suggested calling sessions episodes) and have tour templates",
+      "position": {
+        "x": 304.08826999690007,
+        "y": 793.3652638306787
+      }
+    },
+    {
+      "id": "w-1787345242753",
+      "label": "Ensure waypoints and tours stay consistent",
+      "type": "User Need",
+      "description": "Software changes - ideally the developer will update waypoints and tours as they go but things may drift",
+      "position": {
+        "x": -652.4634090787454,
+        "y": -225.19325819099888
+      }
+    },
+    {
+      "id": "w-1792829588257",
+      "label": "Export Tour tests",
+      "type": "Test",
+      "description": "unit tests for the markdown export",
+      "filePath": "",
+      "position": {
+        "x": 1073.308105380368,
+        "y": 356.8748525310935
+      }
+    },
+    {
+      "id": "w-1793742650697",
+      "label": "One site and one database per team",
+      "type": "ADR",
+      "description": "A stopgap for getting a site and database per team in my course (and for demos/tests).  LaterI would like to have just one database with team-scoped rows.\n\nReason I did it this way: time and ease of deployment\n\nDetails in the linked ADR",
+      "notes": "9 sites, 9 databases. For example, a team called Acme would get the site cognitive-tours-acme and the database ct-acme. The full table is in CLAUDE.md, under \"Team sites\".\n\nFacts from Claude Nov 3:\n\nSame code everywhere. One push to main deploys all 9. Only the environment variables differ:\nTURSO_DATABASE_URL and TURSO_AUTH_TOKEN: which database the site uses;\nSEED_ON_EMPTY=false: a team starts with an empty map (app/api/data/route.ts, from 46f4f82);\nNEXT_PUBLIC_PROJECT_NAME: the \"Project:\" label (a0d73f3);\nNEXT_PUBLIC_REPO_URL, optional: links file paths to the team's GitHub repo (7db0dd8).\nNo team code at all. There is no team id, no login and no filtering. A team's data is separate because it's physically in a different database.",
+      "filePath": "",
+      "position": {
+        "x": -415.2544291014729,
+        "y": -760.1997420662208
+      }
+    },
+    {
+      "id": "w-1793743371612",
+      "label": "(deferred) One database with team-scoped rows",
+      "type": "ADR",
+      "description": "Deferred: the intended direction\n\nNot needed yet: I expect only 2 or 3 outside users, so one site each is enough.",
+      "notes": "Intended direction, but not before there are more than 2 or 3 outside users\".",
+      "filePath": "",
+      "position": {
+        "x": -5.609769144013299,
+        "y": -823.6440437828127
+      }
+    },
+    {
+      "id": "w-1793743893594",
+      "label": "Team sites",
+      "type": "Feature",
+      "description": "Each team gets their own clean site and won't be confused by other team sites.",
+      "notes": "Facts from Claude, Nov 3\n\nEach team gets their own clean site and won't be confused by other team sites.its own link, opening on an empty map (app/api/data/route.ts, SEED_ON_EMPTY=false);\na \"Project:\" label in the header, tab title and exports (app/lib/project.ts);\noptionally, file paths that open in the team's GitHub repo (app/lib/repo.ts).\n\nYes, that's your description. It says what a team gets (a clean site of its own) and why that matters (no confusion with other teams). Two optional additions:\n\nHow a team knows it's on the right site: e.g. the \"Project: Acme\" label in the header and tab title (app/lib/project.ts). That's the visible part of \"won't be confused\".\nIt's not only about confusion; it's also protection. One team can't change another team's map, because each site has its own database (ADR 008).",
+      "filePath": "",
+      "position": {
+        "x": -140.17032299024748,
+        "y": -680.3099727770444
+      }
+    },
+    {
+      "id": "w-1793744067277",
+      "label": "Each team keeps its own map",
+      "type": "User Need",
+      "description": "so students build understanding of their own product without other teams maps (or mine) in the way.",
+      "notes": "This waypoint doesn't link to any file - this user need is in my head (and now in this tour) only.",
+      "position": {
+        "x": -703.7829893266035,
+        "y": -669.1066501105479
+      }
+    },
+    {
+      "id": "w-1793746992534",
+      "label": "AI asks, the human writes: skills should never write to the map",
+      "type": "ADR",
+      "description": "The Claude Code skills (suggest and audit, for waypoints and tours) only should read the map and never change it. The suggest skills ask questions of the user first; I write every description and narrative in the app, and Claude gives only the facts (label, type, file path, edges, stop order). Claude drafts text only when I ask it too, and the draft is marked in Notes. Why: writing the waypoint is how I build understanding, and a waypoint Claude wrote would look like understanding without being it (\"AI as scaffold, not substitute\"). It also keeps the skills always safe to run. (Claude drafted this description - I note the irony)",
+      "notes": "I sometimes ask Claude to override my instruction and suggest text without asking me questions or forcing me to draft - but with this map - I have never asked it to write to my database (but I have done so for other maps - but at the cost of not building any comprehension!).  The drafting step also costs in comprehension\n\nReverses my earlier idea (Open Question \"how to connect cognitive tours to claude code\") that Claude would add waypoints to the database. Decided Oct 21 when the suggest skills were built (779686e); provenance line added Nov 3 (4a80816). Description drafted with Claude's help, Nov 3.",
+      "filePath": "",
+      "position": {
+        "x": -411.6882767589862,
+        "y": -242.8877945792211
+      }
+    },
+    {
+      "id": "w-1793747626216",
+      "label": "Should I have multiple artifacts per waypoint",
+      "type": "Open Question",
+      "description": "For example my skills could link to two files but so far this is really the only time I've needed this",
+      "position": {
+        "x": -516.1350150102962,
+        "y": 453.5916491763672
+      }
+    },
+    {
+      "id": "w-1793747738966",
+      "label": "Suggest waypoints and tours: questions first",
+      "type": "AI Instruction",
+      "description": "Two skills, /suggest-waypoint and /suggest-tour, that help me record work as I go. They find what's worth a waypoint (decisions first), ask me questions, and give the facts (label, type, file path, edges, stop order). I write the descriptions and narratives. They never change the map. /suggest-tour's file is .claude/skills/suggest-tour/SKILL.md.",
+      "notes": "Description drafted with Claude's help, Nov 3.",
+      "filePath": "",
+      "position": {
+        "x": -154.015081443079,
+        "y": -313.8995451557827
+      }
+    },
+    {
+      "id": "w-1782776741163",
+      "label": "Should waypoint types be configurable rather than hardcoded?",
+      "type": "Open Question",
+      "description": "Currently types are a TypeScript union in types.ts — adding or renaming a type requires a code change and deploy. Moving types to a database table would let researchers evolve the ontology without touching code. Tradeoff: more complexity, colour coding and filters would need to be dynamic too. Note relationships are not typed and do not even have to be labelled.",
+      "notes": "from a discussion with claude: \nThis is a meaningful architectural decision though — worth an ADR and probably a Spec Kit spec before touching it. It also has implications for colour coding (currently hardcoded per type) and the filter toggle.",
+      "position": {
+        "x": -13.508661156142267,
+        "y": -320.3036340261988
       }
     }
   ],
   "edges": [
     {
-      "id": "e-1792734893617",
-      "source": "w-1792734880202",
-      "target": "w-1792734410084",
-      "label": "leads-to"
+      "id": "e07",
+      "source": "w04",
+      "target": "w07",
+      "label": "enhanced by"
     },
     {
-      "id": "e-flaskr-1",
-      "source": "w-flaskr-goal",
-      "target": "w-flaskr-need",
+      "id": "e08",
+      "source": "w08",
+      "target": "w13",
+      "label": "implemented in"
+    },
+    {
+      "id": "e10",
+      "source": "w11",
+      "target": "w12",
+      "label": "implemented in"
+    },
+    {
+      "id": "e15",
+      "source": "w18",
+      "target": "w19",
+      "label": "mapped by"
+    },
+    {
+      "id": "e17",
+      "source": "w12",
+      "target": "w13",
+      "label": "renders"
+    },
+    {
+      "id": "e18",
+      "source": "w12",
+      "target": "w14",
+      "label": "renders"
+    },
+    {
+      "id": "e19",
+      "source": "w12",
+      "target": "w15",
+      "label": "renders"
+    },
+    {
+      "id": "e-1780363517566",
+      "source": "w07",
+      "target": "w14",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1780363554082",
+      "source": "w07",
+      "target": "w16",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1780364000600",
+      "source": "w29",
+      "target": "w02",
       "label": "motivates"
     },
     {
-      "id": "e-flaskr-3",
-      "source": "w-flaskr-adr-factory",
-      "target": "w-flaskr-tests",
-      "label": "leads-to"
-    },
-    {
-      "id": "e-flaskr-4",
-      "source": "w-flaskr-adr-blueprints",
-      "target": "w-flaskr-auth",
-      "label": "leads-to"
-    },
-    {
-      "id": "e-flaskr-5",
-      "source": "w-flaskr-adr-blueprints",
-      "target": "w-flaskr-blog",
-      "label": "leads-to"
-    },
-    {
-      "id": "e-flaskr-6",
-      "source": "w-flaskr-adr-sqlite",
-      "target": "w-flaskr-blog",
-      "label": "leads-to"
-    },
-    {
-      "id": "e-flaskr-8",
-      "source": "w-flaskr-tests",
-      "target": "w-flaskr-auth",
-      "label": "validates"
-    },
-    {
-      "id": "e-flaskr-9",
-      "source": "w-flaskr-risk-secret",
-      "target": "w-flaskr-auth",
-      "label": "threatens"
-    },
-    {
-      "id": "e-flaskr-10",
-      "source": "w-flaskr-need",
-      "target": "w-flaskr-feat-posts",
-      "label": "supported-by"
-    },
-    {
-      "id": "e-flaskr-11",
-      "source": "w-flaskr-need",
-      "target": "w-flaskr-feat-accounts",
-      "label": "supported-by"
-    },
-    {
-      "id": "e-flaskr-12",
-      "source": "w-flaskr-feat-posts",
-      "target": "w-flaskr-blog",
-      "label": "implemented-by"
-    },
-    {
-      "id": "e-flaskr-13",
-      "source": "w-flaskr-feat-accounts",
-      "target": "w-flaskr-auth",
-      "label": "implemented-by"
-    },
-    {
-      "id": "e-flaskr-14",
-      "source": "w-flaskr-auth",
-      "target": "w-flaskr-login-required",
+      "id": "e-1780364287430",
+      "source": "w06",
+      "target": "w04",
       "label": "contains"
     },
     {
-      "id": "e-flaskr-15",
-      "source": "w-flaskr-blog",
-      "target": "w-flaskr-login-required",
-      "label": "uses"
+      "id": "e-1780364373430",
+      "source": "w02",
+      "target": "w06",
+      "label": "addressed by"
     },
     {
-      "id": "e-flaskr-16",
-      "source": "w-flaskr-adr-sqlite",
-      "target": "w-flaskr-auth",
-      "label": "leads-to"
+      "id": "e-1780369856383",
+      "source": "w12",
+      "target": "w19",
+      "label": "depends on"
     },
     {
-      "id": "e-flaskr-17",
-      "source": "w-flaskr-tests",
-      "target": "w-flaskr-feat-posts",
+      "id": "e-1780379178300",
+      "source": "w04",
+      "target": "w-1780379099199",
+      "label": "contains"
+    },
+    {
+      "id": "e-1780379226482",
+      "source": "w-1780379099199",
+      "target": "w12",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1780379316397",
+      "source": "w-1780379099199",
+      "target": "w13",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1780457871272",
+      "source": "w-1780457780500",
+      "target": "w18",
+      "label": "depends on"
+    },
+    {
+      "id": "e-1780601266660",
+      "source": "w-1780601252961",
+      "target": "w12",
+      "label": "check out"
+    },
+    {
+      "id": "e-1781669823500",
+      "source": "w-1780457285601",
+      "target": "w23",
+      "label": "exposes"
+    },
+    {
+      "id": "e-1781670263996",
+      "source": "w10",
+      "target": "w-1780457285601",
+      "label": "followed by"
+    },
+    {
+      "id": "e-1781670370568",
+      "source": "w-1780457252868",
+      "target": "w-1780457780500",
+      "label": "implemented in"
+    },
+    {
+      "id": "e-1781671339985",
+      "source": "w17",
+      "target": "w12",
+      "label": "defines types for"
+    },
+    {
+      "id": "e-1781671383789",
+      "source": "w12",
+      "target": "w16",
+      "label": "renders"
+    },
+    {
+      "id": "e-1781672084775",
+      "source": "w02",
+      "target": "w04",
+      "label": "addressed by"
+    },
+    {
+      "id": "e-1782491944553",
+      "source": "w-1782491878877",
+      "target": "w06",
+      "label": "addressed by"
+    },
+    {
+      "id": "e-1782544778810",
+      "source": "w23",
+      "target": "w-1780457252868",
+      "label": "address by"
+    },
+    {
+      "id": "e-1782714539125",
+      "source": "w-1782491878877",
+      "target": "w-1782714501781",
+      "label": "addressed by"
+    },
+    {
+      "id": "e-1782755233740",
+      "source": "w06",
+      "target": "w12",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1782760245992",
+      "source": "w06",
+      "target": "w-1782759848959",
+      "label": "contains"
+    },
+    {
+      "id": "e-1782760652596",
+      "source": "w-1782759848959",
+      "target": "w-1782760613840",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1782760678043",
+      "source": "w-1782759848959",
+      "target": "w15",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1782760744905",
+      "source": "w-1782760613840",
+      "target": "w-1782760519607",
+      "label": "depends on"
+    },
+    {
+      "id": "e-1782760769782",
+      "source": "w15",
+      "target": "w-1782760519607",
+      "label": "depends on"
+    },
+    {
+      "id": "e-1782761321184",
+      "source": "w06",
+      "target": "w-1782714501781",
+      "label": "contains"
+    },
+    {
+      "id": "e-1782761508107",
+      "source": "w-1782714501781",
+      "target": "w12",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1782769862958",
+      "source": "w-1782769818163",
+      "target": "w13",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1782780813475",
+      "source": "w-1782714501781",
+      "target": "w18",
+      "label": "requires"
+    },
+    {
+      "id": "e-1782781315825",
+      "source": "w-1782714501781",
+      "target": "w-1782778490775",
+      "label": "validated by"
+    },
+    {
+      "id": "e-1782781324331",
+      "source": "w04",
+      "target": "w-1782778490775",
+      "label": "validated by"
+    },
+    {
+      "id": "e-1782781333432",
+      "source": "w06",
+      "target": "w-1782778490775",
+      "label": "validated by"
+    },
+    {
+      "id": "e-1783472677178",
+      "source": "w-1783472569435",
+      "target": "w13",
+      "label": "implemented in"
+    },
+    {
+      "id": "e-1783472816892",
+      "source": "w-1783472569435",
+      "target": "w06",
+      "label": "contrasts with"
+    },
+    {
+      "id": "e-1783472839730",
+      "source": "w-1783472569435",
+      "target": "w04",
+      "label": "displays"
+    },
+    {
+      "id": "e-1783473138366",
+      "source": "w-1783472964316",
+      "target": "w14",
+      "label": "implemented in"
+    },
+    {
+      "id": "e-1783473221032",
+      "source": "w15",
+      "target": "w-1783472964316",
+      "label": "triggers"
+    },
+    {
+      "id": "e-1783473710947",
+      "source": "w04",
+      "target": "w-1782769818163",
+      "label": "contains"
+    },
+    {
+      "id": "e-1783473778589",
+      "source": "w04",
+      "target": "w-1783472964316",
+      "label": "supports"
+    },
+    {
+      "id": "e-1783502202666",
+      "source": "w24",
+      "target": "w06",
+      "label": "governs"
+    },
+    {
+      "id": "e-1783502211385",
+      "source": "w24",
+      "target": "w04",
+      "label": "governs"
+    },
+    {
+      "id": "e-1783534349873",
+      "source": "w15",
+      "target": "w-1782760613840",
+      "label": "contains"
+    },
+    {
+      "id": "e-1783545848163",
+      "source": "w-1783472569435",
+      "target": "w-1783545829711",
+      "label": "contains"
+    },
+    {
+      "id": "e-1783545899265",
+      "source": "w06",
+      "target": "w-1783545776994",
+      "label": "contains"
+    },
+    {
+      "id": "e-1783546112812",
+      "source": "w-1783545776994",
+      "target": "w-1783546089293",
+      "label": "contains"
+    },
+    {
+      "id": "e-1783546120497",
+      "source": "w-1782759848959",
+      "target": "w-1783546089293",
+      "label": "contains"
+    },
+    {
+      "id": "e-1783546162626",
+      "source": "w-1783545776994",
+      "target": "w15",
+      "label": "implemented by"
+    },
+    {
+      "id": "e-1783547792830",
+      "source": "w10",
+      "target": "w04",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1783547807702",
+      "source": "w-1780457285601",
+      "target": "w-1783545829711",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1783547830393",
+      "source": "w08",
+      "target": "w-1783472569435",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1783548199360",
+      "source": "w29",
+      "target": "w-1783548172868",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1783548213679",
+      "source": "w-1783548172868",
+      "target": "w11",
+      "label": "addressed by"
+    },
+    {
+      "id": "e-1783640694864",
+      "source": "w-1783545776994",
+      "target": "w-1783639775448",
+      "label": "contains"
+    },
+    {
+      "id": "e-1783641325727",
+      "source": "w12",
+      "target": "w-1783639775448",
+      "label": "implements"
+    },
+    {
+      "id": "e-1783641409689",
+      "source": "w-1783639775448",
+      "target": "w-1783472964316",
+      "label": "coordinates with"
+    },
+    {
+      "id": "e-1783642342804",
+      "source": "w-1782714501781",
+      "target": "w-1782759848959",
+      "label": "displayed in"
+    },
+    {
+      "id": "e-1783642366880",
+      "source": "w-1782714501781",
+      "target": "w-1783639775448",
+      "label": "displayed in"
+    },
+    {
+      "id": "e-1783642507155",
+      "source": "w06",
+      "target": "w21",
+      "label": "tested by"
+    },
+    {
+      "id": "e-1792827764279",
+      "source": "w-1782491878877",
+      "target": "w04",
+      "label": "addressed by"
+    },
+    {
+      "id": "e-1792827808236",
+      "source": "w29",
+      "target": "w-1787345242753",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1792827814496",
+      "source": "w29",
+      "target": "w-1782491878877",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1792829608373",
+      "source": "w-1783546089293",
+      "target": "w-1792829588257",
       "label": "validates"
     },
     {
-      "id": "e-flaskr-18",
-      "source": "w-flaskr-risk-secret",
-      "target": "w-flaskr-need",
-      "label": "threatens"
+      "id": "e-1793743135163",
+      "source": "w-1793742650697",
+      "target": "w-1780457252868",
+      "label": "leads to"
     },
     {
-      "id": "e-flaskr-19",
-      "source": "w-flaskr-adr-factory",
-      "target": "w-1792734410084",
-      "label": "uses"
+      "id": "e-1793743420617",
+      "source": "w-1793742650697",
+      "target": "w-1793743371612",
+      "label": "defers"
+    },
+    {
+      "id": "e-1793743440962",
+      "source": "w-1793743371612",
+      "target": "w-1780457252868",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1793744732860",
+      "source": "w29",
+      "target": "w-1793744067277",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1793744817834",
+      "source": "w-1793742650697",
+      "target": "w-1793743893594",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1793744861293",
+      "source": "w-1793744067277",
+      "target": "w-1793742650697",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1793747078141",
+      "source": "w-1793746992534",
+      "target": "w-1783496581817",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1793747845467",
+      "source": "w-1793746992534",
+      "target": "w-1793747738966",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1793747905245",
+      "source": "w-1787345242753",
+      "target": "w-1793746992534",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1792643289135",
+      "source": "w-1782776741163",
+      "target": "w04"
     }
   ],
   "tours": [
     {
-      "id": "t-flaskr-only-you",
-      "name": "How does flaskr make sure only you can edit your post?",
-      "description": "",
-      "author": "Claude",
-      "createdAt": "2026-10-23T06:03:49.326Z",
-      "updatedAt": "2026-10-23T06:24:18.195Z",
+      "id": "t01",
+      "name": "Architecture of the Cognitive Tours App Code",
+      "description": "A guided walkthrough of Cognitive Tours component architecture. Start with the data types, follow the state through CognitiveToursApp, and see how each panel renders.",
+      "createdAt": "2026-10-21T01:36:37.000Z",
+      "updatedAt": "2026-10-22T02:19:18.562Z",
       "stops": [
         {
-          "waypointId": "w-flaskr-need",
-          "narrative": "That's the promise. Next: the code that keeps it, in the blog views."
+          "waypointId": "w17",
+          "narrative": "With the vocabulary settled, the next question is: who actually holds this data while the app runs? That's CognitiveToursApp."
         },
         {
-          "waypointId": "w-flaskr-blog",
-          "narrative": "get_post checks that you're the author, but only works once you're logged in. Next: how login_required makes sure you are."
+          "waypointId": "w12",
+          "narrative": "State needs somewhere to become visible. The left panel, WaypointGraph, is where waypoints and edges get drawn onto the canvas. We visit it next."
         },
         {
-          "waypointId": "w-flaskr-login-required",
-          "narrative": "End of the tour. To see both checks tested, read test_author_required in tests/test_blog.py."
+          "waypointId": "w13",
+          "narrative": "Selecting a node in that graph needs somewhere to show its full picture. That's what the right panel, WaypointDetail, and your next stop on the tour is for."
+        },
+        {
+          "waypointId": "w14",
+          "narrative": "A single waypoint is one place on the map. To follow a path through many of them, you first need to pick or build one. TourBar is where tours are chosen, created and edited, and where you switch between reading a tour on the graph or as a document."
+        },
+        {
+          "waypointId": "w15",
+          "narrative": "TourBar drives the reading experience in graph view, but the graph isn't the only lens on a tour. TourMarkdownView offers the same stops as a linear document.\""
+        },
+        {
+          "waypointId": "w-1782760613840",
+          "narrative": "Rendering that document live is one thing. Turning it into a saved, dated snapshot is another; that's what tour-markdown.ts handles."
+        },
+        {
+          "waypointId": "w-1782760519607",
+          "narrative": "Reading, and exporting, cover how existing understanding gets consumed. But every waypoint had to be entered by someone first, that's WaypointForm's job."
+        },
+        {
+          "waypointId": "w16",
+          "narrative": "Once a waypoint is created in the form, it needs somewhere to live permanently. The Prisma schema defines that shape."
+        },
+        {
+          "waypointId": "w18",
+          "narrative": "The schema defines shape, but not which physical database holds it. db.ts as shown next is what makes that call, Turso or local SQLite."
+        },
+        {
+          "waypointId": "w-1780457780500",
+          "narrative": "One file, one job: decide which database to talk to. In production (NODE_ENV is 'production') it uses Turso; everywhere else, local SQLite. It deliberately doesn't check whether TURSO_DATABASE_URL is set, since that variable is always in .env. This is where the deployment architecture lives in code — the single seam between development and production. But connecting to the right database only gets you raw rows, and they don't quite match the shapes the app works with. Translating them is db-mappers' job"
+        },
+        {
+          "waypointId": "w19",
+          "narrative": "That's the full loop: types define the vocabulary, CognitiveToursApp holds the state, the panels render it, the form captures new input, Prisma and db.ts persist it, and db-mappers is the last translation before it reaches your screen. Check out other tours..."
         }
       ]
     },
     {
-      "id": "t-flaskr-why-built",
-      "name": "Why is flaskr built this way?",
-      "description": "",
-      "author": "Claude",
-      "createdAt": "2026-10-23T06:21:27.931Z",
-      "updatedAt": "2026-10-23T06:24:18.766Z",
+      "id": "t-1780379652948",
+      "name": "A Research Story Behind Cognitive Tours",
+      "description": "A tour to help a newcomer understand the story behind Cognitive Tours",
+      "author": "Peggy",
+      "createdAt": "2026-10-21T01:36:37.000Z",
+      "updatedAt": "2026-10-24T07:52:06.557Z",
       "stops": [
         {
-          "waypointId": "w-flaskr-goal",
-          "narrative": "To serve that goal, flaskr makes a few structural decisions. First: how the app gets created."
+          "waypointId": "w29",
+          "narrative": "The overarching goal of this tool is to \"mitigate cognitive debt\". Cognitive debt accumulates when you go too fast using AI. One can \"lose the plot\" after hours of coding and it can creep up over time and across the team, not even knowing who knows what."
         },
         {
-          "waypointId": "w-flaskr-adr-factory",
-          "narrative": "Because the app is made by a function, tests can make their own. Next: what that buys the tests."
+          "waypointId": "w-1782491878877"
         },
         {
-          "waypointId": "w-flaskr-tests",
-          "narrative": "That is the payoff of the factory. Next decision: how the code is divided up."
+          "waypointId": "w02",
+          "narrative": "To facilitate these user needs, we look at two main features, the first waypoints..."
         },
         {
-          "waypointId": "w-flaskr-adr-blueprints",
-          "narrative": "Each blueprint owns its own routes. Next decision: where the data lives."
+          "waypointId": "w04",
+          "narrative": "Waypoints on their own are just dots on a map. What turns them into something a person can actually follow is putting them in order — which is what a tour does."
         },
         {
-          "waypointId": "w-flaskr-adr-sqlite",
-          "narrative": "Simple choices keep the tutorial small, but some defaults are not safe to ship. Last stop: a risk."
+          "waypointId": "w06",
+          "narrative": "Tours sequence waypoints, they capture understanding, and the paths that connect those units into something worth sharing. so far this has been ideas, so where do they actually live?"
         },
         {
-          "waypointId": "w-flaskr-risk-secret",
-          "narrative": "End of the tour. Which of these decisions would you change for a real product, and why?"
+          "waypointId": "w12",
+          "narrative": "This is where the research meets the running app: the waypoints, tours and the stop you're on all live in this component's state. Next we visit a test waypoint illustrating how waypoints can also capture important verification practices."
+        },
+        {
+          "waypointId": "w-1782778490775",
+          "narrative": "Going back to the prior research and why it was not successful earlier. One challenge was keeping waypoints and tours up to date as the code evolves (a common problem with software documentation)."
+        },
+        {
+          "waypointId": "w-1787345242753",
+          "narrative": "We can do with an audit skill"
+        },
+        {
+          "waypointId": "w-1783496581817",
+          "narrative": "Closing off the tour is the consideration of waypoint types, and the small ontology currently hardcoded into the current implementation. Is this the right approach - I'm not sure - future research is needed to really understand what cognitive support features a user needs."
+        },
+        {
+          "waypointId": "w-1782776741163",
+          "narrative": "That concludes the tour, and the user is encouraged to check out other tours!"
         }
       ]
     },
     {
-      "id": "t-flaskr-start-here",
-      "name": "Start here: how to read this map",
-      "description": "New to Cognitive Tours? This tour walks through flaskr, the small blog app from Flask's tutorial, and shows you how to use the map as you go.",
-      "author": "Claude",
-      "createdAt": "2026-10-24T03:45:37.821Z",
-      "updatedAt": "2026-10-24T03:45:37.821Z",
+      "id": "t-1780459334725",
+      "name": "Choosing a Database That Works in Production",
+      "description": "A tour of the deployment architecture — from the SQLite limitation that forced the decision, through the Vercel and Turso choices, to the code that implements it. 5 stops.",
+      "createdAt": "2026-10-21T01:36:37.000Z",
+      "updatedAt": "2026-10-22T02:29:23.394Z",
       "stops": [
         {
-          "waypointId": "w-flaskr-goal",
-          "narrative": "A tour is a guided path through a project's map, written by someone who understands it. This first stop is flaskr's goal. Press Next to go on, or Escape to leave the tour at any time. Next: the user need behind the goal."
+          "waypointId": "w10",
+          "narrative": "We started simple: SQLite running locally, Prisma for type-safe queries and migrations. No server, no setup, no cloud. It worked, until we needed to share it beyond one machine."
         },
         {
-          "waypointId": "w-flaskr-need",
-          "narrative": "Goals and user needs are the why: the intent behind the code, which the code itself doesn't record. Next: the feature that meets this need."
+          "waypointId": "w-1780457285601",
+          "narrative": "Vercel was the obvious choice, zero config, auto-deploy on every push. But deploying here exposed a problem we hadn't anticipated."
         },
         {
-          "waypointId": "w-flaskr-feat-posts",
-          "narrative": "Features are what the app does for people. The lines between waypoints are labelled with how they relate, like implemented-by. Next: a design decision behind the code."
+          "waypointId": "w23",
+          "narrative": "Vercel's filesystem is ephemeral, every deployment wipes local files. The SQLite database resets on every deploy, taking all waypoints and tours with it. This wasn't theoretical. It was a blocker."
         },
         {
-          "waypointId": "w-flaskr-adr-blueprints",
-          "narrative": "An ADR records a decision and why it was made. This one comes from Flask's own docs. Next: the code it led to."
+          "waypointId": "w-1780457252868",
+          "narrative": "Turso keeps the data alive across deploys, and the switch was small: the same Prisma client, just a different adapter and connection. But something still has to decide, at runtime, which database to use. That decision lives in one file, db.ts."
         },
         {
-          "waypointId": "w-flaskr-blog",
-          "narrative": "Code waypoints link to their file. Click the file link in the panel to open blog.py on GitHub, or Copy path to find it in your editor. Next: something that could go wrong."
+          "waypointId": "w-1780457780500",
+          "narrative": "This is where the decision lives in code. One file checks NODE_ENV explicitly, not just whether a Turso variable happens to be set, since that variable is always present in .env. Every query in the app flows through this single connection point."
+        }
+      ]
+    },
+    {
+      "id": "t-1782760176625",
+      "name": "Reading and Sharing Tours",
+      "description": "How a tour moves from a sequence of waypoints to a flowing document you can share. Five stops: tours as the foundation, graph view as the default reading surface, docent mode as the narrative layer, markdown view as an alternate reading surface, and export as the way to keep a copy.",
+      "author": "Margaret",
+      "createdAt": "2026-10-21T01:36:37.000Z",
+      "updatedAt": "2026-10-28T02:37:12.200Z",
+      "stops": [
+        {
+          "waypointId": "w06",
+          "narrative": "A tour is an ordered sequence of waypoints, a path through the understanding map. But a path needs somewhere to be seen. That starts with Graph View."
         },
         {
-          "waypointId": "w-flaskr-risk-secret",
-          "narrative": "Risks belong on the map too: what someone changing this code should know before they ship it. Next: how the code is tested."
+          "waypointId": "w-1783545776994",
+          "narrative": "This is where most tours are read: the graph follows you, centering and spotlighting the stop you're on. But the graph only shows where you are. To move along the tour, and to see what each stop is about, you need the Tour Controls panel beside it"
         },
         {
-          "waypointId": "w-flaskr-tests",
-          "narrative": "That's the tour. Click Exit tour to see the whole map, try Filter → Intent Layer to see only the why, or pick another tour. Then add a waypoint for something you figured out, or make your own tour with + New Tour."
+          "waypointId": "w-1783639775448",
+          "narrative": "Tour Controls lets you step through, but the most useful part is the note on why the next stop matters. That's docent mode."
+        },
+        {
+          "waypointId": "w-1782714501781",
+          "narrative": "Docent mode lets tour authors write transition text for each stop, the \"why we're here and where we're going next.\" This narrative lives on the TourWaypoint join record, not the waypoint itself, so the same waypoint can carry different narrative in different tours. But graphs aren't the only way to read. Sometimes you just want to read top to bottom."
+        },
+        {
+          "waypointId": "w-1782759848959",
+          "narrative": "The markdown view renders the full tour, title, description, each waypoint, and its docent narrative, as a flowing document to read start to finish. Reading it once is useful. Being able to keep it is more useful still."
+        },
+        {
+          "waypointId": "w-1783546089293",
+          "narrative": "That snapshot lives in the repo as a versioned record of understanding at a point in time, not just how the code works, but what it meant to the person who built it, on the day they wrote it down."
+        },
+        {
+          "waypointId": "w-1792829588257"
+        }
+      ]
+    },
+    {
+      "id": "t-1782779700105",
+      "name": "Docent Annotations: user need -> feature ->  code ->  test",
+      "description": "An end-to-end walk through one feature's full story: the user need that motivated it, the feature design, the schema change that enabled it, the components that implement it, and the tests that validate it. Use this as a template for documenting other features.",
+      "createdAt": "2026-10-21T01:36:37.000Z",
+      "updatedAt": "2026-10-24T07:42:55.667Z",
+      "stops": [
+        {
+          "waypointId": "w-1782491878877",
+          "narrative": "Docent annotations help tell the story..."
+        },
+        {
+          "waypointId": "w-1782714501781",
+          "narrative": "The feature itself: optional per-step narrative on tour stops. Authors write transition text in the tour editor; readers see it in the amber \"Next stop\" box in the Tour Controls panel\". The key design decision — narrative lives on the TourWaypoint join record, not the waypoint, so the same waypoint can say different things in different tours."
+        },
+        {
+          "waypointId": "w18",
+          "narrative": "The narrative now has a home: a column on each tour stop in the database. But the database stores stops as rows with an order number, not the ordered list the app uses. db-mappers does that translation"
+        },
+        {
+          "waypointId": "w19",
+          "narrative": "Here each tour's rows are sorted into order and turned into stops, and a stop's narrative comes along with it. From here the tour, narratives included, goes to the component that holds the app's state: CognitiveToursApp."
+        },
+        {
+          "waypointId": "w12",
+          "narrative": "From here, narratives thread down to where they're actually displayed today: the Tour Control Panel."
+        },
+        {
+          "waypointId": "w-1783639775448",
+          "narrative": "The same narrative also renders in the markdown view, just as plain text instead of an amber bar."
+        },
+        {
+          "waypointId": "w-1782759848959",
+          "narrative": "The same narrative also appears in Markdown View, in an amber \"Next stop commentary\" block under each stop."
+        },
+        {
+          "waypointId": "w-1782778490775",
+          "narrative": "The validation layer. Among the Playwright tests, one checks docent mode directly: it steps to a tour stop that has a narrative and verifies the amber \"Next stop\" box appears. This completes the feature's story: need, design, schema, code, test."
+        }
+      ]
+    },
+    {
+      "id": "t-1793745790323",
+      "name": "One Site per Team, and What Comes Next",
+      "description": "Explains my decisions around one site per team, and how it could be change in the Future.",
+      "author": "Peggy",
+      "createdAt": "2026-11-03T22:43:10.571Z",
+      "updatedAt": "2026-11-03T22:49:35.306Z",
+      "stops": [
+        {
+          "waypointId": "w-1793744067277",
+          "narrative": "Giving each team its own map could have been done with one database per team, or with scoped rows in one database shared by all teams. I chose the former, for time and ease of deployment."
+        },
+        {
+          "waypointId": "w-1793742650697",
+          "narrative": "Once you know each team has its own site and database, see what that gives a team: a map that is theirs alone."
+        },
+        {
+          "waypointId": "w-1793743893594",
+          "narrative": "This one site and one database per team (project) is cumbersome for adding new teams (users), and has no authentication. The deferred design next solves the first; authentication would still be a separate step"
+        },
+        {
+          "waypointId": "w-1793743371612",
+          "narrative": "For now leaving this as is, if want your own space for your team or project, ask me!  I would love your feedback."
+        }
+      ]
+    },
+    {
+      "id": "t-1793748102731",
+      "name": "How AI Helps Repair Intent Debt Without Writing For Me",
+      "description": "Why my Claude Code skills ask questions and leave the writing to me, and which skills do what. Stop narratives drafted with Claude's help, Nov 3.",
+      "author": "Peggy",
+      "createdAt": "2026-11-03T23:21:42.929Z",
+      "updatedAt": "2026-11-03T23:21:42.929Z",
+      "stops": [
+        {
+          "waypointId": "w-1787345242753",
+          "narrative": "Keeping the map in step with the code is too much to do by hand alone, but letting AI do it would undo the point of the tool. So first, the rule I set for AI."
+        },
+        {
+          "waypointId": "w-1793746992534",
+          "narrative": "With that rule in place, the first kind of skill helps while I work: it asks, I write."
+        },
+        {
+          "waypointId": "w-1793747738966",
+          "narrative": "Recording as I go still leaves things to go stale, so a second kind of skill checks afterwards."
+        },
+        {
+          "waypointId": "w-1783496581817",
+          "narrative": "Whether questions-first really builds understanding is still open: I tried it on Nov 3 and it helped, but it was also tiring."
         }
       ]
     }
