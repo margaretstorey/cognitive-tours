@@ -6,6 +6,7 @@ import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo } from '../a
 import { vscodeLink } from '../app/lib/code-folder';
 import { getSites } from '../app/lib/sites';
 import { parseSiteColor, parseSiteNotice } from '../app/lib/project';
+import { resetPlan } from '../app/api/reset-nightly/reset';
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
@@ -603,5 +604,31 @@ test.describe('site list comes from SITE_NAMES', () => {
     expect(() => getSites()).toThrow(/SITE_NAMES is not set/);
     process.env.SITE_NAMES = 'test,Bad Name';
     expect(() => getSites()).toThrow(/invalid names: Bad Name/);
+  });
+});
+
+test.describe('nightly demo reset', () => {
+  test('runs only on a demo site that opted in', () => {
+    const demo = 'Cognitive Tours (demo)';
+    expect(resetPlan({})).toEqual({ skip: 'RESET_NIGHTLY_FROM is not set' });
+    expect(resetPlan({ RESET_NIGHTLY_FROM: 'demo-canonical' })).toHaveProperty('skip');
+    expect(resetPlan({ RESET_NIGHTLY_FROM: 'demo-canonical', NEXT_PUBLIC_PROJECT_NAME: 'Acme' })).toHaveProperty('skip');
+    expect(resetPlan({ RESET_NIGHTLY_FROM: 'demo-canonical', NEXT_PUBLIC_PROJECT_NAME: 'Demolition crew' })).toHaveProperty('skip');
+    expect(resetPlan({ RESET_NIGHTLY_FROM: 'backups/x.json', NEXT_PUBLIC_PROJECT_NAME: demo })).toHaveProperty('skip');
+
+    const canonical = resetPlan({ RESET_NIGHTLY_FROM: 'demo-canonical', NEXT_PUBLIC_PROJECT_NAME: demo });
+    expect(canonical).toMatchObject({ source: 'demo-canonical' });
+    expect('data' in canonical && canonical.data.waypoints.length).toBeGreaterThan(0);
+    expect(resetPlan({ RESET_NIGHTLY_FROM: 'demo-flask', NEXT_PUBLIC_PROJECT_NAME: 'Flask (demo)' })).toMatchObject({ source: 'demo-flask' });
+    const empty = resetPlan({ RESET_NIGHTLY_FROM: 'empty', NEXT_PUBLIC_PROJECT_NAME: 'Demo 3' });
+    expect('data' in empty && empty.data).toEqual({ waypoints: [], edges: [], tours: [] });
+  });
+
+  test('the route does nothing on a site that did not opt in', async ({ request }) => {
+    const before = await (await request.get('/api/data')).json();
+    const res = await request.get('/api/reset-nightly');
+    expect(res.status()).toBe(204);
+    const after = await (await request.get('/api/data')).json();
+    expect(after.waypoints.length).toBe(before.waypoints.length);
   });
 });

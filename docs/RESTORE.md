@@ -33,6 +33,12 @@ It's read-only: it only reads each site and saves a file. Yours goes to
 The demo has a fixed good copy, `backups/demo-canonical.json` (committed),
 so resetting it always puts back the same map.
 
+**Usually you don't need to:** since Nov 4 the demo sites reset themselves
+every night around midnight Pacific (`/api/reset-nightly`; see `CLAUDE.md`
+→ Team sites). The demo goes back to `backups/demo-canonical.json`,
+demo-flask to `backups/demo-flask.json`, and Demo 1–9 are emptied. Use
+the steps below only to reset one straight away.
+
 1. Sign in to Turso if you haven't today: `turso auth login`, with the
    **mastorey@gmail.com** account. The browser window may stay blank;
    the terminal says "Logged in" when it's done.
