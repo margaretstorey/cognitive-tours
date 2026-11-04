@@ -1,10 +1,13 @@
+import { requireEditPasscode } from '@/app/lib/edit-passcode';
 import { prisma } from '@/app/lib/db';
 import { Prisma } from '@/app/generated/prisma/client';
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const denied = requireEditPasscode(request);
+  if (denied) return denied;
   const { id } = await params;
   try {
     await prisma.edge.delete({ where: { id } });

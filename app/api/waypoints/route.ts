@@ -1,8 +1,11 @@
+import { requireEditPasscode } from '@/app/lib/edit-passcode';
 import { prisma } from '@/app/lib/db';
 import { toWaypoint } from '@/app/lib/db-mappers';
 import type { Waypoint } from '@/app/lib/types';
 
 export async function POST(request: Request) {
+  const denied = requireEditPasscode(request);
+  if (denied) return denied;
   try {
     const body = (await request.json()) as Waypoint;
     if (!body.id || !body.label || !body.type || !body.position) {

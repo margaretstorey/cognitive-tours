@@ -7,6 +7,7 @@ import { vscodeLink } from '../app/lib/code-folder';
 import { getSites } from '../app/lib/sites';
 import { parseSiteColor, parseSiteNotice } from '../app/lib/project';
 import { resetPlan } from '../app/api/reset-nightly/reset';
+import { EDIT_PASSCODE_HEADER, editAllowed, requireEditPasscode } from '../app/lib/edit-passcode';
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
@@ -630,5 +631,36 @@ test.describe('nightly demo reset', () => {
     expect(res.status()).toBe(204);
     const after = await (await request.get('/api/data')).json();
     expect(after.waypoints.length).toBe(before.waypoints.length);
+  });
+});
+
+test.describe('edit passcode', () => {
+  const saved = process.env.EDIT_PASSCODE;
+  test.afterEach(() => {
+    if (saved === undefined) delete process.env.EDIT_PASSCODE;
+    else process.env.EDIT_PASSCODE = saved;
+  });
+
+  test('without a passcode set, every edit is allowed', () => {
+    expect(editAllowed(undefined, null)).toBe(true);
+    expect(editAllowed('  ', null)).toBe(true);
+    delete process.env.EDIT_PASSCODE;
+    expect(requireEditPasscode(new Request('http://x/api/waypoints', { method: 'POST' }))).toBeNull();
+  });
+
+  test('with one set, only the right passcode is allowed', async () => {
+    expect(editAllowed('owl-river', null)).toBe(false);
+    expect(editAllowed('owl-river', 'owl-rive')).toBe(false);
+    expect(editAllowed('owl-river', 'Owl-River')).toBe(false);
+    expect(editAllowed('owl-river', ' owl-river ')).toBe(true);
+
+    process.env.EDIT_PASSCODE = 'owl-river';
+    const refused = requireEditPasscode(new Request('http://x/api/waypoints', { method: 'POST' }));
+    expect(refused?.status).toBe(401);
+    expect(await refused?.json()).toEqual({ error: 'This map needs a passcode to edit' });
+    const allowed = requireEditPasscode(
+      new Request('http://x/api/waypoints', { method: 'POST', headers: { [EDIT_PASSCODE_HEADER]: 'owl-river' } }),
+    );
+    expect(allowed).toBeNull();
   });
 });

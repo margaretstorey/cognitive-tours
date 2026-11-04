@@ -10,6 +10,7 @@ import TourBar from './TourBar';
 import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
 import { PROJECT_NAME, SITE_COLOR, SITE_NOTICE } from '@/app/lib/project';
+import { EDIT_PASSCODE_HEADER } from '@/app/lib/edit-passcode';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 import { githubFileLink, linkLabel, useRepoUrl } from '@/app/lib/repo';
 
@@ -32,9 +33,56 @@ const DEFAULT_FILTER_STATE: FilterState = Object.fromEntries(
   WAYPOINT_TYPES.map(t => [t, true])
 ) as FilterState;
 
+// Edit passcode (app/lib/edit-passcode.ts): on a site that has one, writes
+// carry it; this browser asks once and remembers it. Sites without one never ask.
+const PASSCODE_KEY = 'cognitive-tours-edit-passcode';
+
+function savedPasscode(): string | null {
+  try {
+    return localStorage.getItem(PASSCODE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+// Several writes refused at once (e.g. deleting a waypoint's edges) share one prompt.
+let passcodePrompt: Promise<string | null> | null = null;
+
+function askForPasscode(again: boolean): Promise<string | null> {
+  passcodePrompt ??= Promise.resolve().then(() => {
+    const entered = window.prompt(
+      again
+        ? "That passcode didn't work. Enter this map's edit passcode:"
+        : 'This map needs a passcode to edit. Enter it once; this browser will remember it.',
+    );
+    passcodePrompt = null;
+    const passcode = entered?.trim() || null;
+    if (passcode) {
+      try {
+        localStorage.setItem(PASSCODE_KEY, passcode);
+      } catch {
+        // Storage blocked: the passcode works for this edit only.
+      }
+    }
+    return passcode;
+  });
+  return passcodePrompt;
+}
+
 async function apiFetch(url: string, options: RequestInit): Promise<void> {
-  const res = await fetch(url, options);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  let passcode = savedPasscode();
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const headers = new Headers(options.headers);
+    if (passcode) headers.set(EDIT_PASSCODE_HEADER, passcode);
+    const res = await fetch(url, { ...options, headers });
+    if (res.status !== 401) {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return;
+    }
+    passcode = await askForPasscode(passcode !== null);
+    if (!passcode) throw new Error('Edit cancelled: this map needs a passcode');
+  }
+  throw new Error('HTTP 401');
 }
 
 export default function CognitiveToursApp() {
@@ -452,7 +500,7 @@ export default function CognitiveToursApp() {
         id,
         setTimeout(() => {
           positionDebounceMap.current.delete(id);
-          void fetch(`/api/waypoints/${id}`, {
+          apiFetch(`/api/waypoints/${id}`, {
             method: 'PUT',
             headers: JSON_HEADERS,
             body: JSON.stringify({ position }),

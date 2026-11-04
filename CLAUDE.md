@@ -281,21 +281,32 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
   | Site | Vercel project | Turso database | NEXT_PUBLIC_PROJECT_NAME | NEXT_PUBLIC_REPO_URL |
   |---|---|---|---|---|
-  | Mine | cognitive-tours (address in `MY_SITE_URL`; not written here) | cognitive-tours | (unset) | (unset) |
+  | Mine (edit passcode; header `#0f4c5c`) | cognitive-tours (address in `MY_SITE_URL`) | cognitive-tours | Cognitive Tours Repo | https://github.com/margaretstorey/cognitive-tours |
   | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | https://github.com/margaretstorey/cognitive-tours |
   | Demo, Flask (public, brownfield) | cognitive-tours-demo-flask | ct-demo-flask | Flask (demo) | https://github.com/margaretstorey/flask |
   | Sandbox 1 … Sandbox 9 (public, blank, to try authoring) | cognitive-tours-sandbox1 … sandbox9 | ct-sandbox1 … ct-sandbox9 | Sandbox 1 … Sandbox 9 | (unset) |
 
-  **Your own site's address is kept out of the repo** (Nov 3): it 
-  lives only in `MY_SITE_URL`, in your local `.env` and in the 
-  cognitive-tours Vercel project (server-only, no `NEXT_PUBLIC_`), 
-  read by `app/lib/sites.ts`, the backup script, the nightly backup 
-  and the four audit/suggest skills. The site was moved to a 
-  hard-to-guess `cognitive-tours-<random>.vercel.app` so students and 
-  strangers don't stumble on it. That's a stopgap, not access control: 
-  anyone holding the link can still edit everything. The proper fix is 
-  Vercel Authentication (free on Pro) plus a protection bypass for the 
-  scripts and skills.
+  **Your own site's address is read from `MY_SITE_URL`** (Nov 3), in 
+  your local `.env` and in the cognitive-tours Vercel project 
+  (server-only, no `NEXT_PUBLIC_`), by `app/lib/sites.ts`, the backup 
+  script, the nightly backup and the four audit/suggest skills. 
+  **Correction (Nov 4):** the Nov 3 note that the site "was moved to a 
+  hard-to-guess `cognitive-tours-<random>.vercel.app`" was wrong. The 
+  project only ever served the well-known `cognitive-tours.vercel.app` 
+  (checked through the Vercel API), and `MY_SITE_URL` was missing from 
+  the Vercel project until Nov 4, so the nightly backup had skipped your 
+  map. **Your map is protected by an edit passcode instead** (Nov 4): the 
+  server-only `EDIT_PASSCODE` on the cognitive-tours project. Every add, 
+  edit and delete needs it in the `x-edit-passcode` header 
+  (`app/lib/edit-passcode.ts`, checked in all eight write handlers under 
+  `app/api/`); the app asks once per browser and remembers it. Reading 
+  stays open, so backups, the nightly jobs, the skills and the restore 
+  tool (which writes through `turso db shell`) are unaffected. Only your 
+  site sets it; any other site can get one later with that one setting 
+  and a redeploy. The passcode itself is never written in the repo. To 
+  hide the map from readers too, the next step would be Vercel 
+  Authentication (free on Pro) plus a protection bypass for the scripts, 
+  nightly jobs and skills.
 
   The Demo site (Oct 22) is the public demo for the ICSE 2027 demo 
   paper and for letting others try the tool, so they never edit your 
