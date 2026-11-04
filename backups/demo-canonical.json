@@ -248,8 +248,8 @@
       "notes": "The research motivation for Cognitive Tours\n\nBackground: \n\nCheng, Desmond, Storey (2006) (see below): Tours is an Eclipse plugin that lets programmers give live technical presentations by combining slideware with guided navigation through code waypoints.  \"Like Routes, but with a tour guide equipped with a flashlight and a dimmer switch.\"",
       "filePath": "https://www.researchgate.net/publication/4251316_Presentations_by_Programmers_for_Programmers",
       "position": {
-        "x": -1181.0946928965782,
-        "y": -323.89254102951793
+        "x": -1187.2052952945994,
+        "y": -397.2197698057725
       }
     },
     {
@@ -710,14 +710,25 @@
       }
     },
     {
-      "id": "w-1782776741163",
+      "id": "w-1793813092861",
+      "label": "Not a code analysis tool",
+      "type": "ADR",
+      "description": "This is not intended to analyze the code automatically or do architecture recovery.\n\nThe act of creating waypoints and tours IS the cognitive debt repair.",
+      "notes": "The user can override the instruction skill to not automate...  but that's not the point! But may be useful in some circumstances to speed up curation or for demo purposes.",
+      "position": {
+        "x": -635.4901900030245,
+        "y": -359.286515012847
+      }
+    },
+    {
+      "id": "w-1793813636075",
       "label": "Should waypoint types be configurable rather than hardcoded?",
       "type": "Open Question",
       "description": "Currently types are a TypeScript union in types.ts — adding or renaming a type requires a code change and deploy. Moving types to a database table would let researchers evolve the ontology without touching code. Tradeoff: more complexity, colour coding and filters would need to be dynamic too. Note relationships are not typed and do not even have to be labelled.",
-      "notes": "from a discussion with claude: \nThis is a meaningful architectural decision though — worth an ADR and probably a Spec Kit spec before touching it. It also has implications for colour coding (currently hardcoded per type) and the filter toggle.",
+      "filePath": "app/lib/types.ts",
       "position": {
-        "x": -13.508661156142267,
-        "y": -320.3036340261988
+        "x": -697.7052952945994,
+        "y": -603.7197698057724
       }
     }
   ],
@@ -1197,9 +1208,10 @@
       "label": "motivates"
     },
     {
-      "id": "e-1792643289135",
-      "source": "w-1782776741163",
-      "target": "w04"
+      "id": "e-1793813233612",
+      "source": "w29",
+      "target": "w-1793813092861",
+      "label": "motivates"
     }
   ],
   "tours": [
@@ -1262,7 +1274,7 @@
       "description": "A tour to help a newcomer understand the story behind Cognitive Tours",
       "author": "Peggy",
       "createdAt": "2026-10-21T01:36:37.000Z",
-      "updatedAt": "2026-10-24T07:52:06.557Z",
+      "updatedAt": "2026-11-04T17:35:25.710Z",
       "stops": [
         {
           "waypointId": "w29",
@@ -1293,14 +1305,18 @@
         },
         {
           "waypointId": "w-1787345242753",
-          "narrative": "We can do with an audit skill"
+          "narrative": "We can do with an audit skill, but first I'll explicitly add a decision that says this is not about automated architecture recovery!"
+        },
+        {
+          "waypointId": "w-1793813092861",
+          "narrative": "Next let's look at the audit and suggest skills I added to Cognitive Tours"
         },
         {
           "waypointId": "w-1783496581817",
           "narrative": "Closing off the tour is the consideration of waypoint types, and the small ontology currently hardcoded into the current implementation. Is this the right approach - I'm not sure - future research is needed to really understand what cognitive support features a user needs."
         },
         {
-          "waypointId": "w-1782776741163",
+          "waypointId": "w-1793813636075",
           "narrative": "That concludes the tour, and the user is encouraged to check out other tours!"
         }
       ]
