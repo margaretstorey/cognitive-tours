@@ -215,6 +215,15 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   backups/teams/<team>-YYYY-MM-DD.json (gitignored). Turso's own 
   point-in-time restore only reaches back 1 day on the current plan 
   (10 on Developer), so these files are the longer-term safety net.
+  **Plans (as of Nov 4):** **Vercel Pro** (team 
+  `margaret-anne-storey-s-projects`, since about Oct 22), so all 19 
+  sites can deploy on every push. **Turso Starter** (free), kept on 
+  purpose: 19 of 100 databases used, 1-day point-in-time restore, with 
+  these backup files and the nightly Blob backups as the longer safety 
+  net; Developer ($4.99/month) would give 10 days if ever wanted. 
+  Turso's "locations" reads 5 of 3 (over its limit, overages disabled), 
+  so far without effect: if creating a database ever fails, check this 
+  first.
   **Nightly, automatically:** a Vercel cron (`vercel.json` → 
   `/api/backup-nightly`, ~3 a.m. Pacific) saves every site to the private 
   Blob store `cognitive-tours-backups`, under `nightly/YYYY-MM-DD/<site>.json` 
