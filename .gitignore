@@ -49,6 +49,9 @@ prisma/dev.db-journal
 # Private project facts (team site addresses), read by Claude Code locally
 CLAUDE.local.md
 
+# Private research diary; commit it only if you decide to make it public
+docs/diary.md
+
 # Bram (local agent tooling)
 resources/
 .claude/bram-conventions.md
