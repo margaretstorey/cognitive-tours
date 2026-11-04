@@ -114,3 +114,7 @@ automatically.
 
 The constitution (8 principles) lives at `.specify/memory/constitution.md`. 
 Read it before adding any feature.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
