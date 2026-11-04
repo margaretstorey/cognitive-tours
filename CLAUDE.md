@@ -227,8 +227,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   **Nightly, automatically:** a Vercel cron (`vercel.json` → 
   `/api/backup-nightly`, ~3 a.m. Pacific) saves every site to the private 
   Blob store `cognitive-tours-backups`, under `nightly/YYYY-MM-DD/<site>.json` 
-  (`mine.json` is yours). Get one from Vercel → cognitive-tours → 
-  Storage → cognitive-tours-backups, or `vercel blob list`. It runs only 
+  (`mine.json` is yours). Get one from your team's page on Vercel 
+  (margaret-anne-storey-s-projects, not inside a project: stores belong 
+  to the team) → **Storage** in the left sidebar → cognitive-tours-backups 
+  → Browser, directly at 
+  https://vercel.com/margaret-anne-storey-s-projects/~/stores/blob/store_kEY392RuLzkDcRkA, 
+  or `vercel blob list`. It runs only 
   on cognitive-tours (`BACKUP_ALL_SITES=true`, plus `CRON_SECRET`); the 
   team projects get the cron but it does nothing there. Check its logs 
   in Vercel if a night's folder is missing.

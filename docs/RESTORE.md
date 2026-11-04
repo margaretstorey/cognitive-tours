@@ -95,8 +95,10 @@ turso db shell cognitive-tours < backups/restore/mine-from-backup-<date>.sql
 Use this when the damage happened before your last manual backup, or when
 you don't have one.
 
-1. Vercel → **cognitive-tours** → **Storage** → **cognitive-tours-backups**
-   → `nightly/<date>/<site>.json` (`mine.json` is yours).
+1. On Vercel, go to your **team's** page, not a project's (storage stores
+   belong to the team) → **Storage** in the left sidebar →
+   **cognitive-tours-backups** → **Browser** → `nightly/<date>/<site>.json`
+   (`mine.json` is yours).
 2. Download it into `backups/teams/` (or `backups/` for yours), and rename
    it to `<site>-<date>-nightly.json` so it's clear what it is.
 3. Follow 4 or 5 with that file.
