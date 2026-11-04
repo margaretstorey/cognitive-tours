@@ -283,6 +283,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   |---|---|---|---|---|
   | Mine | cognitive-tours (address in `MY_SITE_URL`; not written here) | cognitive-tours | (unset) | (unset) |
   | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | https://github.com/margaretstorey/cognitive-tours |
+  | Demo, Flask (public, brownfield) | cognitive-tours-demo-flask | ct-demo-flask | Flask (demo) | https://github.com/margaretstorey/flask |
+  | Demo 1 … Demo 9 (public, blank, to try authoring) | cognitive-tours-demo1 … demo9 | ct-demo1 … ct-demo9 | Demo 1 … Demo 9 | (unset) |
 
   **Your own site's address is kept out of the repo** (Nov 3): it 
   lives only in `MY_SITE_URL`, in your local `.env` and in the 
@@ -312,8 +314,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   backup with the same clean-up, then check the copy for the private 
   address, `vercel.app` and team site names before loading it. Until 
   Nov 4 the demo toured the user's fork of Flask (cloned at `~/flask`; 
-  `docs/design.rst` is the source for ADR waypoints); that map is kept 
-  in `backups/demo-flask.json`. Anyone can edit the demo, so back it 
+  `docs/design.rst` is the source for ADR waypoints). **That map now 
+  has its own site, demo-flask** (Nov 4), with `backups/demo-flask.json` 
+  as its reset copy (`scripts/restore-production-from-backup.ts 
+  backups/demo-flask.json demo-flask`). **Demo 1 to Demo 9** (Nov 4) are 
+  blank sites (`SEED_ON_EMPTY=false`) for people to try writing 
+  waypoints and tours; reset one by restoring an empty backup. All ten 
+  are in `SITE_NAMES`, so they're backed up and migrated with the rest: 
+  every push to `main` now builds 19 sites. Anyone can edit the demo, so back it 
   up before sharing the link; resetting it means restoring 
   `backups/demo-canonical.json` (see "Restoring a site from a backup" 
   above).
