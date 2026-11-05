@@ -29,7 +29,9 @@ function WaypointNode({ data, selected }: NodeProps & { data: WaypointNodeData }
     <div
       data-current-stop={data.isActiveTourStep ? 'true' : undefined}
       data-current-match={data.isCurrentMatch ? 'true' : undefined}
-      className={`px-3 py-2 rounded-lg border-2 transition-transform text-sm font-medium max-w-[180px] shadow-sm ${colorClass} ${
+      // nopan: React Flow's double-click zoom skips nodes, so a double-click
+      // opens the edit form without also zooming in. Wheel zoom still works.
+      className={`nopan px-3 py-2 rounded-lg border-2 transition-transform text-sm font-medium max-w-[180px] shadow-sm ${colorClass} ${
         data.isActiveTourStep || data.isCurrentMatch
           ? 'scale-[1.2] ring-[6px] ring-offset-2 ring-blue-500 shadow-xl shadow-blue-500/60'
           : selected ? 'ring-2 ring-offset-1 ring-blue-500' : ''
@@ -51,6 +53,8 @@ interface WaypointGraphProps {
   selectedWaypointId: string | null;
   activeTourWaypointIds: string[];
   onSelectWaypoint: (id: string | null) => void;
+  /** Double-clicking a node opens its edit form. */
+  onEditWaypoint: (id: string) => void;
   onConnect: (connection: { source: string; target: string; label?: string }) => void;
   onDeleteEdge: (id: string) => void;
   onDeleteWaypoint: (id: string) => void;
@@ -80,6 +84,7 @@ function Graph({
   selectedWaypointId,
   activeTourWaypointIds,
   onSelectWaypoint,
+  onEditWaypoint,
   onConnect,
   onDeleteEdge,
   onNodePositionChange,
@@ -373,6 +378,11 @@ function Graph({
     [onSelectWaypoint, searchQuery, onSearchChange]
   );
 
+  const onNodeDoubleClick = useCallback(
+    (_: React.MouseEvent, node: Node) => onEditWaypoint(node.id),
+    [onEditWaypoint]
+  );
+
   const onPaneClick = useCallback(() => {
     onSelectWaypoint(null);
     if (searchQuery) onSearchChange('');
@@ -426,6 +436,7 @@ function Graph({
           onEdgesChange={onEdgesChange}
           onConnect={handleConnect}
           onNodeClick={onNodeClick}
+          onNodeDoubleClick={onNodeDoubleClick}
           onPaneClick={onPaneClick}
           onEdgeDoubleClick={onEdgeDoubleClick}
           fitView

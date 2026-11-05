@@ -29,6 +29,14 @@ interface BulkDataResponse {
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
+// A new id for a waypoint, edge or tour, made in the browser. The timestamp
+// alone could repeat when two saves land in the same millisecond (two people
+// on one site, or parallel test runs), and the server then refuses the
+// second; the random ending makes that practically impossible.
+function newId(prefix: 'w' | 'e' | 't'): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 const DEFAULT_FILTER_STATE: FilterState = Object.fromEntries(
   WAYPOINT_TYPES.map(t => [t, true])
 ) as FilterState;
@@ -204,7 +212,7 @@ export default function CognitiveToursApp() {
   // T018
   const createWaypoint = useCallback(
     (data: Omit<Waypoint, 'id' | 'position'>, placement: { x: number; y: number } | null) => {
-      const id = `w-${Date.now()}`;
+      const id = newId('w');
       // Normally where the cursor last was on the map (see WaypointGraph's
       // placementRef). When the map isn't showing (markdown view, or the
       // empty-map screen), fall back to the top-right corner of the map.
@@ -304,7 +312,7 @@ export default function CognitiveToursApp() {
   const addEdge = useCallback(
     (connection: { source: string; target: string; label?: string }) => {
       if (connection.source === connection.target) return;
-      const id = `e-${Date.now()}`;
+      const id = newId('e');
       const newEdge: WaypointEdge = { id, ...connection };
       setEdges(prev => [...prev, newEdge]);
       void (async () => {
@@ -345,7 +353,7 @@ export default function CognitiveToursApp() {
   // T024
   const createTour = useCallback(
     (data: Omit<Tour, 'id'>) => {
-      const id = `t-${Date.now()}`;
+      const id = newId('t');
       const newTour: Tour = { id, ...data };
       setTours(prev => [...prev, newTour]);
       void (async () => {
@@ -524,6 +532,13 @@ export default function CognitiveToursApp() {
     (waypoint: Waypoint) => setForm({ open: true, mode: 'edit', waypoint }),
     [],
   );
+  const editWaypointById = useCallback(
+    (id: string) => {
+      const waypoint = waypoints.find(w => w.id === id);
+      if (waypoint) openEditForm(waypoint);
+    },
+    [waypoints, openEditForm],
+  );
   const closeForm = useCallback(() => setForm({ open: false }), []);
 
   const handleFormSave = useCallback(
@@ -631,6 +646,7 @@ export default function CognitiveToursApp() {
               selectedWaypointId={selectedWaypointId}
               activeTourWaypointIds={activeTour?.stops.map(s => s.waypointId) ?? []}
               onSelectWaypoint={selectWaypoint}
+              onEditWaypoint={editWaypointById}
               onConnect={addEdge}
               onDeleteEdge={deleteEdge}
               onDeleteWaypoint={deleteWaypoint}

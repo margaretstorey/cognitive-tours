@@ -49,6 +49,48 @@ test.describe('create a waypoint', () => {
   });
 });
 
+test.describe('double-click a waypoint', () => {
+  let label: string;
+
+  test.afterEach(async ({ request }) => {
+    const { waypoints } = await (await request.get('/api/data')).json();
+    const wp = waypoints.find((w: { label: string }) => w.label === label);
+    if (wp) await request.delete(`/api/waypoints/${wp.id}`);
+  });
+
+  test('double-clicking a node opens its edit form, without zooming', async ({ page }) => {
+    label = `Waypoint To Double-Click ${Date.now()}`;
+    await page.goto('/');
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(label);
+    await form.locator('select').selectOption('Feature');
+    const saved = page.waitForResponse(r => r.url().endsWith('/api/waypoints') && r.request().method() === 'POST');
+    await form.getByRole('button', { name: 'Save' }).click();
+    await saved;
+    await expect(form).not.toBeVisible();
+
+    // A double-click zoom doubles the scale; the map's own re-fit after a
+    // save changes it far less.
+    const scale = async () => Number((await page.locator('.react-flow__viewport').getAttribute('style'))!.match(/scale\(([\d.]+)\)/)![1]);
+    const node = page.locator('.react-flow__node', { hasText: label });
+    await expect(node).toBeVisible();
+    const before = await scale();
+    // Clicked like a person: Playwright's own dblclick() sends the second
+    // click at once, and selecting a node makes React Flow hide it for one
+    // frame while it re-measures, so that second click would miss.
+    const box = (await node.boundingBox())!;
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+    await page.mouse.click(x, y);
+    await page.waitForTimeout(120);
+    await page.mouse.click(x, y, { clickCount: 2 });
+    await expect(form).toBeVisible();
+    await expect(form.getByPlaceholder('Short descriptive title')).toHaveValue(label);
+    expect(Math.abs(await scale() / before - 1)).toBeLessThan(0.5);
+  });
+});
+
 test.describe('delete a waypoint', () => {
   test.afterEach(async ({ request }) => {
     const { waypoints } = await (await request.get('/api/data')).json();

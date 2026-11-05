@@ -195,6 +195,20 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   title text-lg, body and buttons text-base, small print text-sm), 
   after the Oct 21 step. Panel width unchanged; the Prev/Next/Exit row 
   still fits on one line ✅
+- Double-click a waypoint on the graph to edit it (Nov 4): it opens 
+  the same form as Edit in the Waypoint panel (`onNodeDoubleClick` in 
+  WaypointGraph.tsx). Nodes carry React Flow's `nopan` class, so the 
+  double-click no longer zooms in; double-clicking empty canvas still 
+  does. During a tour, the first click still suspends the tour as 
+  before, and Resume tour works after the form closes. Covered by a 
+  Playwright test ✅
+- New waypoint, edge and tour ids get a random ending (Nov 5; 
+  `newId()` in CognitiveToursApp.tsx). They were the bare millisecond 
+  (`w-${Date.now()}`), so two saves in the same millisecond got the 
+  same id; the server refused the second and the app quietly removed 
+  it from the map ("Failed to save waypoint."). Found because parallel 
+  test runs hit it about 1 in 6; two people on one team site could 
+  too. Existing ids are unchanged ✅
 
 ---
 
@@ -402,6 +416,12 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ### Known issues
 - Edge deletion via keyboard doesn't work reliably on Mac
+- **Double-click means edit on a node but delete on an edge** (Nov 4). 
+  Double-clicking an edge deletes it at once, with no confirmation 
+  (`onEdgeDoubleClick` in WaypointGraph.tsx), so a double-click that 
+  misses a node by a few pixels can delete an edge. Asking first, or 
+  moving edge deletion into an edge panel (What to work on next, item 
+  6), would fix it.
 - Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead) — needs a pass to verify across all tours
 - **Vercel Git connection can silently disconnect.** If pushes stop triggering deploys (commits show on `origin/main` via `git log`, but nothing new appears in Vercel's Deployments tab), check Project Settings → Git in Vercel. It may show "Connect Git" instead of a connected repo. Fix: reconnect via "Adjust GitHub App Permissions" if the repo isn't listed, then "Connect."
 - **No undo and no multi-user conflict protection** — the app has no undo 
