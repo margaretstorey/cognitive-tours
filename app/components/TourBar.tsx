@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FilterState, Tour, TourStop, Waypoint, WaypointType } from '@/app/lib/types';
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
+import { WaypointTypeIcon } from '@/app/lib/waypoint-icons';
 import { generateFullMapMarkdown, generateTourMarkdown, tourSlug } from '@/app/lib/tour-markdown';
 import { PROJECT_NAME } from '@/app/lib/project';
 import { useRepoUrl } from '@/app/lib/repo';
@@ -314,6 +315,7 @@ export default function TourBar({
                       className="rounded"
                     />
                     <span className={`inline-block w-2.5 h-2.5 rounded-full border-2 flex-shrink-0 ${WAYPOINT_COLORS[type]}`} />
+                    <WaypointTypeIcon type={type} />
                     <span>{type}</span>
                   </label>
                 ))}
@@ -441,7 +443,10 @@ export default function TourBar({
                             {wp?.label ?? stop.waypointId}
                           </span>
                           {wp && (
-                            <span className={`shrink-0 text-xs px-1.5 py-0.5 rounded border ${WAYPOINT_COLORS[wp.type]}`}>{wp.type}</span>
+                            <span className={`shrink-0 inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded border ${WAYPOINT_COLORS[wp.type]}`}>
+                              <WaypointTypeIcon type={wp.type} size={12} />
+                              {wp.type}
+                            </span>
                           )}
                           <button onClick={() => moveWaypoint(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↑</button>
                           <button onClick={() => moveWaypoint(idx, 1)} disabled={idx === editor.stops.length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↓</button>

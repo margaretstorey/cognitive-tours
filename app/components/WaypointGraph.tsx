@@ -20,6 +20,7 @@ import {
 } from '@xyflow/react';
 import type { Waypoint, WaypointEdge, FilterState } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
+import { WaypointTypeIcon } from '@/app/lib/waypoint-icons';
 
 type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean; isCurrentMatch: boolean };
 
@@ -38,7 +39,10 @@ function WaypointNode({ data, selected }: NodeProps & { data: WaypointNodeData }
       }`}
     >
       <Handle type="target" position={Position.Left} className="!bg-gray-400" />
-      <div className="text-xs opacity-60 mb-0.5">{data.waypoint.type}</div>
+      <div className="flex items-center gap-1 text-xs mb-0.5">
+        <WaypointTypeIcon type={data.waypoint.type} />
+        <span className="opacity-60">{data.waypoint.type}</span>
+      </div>
       <div className="leading-tight">{data.waypoint.label}</div>
       <Handle type="source" position={Position.Right} className="!bg-gray-400" />
     </div>

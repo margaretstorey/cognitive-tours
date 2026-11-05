@@ -149,6 +149,22 @@ test.describe('docent mode', () => {
   });
 });
 
+test('each graph node shows its type icon beside the type name', async ({ page }) => {
+  await page.goto('/');
+  const nodes = page.locator('.react-flow__node');
+  await expect(nodes.first()).toBeVisible();
+  const count = Math.min(await nodes.count(), 5);
+  for (let i = 0; i < count; i++) {
+    const node = nodes.nth(i);
+    const icon = node.locator('svg[data-waypoint-icon]');
+    await expect(icon).toHaveCount(1);
+    await expect(icon).toHaveAttribute('aria-hidden', 'true');
+    // The icon matches the type name the node shows as text.
+    const type = await icon.getAttribute('data-waypoint-icon');
+    await expect(node.getByText(type!, { exact: true })).toBeVisible();
+  }
+});
+
 test.describe('tour editor bridges', () => {
   test('each narrative box names the stop it leads to, and follows a reorder', async ({ page }) => {
     await page.goto('/');

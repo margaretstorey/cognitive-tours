@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Waypoint } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
+import { WaypointTypeIcon } from '@/app/lib/waypoint-icons';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo, SITE_REPO_URL, useRepoUrl } from '@/app/lib/repo';
 
@@ -167,7 +168,8 @@ export default function WaypointDetail({
         {addWaypointButton}
       </div>
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-        <span className={`inline-block self-start px-2 py-0.5 rounded text-xs font-medium border ${colorClass}`}>
+        <span className={`inline-flex items-center gap-1 self-start px-2 py-0.5 rounded text-xs font-medium border ${colorClass}`}>
+          <WaypointTypeIcon type={waypoint.type} size={12} />
           {waypoint.type}
         </span>
         <h2 className="text-sm font-semibold text-gray-900 leading-snug">{waypoint.label}</h2>

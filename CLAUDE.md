@@ -217,6 +217,17 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   colour as a chip and a left border; markdown view shows the same 
   chip (exports stay plain text). Narrative data is unchanged. Covered 
   by a Playwright test ✅
+- An icon per waypoint type (Nov 5; `app/lib/waypoint-icons.tsx`, 
+  `lucide-react` pinned at 0.460.0), so types can be told apart without 
+  colour (colour-blind readers, black-and-white printouts). Goal Flag, 
+  User Need User, Feature Puzzle, ADR Scale, Code Component Code, Test 
+  FlaskConical, Risk TriangleAlert, AI Instruction Bot, Open Question 
+  CircleHelp, Deprecated Archive. Shown beside the type name, never 
+  instead of it: on graph nodes (14px; node size unchanged, the user's 
+  pick from a mockup of three placements), the detail panel badge, the 
+  type filter (so it doubles as a legend), and the type chips in Edit 
+  tour and markdown view. Icons are `aria-hidden`; exports stay plain 
+  text. Covered by a Playwright test ✅
 
 ---
 
