@@ -209,6 +209,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   it from the map ("Failed to save waypoint."). Found because parallel 
   test runs hit it about 1 in 6; two people on one team site could 
   too. Existing ids are unchanged ✅
+- Tour editor shows where each bridge leads (Nov 5; TourBar.tsx). Each 
+  stop's narrative box is headed "→ to stop N+1: <label>" (the last 
+  stop's reads "Closing words (optional)") and updates on reorder; a 
+  "Show description" toggle on each stop shows the waypoint's 
+  description, read-only, while you write. Each stop has its type's 
+  colour as a chip and a left border; markdown view shows the same 
+  chip (exports stay plain text). Narrative data is unchanged. Covered 
+  by a Playwright test ✅
 
 ---
 

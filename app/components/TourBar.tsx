@@ -8,6 +8,13 @@ import { generateFullMapMarkdown, generateTourMarkdown, tourSlug } from '@/app/l
 import { PROJECT_NAME } from '@/app/lib/project';
 import { useRepoUrl } from '@/app/lib/repo';
 
+// Just the border colour from a type's colour classes, for the left border
+// on a stop in the tour editor (the background and text would be too loud
+// on the whole row).
+function typeBorderColor(type: WaypointType): string {
+  return WAYPOINT_COLORS[type].split(' ').filter(c => c.startsWith('border-') && c !== 'border-dotted').join(' ');
+}
+
 const FILTER_PRESETS: { label: string; types: WaypointType[] }[] = [
   { label: 'Intent Layer', types: ['Goal', 'User Need', 'Feature', 'ADR', 'Test', 'AI Instruction'] },
   { label: 'Technical Layer', types: ['ADR', 'Code Component', 'Test', 'Risk'] },
@@ -67,6 +74,9 @@ export default function TourBar({
     stops: [],
   });
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  // Tour editor: which stops' descriptions are expanded (by waypoint id).
+  // Closed by default, and closed again whenever the editor closes.
+  const [shownDescriptions, setShownDescriptions] = useState<Set<string>>(new Set());
   const filterPanelRef = useRef<HTMLDivElement>(null);
   const hiddenCount = WAYPOINT_TYPES.filter(t => !filterState[t]).length;
 
@@ -121,7 +131,10 @@ export default function TourBar({
     });
   };
 
-  const closeEditor = () => setEditor(e => ({ ...e, open: false }));
+  const closeEditor = () => {
+    setEditor(e => ({ ...e, open: false }));
+    setShownDescriptions(new Set());
+  };
 
   const saveEditor = () => {
     const data = {
@@ -416,21 +429,50 @@ export default function TourBar({
               <ul className="flex flex-col gap-1">
                 {editor.stops.map((stop, idx) => {
                   const wp = waypoints.find(w => w.id === stop.waypointId);
+                  const nextStop = editor.stops[idx + 1];
+                  const nextWp = nextStop && waypoints.find(w => w.id === nextStop.waypointId);
+                  const descShown = shownDescriptions.has(stop.waypointId);
                   return (
-                    <li key={`${stop.waypointId}-${idx}`} className="flex flex-col gap-1 text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="flex-1 truncate">
-                          <span className="text-gray-400 font-normal">Stop {idx + 1}: </span>
-                          {wp?.label ?? stop.waypointId}
-                          {wp && <span className="text-gray-400 font-normal"> ({wp.type})</span>}
-                        </span>
-                        <button onClick={() => moveWaypoint(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↑</button>
-                        <button onClick={() => moveWaypoint(idx, 1)} disabled={idx === editor.stops.length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↓</button>
-                        <button onClick={() => removeWaypointFromTour(idx)} className="text-red-400 hover:text-red-600">✕</button>
+                    <li key={`${stop.waypointId}-${idx}`} className="flex flex-col gap-1 text-sm" data-testid="tour-editor-stop">
+                      <div className={`flex flex-col gap-1 border-l-4 pl-2 ${wp ? typeBorderColor(wp.type) : 'border-gray-200'}`}>
+                        <div className="flex items-center gap-2">
+                          <span className="flex-1 truncate">
+                            <span className="text-gray-400 font-normal">Stop {idx + 1}: </span>
+                            {wp?.label ?? stop.waypointId}
+                          </span>
+                          {wp && (
+                            <span className={`shrink-0 text-xs px-1.5 py-0.5 rounded border ${WAYPOINT_COLORS[wp.type]}`}>{wp.type}</span>
+                          )}
+                          <button onClick={() => moveWaypoint(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↑</button>
+                          <button onClick={() => moveWaypoint(idx, 1)} disabled={idx === editor.stops.length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30">↓</button>
+                          <button onClick={() => removeWaypointFromTour(idx)} className="text-red-400 hover:text-red-600">✕</button>
+                        </div>
+                        {wp?.description?.trim() && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => setShownDescriptions(prev => {
+                                const next = new Set(prev);
+                                if (next.has(stop.waypointId)) next.delete(stop.waypointId); else next.add(stop.waypointId);
+                                return next;
+                              })}
+                              className="self-start text-xs text-blue-600 hover:underline"
+                            >
+                              {descShown ? 'Hide description' : 'Show description'}
+                            </button>
+                            {descShown && (
+                              <p className="text-xs text-gray-600 whitespace-pre-wrap">{wp.description}</p>
+                            )}
+                          </>
+                        )}
                       </div>
-                      <span className="text-xs font-bold text-gray-700">Next stop commentary:</span>
+                      <span className="text-xs font-bold text-gray-700 mt-1" data-testid="tour-editor-bridge-heading">
+                        {nextStop
+                          ? `→ to stop ${idx + 2}: ${nextWp?.label ?? nextStop.waypointId}`
+                          : 'Closing words (optional)'}
+                      </span>
                       <textarea
-                        rows={2}
+                        rows={3}
                         className="text-sm border border-gray-200 rounded px-2 py-1 w-full resize-none"
                         placeholder="Narrative for this stop (optional)"
                         value={stop.narrative ?? ''}

@@ -149,6 +149,36 @@ test.describe('docent mode', () => {
   });
 });
 
+test.describe('tour editor bridges', () => {
+  test('each narrative box names the stop it leads to, and follows a reorder', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: '+ New Tour' }).click();
+    const modal = page.locator('.fixed.inset-0.z-50');
+    await modal.getByPlaceholder('Tour name').fill('Bridge Test Tour');
+    const picker = modal.locator('select').filter({ hasText: 'Add a waypoint' });
+    await picker.selectOption({ index: 1 });
+    await picker.selectOption({ index: 2 });
+
+    const stops = modal.getByTestId('tour-editor-stop');
+    await expect(stops).toHaveCount(2);
+    const label = async (i: number) =>
+      ((await stops.nth(i).locator('span.truncate').innerText()).replace(/^Stop \d+: /, '')).trim();
+    const first = await label(0);
+    const second = await label(1);
+    const headings = modal.getByTestId('tour-editor-bridge-heading');
+    await expect(headings.nth(0)).toHaveText(`→ to stop 2: ${second}`);
+    await expect(headings.nth(1)).toHaveText('Closing words (optional)');
+
+    // Moving stop 1 down swaps them; the heading under the new stop 1
+    // now leads to the old stop 1.
+    await stops.nth(0).getByRole('button', { name: '↓' }).click();
+    await expect(headings.nth(0)).toHaveText(`→ to stop 2: ${first}`);
+
+    // Nothing is saved: the editor is cancelled.
+    await modal.getByRole('button', { name: 'Cancel' }).click();
+  });
+});
+
 test.describe('tour author and updated date', () => {
   test.afterEach(async ({ request }) => {
     const { tours } = await (await request.get('/api/data')).json();
