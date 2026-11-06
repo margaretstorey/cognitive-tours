@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -415,8 +415,10 @@ function Graph({
     return (
       <div className="h-full w-full flex flex-col">
         {tourHeader}
-        <div className="flex-1 min-h-0 flex items-center justify-center text-gray-400 flex-col gap-3">
+        <div className="flex-1 min-h-0 overflow-y-auto flex items-center justify-start pt-16 pb-8 px-4 text-gray-400 flex-col gap-3">
           <p>No waypoints yet.</p>
+          <FirstToursCard />
+          <p className="mt-2 text-gray-500">Or manually start adding waypoints:</p>
           <button
             onClick={onAddWaypointClick}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
@@ -530,6 +532,60 @@ function Graph({
         </ReactFlow>
       </div>
     </div>
+  );
+}
+
+const noSubscribe = () => () => {};
+
+// Empty-map pointer to the /first-tours Claude Code skill. A web page can't
+// run a skill (it runs in the user's terminal, in their checkout), so this
+// copies the command with this site's address filled in.
+function FirstToursCard() {
+  const origin = useSyncExternalStore(noSubscribe, () => window.location.origin, () => '');
+  const [copied, setCopied] = useState(false);
+  const command = `/first-tours site ${origin}`;
+
+  const copy = () => {
+    navigator.clipboard.writeText(command).then(
+      () => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      },
+      () => {},
+    );
+  };
+
+  return (
+    <section
+      aria-label="Don't start from a blank page"
+      className="mt-2 w-full max-w-md rounded-lg border border-gray-200 bg-white p-4 text-left text-sm text-gray-700"
+    >
+      <h2 className="text-base font-semibold text-gray-900">Don&apos;t start from a blank page</h2>
+      <p className="mt-2">
+        New to this repo? Open Claude Code inside it and run <code>/first-tours</code>. It reads the
+        code and docs, then adds a starting map here: about a dozen waypoints and two short tours
+        (one from the user&apos;s side, one from the builder&apos;s; at most 8 stops each).
+      </p>
+      <p className="mt-2">
+        It shows you the plan before adding anything, and marks everything it adds as drafted by
+        Claude, for you to check and rewrite in your own words.
+      </p>
+      <div className="mt-3 flex items-center gap-2">
+        <code data-testid="first-tours-command" className="flex-1 truncate rounded bg-gray-100 px-2 py-1 text-xs">
+          {command}
+        </code>
+        <button
+          onClick={copy}
+          className="shrink-0 rounded border border-gray-300 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+        >
+          {copied ? 'Copied' : 'Copy command'}
+        </button>
+      </div>
+      <p className="mt-2 text-xs text-gray-500">
+        Needs the first-tours skill installed in Claude Code. This card only appears while the map is
+        completely empty.
+      </p>
+    </section>
   );
 }
 

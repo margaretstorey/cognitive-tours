@@ -752,3 +752,27 @@ test.describe('edit passcode', () => {
     expect(allowed).toBeNull();
   });
 });
+
+test.describe('empty map points to /first-tours', () => {
+  test('shows the card with this site in the command, and copies it', async ({ page, context, baseURL }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.route('**/api/data', route =>
+      route.fulfill({ json: { waypoints: [], edges: [], tours: [] } }),
+    );
+    await page.goto('/');
+    const card = page.getByRole('region', { name: "Don't start from a blank page" });
+    await expect(card).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Add first waypoint' })).toBeVisible();
+    const origin = new URL(baseURL!).origin;
+    await expect(card.getByTestId('first-tours-command')).toHaveText(`/first-tours site ${origin}`);
+    await card.getByRole('button', { name: 'Copy command' }).click();
+    await expect(card.getByRole('button', { name: 'Copied' })).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`/first-tours site ${origin}`);
+  });
+
+  test('is not shown when the map has waypoints', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.react-flow__node').first()).toBeVisible();
+    await expect(page.getByRole('region', { name: "Don't start from a blank page" })).toHaveCount(0);
+  });
+});

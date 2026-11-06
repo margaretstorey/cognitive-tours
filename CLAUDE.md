@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: November 4 2026
+Last updated: November 5 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -228,6 +228,29 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   type filter (so it doubles as a legend), and the type chips in Edit 
   tour and markdown view. Icons are `aria-hidden`; exports stay plain 
   text. Covered by a Playwright test ✅
+- No blank page on an unfamiliar repo (Nov 5): a `/first-tours` skill 
+  (`.claude/skills/first-tours/SKILL.md`) reads the local checkout and 
+  adds a **starting map** to the site: about 12–15 waypoints with 
+  short descriptions, a few edges, and two tours of at most 8 stops 
+  each, the user's view and the builder's view (which doubles as the 
+  architecture overview), sharing a Feature where intent meets code. 
+  It's for getting to know a repo you didn't write; you then rewrite 
+  and extend the map as your understanding grows. **A deliberate 
+  exception to "tours you create yourself" and to the read-only 
+  suggest skills**: it shows the plan and writes only after one OK, 
+  through the site's API (asking for the edit passcode on a 401), 
+  never edits or deletes what's there, and marks every waypoint's 
+  Notes "Drafted by Claude from the repo, <date>: a starting point, 
+  not yet checked by a person" and each tour's author "Claude 
+  (first-tours)". Where the repo doesn't say why, it adds an Open 
+  Question instead of inventing an answer. Self-contained (no reliance 
+  on this repo's CLAUDE.md or `.env`), so it runs in any repo from 
+  `~/.claude/skills/`; a plugin to share it is the Worklist item 
+  `cognitive-tours-skills-plugin`. The empty map shows a "Don't start 
+  from a blank page" card under Add first waypoint, with a Copy 
+  command button for `/first-tours site <this site>`: a web page 
+  can't run a skill, so it hands over the command with its own 
+  address. Covered by Playwright tests ✅
 
 ---
 
