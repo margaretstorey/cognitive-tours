@@ -54,6 +54,35 @@ Tours link waypoints according to a goal (name of the tour)
 
 ---
 
+## Skills for Claude Code
+
+A Claude Code plugin, **cognitive-tours**, bundles five skills that work in
+any repo. Install it once:
+
+```
+/plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours
+```
+
+(Older Claude Code: `/plugin marketplace add margaretstorey/cognitive-tours`,
+then `/plugin install cognitive-tours@cognitive-tours`.)
+
+- **`/cognitive-tours:first-tours site <url>`**: no blank page on a repo you
+  don't know yet. It reads the repo and, after you OK the plan, adds a
+  starting map: about a dozen waypoints and two short tours (the user's view
+  and the builder's view), marked as drafted by Claude for you to check and
+  rewrite. An empty map's **Copy command** button gives you this command
+  with the site filled in.
+- **`suggest-waypoint`, `suggest-tour`**: ask you questions so you record
+  recent work as waypoints and tours in your own words.
+- **`audit-waypoints`, `audit-tours`**: report where the map has drifted from
+  the code.
+
+Try it on a blank sandbox: https://cognitive-tours-sandbox1.vercel.app.
+Details in [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md#3-the-ai-skills-claude-code).
+The plugin's files are in [`plugins/cognitive-tours/`](plugins/cognitive-tours/).
+
+---
+
 ## Running your own instance
 See [SETUP.md](./SETUP.md) for instructions on cloning this to run against your own database and project.
 

@@ -764,10 +764,14 @@ test.describe('empty map points to /first-tours', () => {
     await expect(card).toBeVisible();
     await expect(page.getByRole('button', { name: 'Add first waypoint' })).toBeVisible();
     const origin = new URL(baseURL!).origin;
-    await expect(card.getByTestId('first-tours-command')).toHaveText(`/first-tours site ${origin}`);
+    await expect(card.getByTestId('first-tours-command')).toHaveText(`/cognitive-tours:first-tours site ${origin}`);
     await card.getByRole('button', { name: 'Copy command' }).click();
     await expect(card.getByRole('button', { name: 'Copied' })).toBeVisible();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`/first-tours site ${origin}`);
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`/cognitive-tours:first-tours site ${origin}`);
+    await expect(card.getByRole('link', { name: 'Cognitive Tours plugin' })).toHaveAttribute(
+      'href',
+      /github\.com\/margaretstorey\/cognitive-tours#skills-for-claude-code$/,
+    );
   });
 
   test('is not shown when the map has waypoints', async ({ page }) => {

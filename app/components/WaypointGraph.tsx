@@ -537,13 +537,16 @@ function Graph({
 
 const noSubscribe = () => () => {};
 
-// Empty-map pointer to the /first-tours Claude Code skill. A web page can't
-// run a skill (it runs in the user's terminal, in their checkout), so this
-// copies the command with this site's address filled in.
+// Empty-map pointer to the first-tours skill in the Cognitive Tours plugin
+// for Claude Code (plugins/cognitive-tours). A web page can't run a skill
+// (it runs in the user's terminal, in their checkout), so this copies the
+// command with this site's address filled in.
+const PLUGIN_INSTALL_URL = 'https://github.com/margaretstorey/cognitive-tours#skills-for-claude-code';
+
 function FirstToursCard() {
   const origin = useSyncExternalStore(noSubscribe, () => window.location.origin, () => '');
   const [copied, setCopied] = useState(false);
-  const command = `/first-tours site ${origin}`;
+  const command = `/cognitive-tours:first-tours site ${origin}`;
 
   const copy = () => {
     navigator.clipboard.writeText(command).then(
@@ -562,7 +565,7 @@ function FirstToursCard() {
     >
       <h2 className="text-base font-semibold text-gray-900">Don&apos;t start from a blank page</h2>
       <p className="mt-2">
-        New to this repo? Open Claude Code inside it and run <code>/first-tours</code>. It reads the
+        New to this repo? Open Claude Code inside it and run the <code>first-tours</code> skill. It reads the
         code and docs, then adds a starting map here: about a dozen waypoints and two short tours
         (one from the user&apos;s side, one from the builder&apos;s; at most 8 stops each).
       </p>
@@ -582,8 +585,11 @@ function FirstToursCard() {
         </button>
       </div>
       <p className="mt-2 text-xs text-gray-500">
-        Needs the first-tours skill installed in Claude Code. This card only appears while the map is
-        completely empty.
+        Needs the{' '}
+        <a href={PLUGIN_INSTALL_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
+          Cognitive Tours plugin
+        </a>{' '}
+        for Claude Code. This card only appears while the map is completely empty.
       </p>
     </section>
   );

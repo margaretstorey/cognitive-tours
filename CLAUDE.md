@@ -229,7 +229,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   tour and markdown view. Icons are `aria-hidden`; exports stay plain 
   text. Covered by a Playwright test ✅
 - No blank page on an unfamiliar repo (Nov 5): a `/first-tours` skill 
-  (`.claude/skills/first-tours/SKILL.md`) reads the local checkout and 
+  (now `plugins/cognitive-tours/skills/first-tours/SKILL.md`) reads the local checkout and 
   adds a **starting map** to the site: about 12–15 waypoints with 
   short descriptions, a few edges, and two tours of at most 8 stops 
   each, the user's view and the builder's view (which doubles as the 
@@ -245,12 +245,30 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (first-tours)". Where the repo doesn't say why, it adds an Open 
   Question instead of inventing an answer. Self-contained (no reliance 
   on this repo's CLAUDE.md or `.env`), so it runs in any repo from 
-  `~/.claude/skills/`; a plugin to share it is the Worklist item 
-  `cognitive-tours-skills-plugin`. The empty map shows a "Don't start 
+  `~/.claude/skills/`. The empty map shows a "Don't start 
   from a blank page" card under Add first waypoint, with a Copy 
-  command button for `/first-tours site <this site>`: a web page 
-  can't run a skill, so it hands over the command with its own 
-  address. Covered by Playwright tests ✅
+  command button for `/cognitive-tours:first-tours site <this site>` 
+  (the plugin's name for it, since Nov 5): a web page can't run a 
+  skill, so it hands over the command with its own address. Covered by 
+  Playwright tests ✅
+- **The skills are a Claude Code plugin** (Nov 5), so students and 
+  anyone else can use them in their own repos: 
+  `/plugin install cognitive-tours --marketplace 
+  margaretstorey/cognitive-tours` (this repo is the marketplace: 
+  `.claude-plugin/marketplace.json` → `plugins/cognitive-tours/`, v0.1.0). 
+  All five ship: first-tours, suggest-waypoint, suggest-tour, 
+  audit-waypoints and audit-tours, typed as 
+  `/cognitive-tours:<skill>`. **One copy of each:** the files live in 
+  `plugins/cognitive-tours/skills/`, and `.claude/skills/<name>` here 
+  are symlinks, so the short names still work in this repo. Edit them 
+  in the plugin folder and bump the version in both manifests when 
+  they change. **No `.env` any more:** each skill finds its site from 
+  `site <url>`, else a `Cognitive Tours site: <url>` line in the repo's 
+  `CLAUDE.local.md` (or `CLAUDE.md`), else asks and offers to save that 
+  line, only into a `CLAUDE.local.md` that git ignores. This repo's 
+  line is in `CLAUDE.local.md`. The edge vocabulary is written into the 
+  skills instead of read from this file. Docs: README "Skills for 
+  Claude Code" and `docs/GETTING-STARTED.md` §3 ✅
 
 ---
 
@@ -359,7 +377,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   **Your own site's address is read from `MY_SITE_URL`** (Nov 3), in 
   your local `.env` and in the cognitive-tours Vercel project 
   (server-only, no `NEXT_PUBLIC_`), by `app/lib/sites.ts`, the backup 
-  script, the nightly backup and the four audit/suggest skills. 
+  script and the nightly backup (the skills read it until Nov 5; they 
+  now use the `Cognitive Tours site:` line in `CLAUDE.local.md`). 
   **Correction (Nov 4):** the Nov 3 note that the site "was moved to a 
   hard-to-guess `cognitive-tours-<random>.vercel.app`" was wrong. The 
   project only ever served the well-known `cognitive-tours.vercel.app` 

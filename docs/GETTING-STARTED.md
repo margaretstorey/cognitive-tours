@@ -45,33 +45,39 @@ Use **Download backup** (top right) to save a copy, and **Export tour** or
 
 ## 3. The AI skills (Claude Code)
 
-Four [Claude Code](https://claude.com/claude-code) skills help keep a map in
-step with the code. They **ask questions and report; you write everything
-in the app.** They only read the map (the site's `/api/data`) and never write
-to it.
+Five [Claude Code](https://claude.com/claude-code) skills come as one
+plugin, **cognitive-tours**. Install it once and it works in every repo you
+open Claude Code in:
+
+```
+/plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours
+```
+
+(On an older Claude Code, use two commands: `/plugin marketplace add
+margaretstorey/cognitive-tours`, then `/plugin install
+cognitive-tours@cognitive-tours`.)
 
 | Skill | What it does |
 |---|---|
-| `/suggest-waypoint` | Finds recent work worth recording (decisions first), asks you about it, and gives the fact fields (label, type, file path, links) to enter. You write the description. |
-| `/suggest-tour` | Suggests where new waypoints fit in tours, and asks you to write each stop's narrative. |
-| `/audit-waypoints` | Checks code, ADR and test waypoints against the files they link to, and lists what has drifted. |
-| `/audit-tours` | Finds recently changed files that no waypoint or tour covers, stale or repetitive narratives, and redundant links. |
+| `/cognitive-tours:first-tours` | For a repo you **don't know yet**: reads it and, after you OK the plan, adds a starting map to an empty site (about a dozen waypoints and two short tours, the user's view and the builder's view), all marked as drafted by Claude. You then check it and rewrite it in your own words. The only skill that writes to the map. |
+| `/cognitive-tours:suggest-waypoint` | Finds recent work worth recording (decisions first), asks you about it, and gives the fact fields (label, type, file path, links) to enter. You write the description. |
+| `/cognitive-tours:suggest-tour` | Suggests where new waypoints fit in tours, and asks you to write each stop's narrative. |
+| `/cognitive-tours:audit-waypoints` | Checks code, ADR and test waypoints against the files they link to, and lists what has drifted. |
+| `/cognitive-tours:audit-tours` | Finds recently changed files that no waypoint or tour covers, stale or repetitive narratives, and redundant links. |
 
-**Add them to your own repo:**
-1. Copy the four folders from this repo's `.claude/skills/`
-   (`suggest-waypoint`, `suggest-tour`, `audit-waypoints`, `audit-tours`)
-   into your repo's `.claude/skills/`.
-2. Tell them which map to read: either add `MY_SITE_URL=https://<your-site>`
-   to your repo's `.env`, or name the site each time:
-   `/suggest-waypoint site https://<your-site> since 2026-11-01`.
-3. Run them from your repo in Claude Code. They use `git log` to see what
-   changed.
+Apart from `first-tours`, they **ask questions and report; you write
+everything in the app.** They only read the map (the site's `/api/data`).
 
-**Optional:** an ontology in your `CLAUDE.md` (which links mean what) gives
-`/suggest-waypoint` better link labels; without one it suggests plain ones.
+**Which map.** The map lives on a website, so each skill needs the site's
+address. Give it with the command (`site https://<your-site>`), or let the
+skill ask once: it offers to remember it for that repo as a line in
+`CLAUDE.local.md` (`Cognitive Tours site: https://<your-site>`), only if git
+ignores that file. Each map is its own site, so a new repo needs a site of
+its own (or a sandbox, to try things out).
+
+Run them from your repo's folder; they use `git log` to see what changed.
 If your repo uses [Bram](https://github.com/judell/bram), the suggest skills
-also read its worklist history for the "why" behind changes. Neither is
-needed.
+also read its worklist history for the "why" behind changes. Not needed.
 
 ## Before you share a link
 
