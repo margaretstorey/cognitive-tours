@@ -371,9 +371,15 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (`app/lib/edit-passcode.ts`, checked in all eight write handlers under 
   `app/api/`); the app asks once per browser and remembers it. Reading 
   stays open, so backups, the nightly jobs, the skills and the restore 
-  tool (which writes through `turso db shell`) are unaffected. Only your 
-  site sets it; any other site can get one later with that one setting 
-  and a redeploy. The passcode itself is never written in the repo. To 
+  tool (which writes through `turso db shell`) are unaffected. **Since 
+  Nov 5 the team sites set it too** (Test, Finito, Vitalitree, Evernear, 
+  Elevate, Poold, Ciara), all to one shared team passcode (in 
+  `CLAUDE.local.md`), the user's choice for an MVP: reading stays open, 
+  so teams can read each other's maps, and that's fine for now. A team 
+  that wants its own gets one by changing that project's setting and 
+  redeploying. Demo, demo-flask and the sandboxes stay open on purpose. 
+  **Adding a team** now includes setting `EDIT_PASSCODE` (step in 
+  `CLAUDE.local.md`). No passcode is ever written in the repo. To 
   hide the map from readers too, the next step would be Vercel 
   Authentication (free on Pro) plus a protection bypass for the scripts, 
   nightly jobs and skills.
