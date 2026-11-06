@@ -10,6 +10,7 @@ import TourBar from './TourBar';
 import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
 import { PROJECT_NAME, SITE_COLOR, SITE_NOTICE } from '@/app/lib/project';
+import { ClaudeCodeSkillsButton } from '@/app/components/ClaudeCodePanel';
 import { EDIT_PASSCODE_HEADER } from '@/app/lib/edit-passcode';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 import { githubFileLink, linkLabel, useRepoUrl } from '@/app/lib/repo';
@@ -610,6 +611,8 @@ export default function CognitiveToursApp() {
             );
           })()
         )}
+        {/* Pinned right, mirroring the Project pill: the plugin's commands with this site filled in. */}
+        <ClaudeCodeSkillsButton mapIsEmpty={waypoints.length === 0} />
       </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (

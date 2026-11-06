@@ -259,8 +259,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   All five ship: first-tours, suggest-waypoint, suggest-tour, 
   audit-waypoints and audit-tours, typed as 
   `/cognitive-tours:<skill>`. **One copy of each:** the files live in 
-  `plugins/cognitive-tours/skills/`, and `.claude/skills/<name>` here 
-  are symlinks, so the short names still work in this repo. Edit them 
+  `plugins/cognitive-tours/skills/`, and each `.claude/skills/<name>/SKILL.md` 
+  here is a symlink to it, so the short names still work in this repo 
+  (a symlinked *folder* breaks Bram's commit snapshot: "Unable to hash 
+  (null)"). Edit them 
   in the plugin folder and bump the version in both manifests when 
   they change. **No `.env` any more:** each skill finds its site from 
   `site <url>`, else a `Cognitive Tours site: <url>` line in the repo's 
@@ -269,6 +271,15 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   line is in `CLAUDE.local.md`. The edge vocabulary is written into the 
   skills instead of read from this file. Docs: README "Skills for 
   Claude Code" and `docs/GETTING-STARTED.md` §3 ✅
+- **A "Claude Code skills" button on every site** (Nov 5; 
+  `app/components/ClaudeCodePanel.tsx`), pinned right in the header 
+  opposite the Project pill. It opens a panel with the plugin's install 
+  command and each skill's command with this site's address filled in 
+  (`/cognitive-tours:<skill> site <origin>`), each with a Copy button, 
+  so nobody has to find the address or type a command. first-tours is 
+  marked "meant for an empty map" when the map isn't. Escape closes it 
+  without leaving an active tour. The empty-map card shares its Copy 
+  control (`CopyCommand`). Covered by Playwright tests ✅
 
 ---
 

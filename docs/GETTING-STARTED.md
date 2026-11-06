@@ -73,6 +73,10 @@ pick up the skills.
 | `/cognitive-tours:audit-waypoints` | Checks code, ADR and test waypoints against the files they link to, and lists what has drifted. |
 | `/cognitive-tours:audit-tours` | Finds recently changed files that no waypoint or tour covers, stale or repetitive narratives, and redundant links. |
 
+**Every site's header has a Claude Code skills button** that lists these
+commands with that site's address already filled in, each with a Copy
+button: copy one, paste it into Claude Code, press Return.
+
 Apart from `first-tours`, they **ask questions and report; you write
 everything in the app.** They only read the map (the site's `/api/data`).
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -21,6 +21,7 @@ import {
 import type { Waypoint, WaypointEdge, FilterState } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { WaypointTypeIcon } from '@/app/lib/waypoint-icons';
+import { CopyCommand, PLUGIN_INSTALL_URL, skillCommand, useSiteOrigin } from '@/app/components/ClaudeCodePanel';
 
 type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean; isCurrentMatch: boolean };
 
@@ -535,28 +536,13 @@ function Graph({
   );
 }
 
-const noSubscribe = () => () => {};
-
 // Empty-map pointer to the first-tours skill in the Cognitive Tours plugin
 // for Claude Code (plugins/cognitive-tours). A web page can't run a skill
 // (it runs in the user's terminal, in their checkout), so this copies the
-// command with this site's address filled in.
-const PLUGIN_INSTALL_URL = 'https://github.com/margaretstorey/cognitive-tours#skills-for-claude-code';
-
+// command with this site's address filled in. The header's "Claude Code
+// skills" panel (ClaudeCodePanel.tsx) lists all five the same way.
 function FirstToursCard() {
-  const origin = useSyncExternalStore(noSubscribe, () => window.location.origin, () => '');
-  const [copied, setCopied] = useState(false);
-  const command = `/cognitive-tours:first-tours site ${origin}`;
-
-  const copy = () => {
-    navigator.clipboard.writeText(command).then(
-      () => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      },
-      () => {},
-    );
-  };
+  const origin = useSiteOrigin();
 
   return (
     <section
@@ -573,16 +559,12 @@ function FirstToursCard() {
         It shows you the plan before adding anything, and marks everything it adds as drafted by
         Claude, for you to check and rewrite in your own words.
       </p>
-      <div className="mt-3 flex items-center gap-2">
-        <code data-testid="first-tours-command" className="flex-1 truncate rounded bg-gray-100 px-2 py-1 text-xs">
-          {command}
-        </code>
-        <button
-          onClick={copy}
-          className="shrink-0 rounded border border-gray-300 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
-        >
-          {copied ? 'Copied' : 'Copy command'}
-        </button>
+      <div className="mt-3">
+        <CopyCommand
+          command={skillCommand('first-tours', origin)}
+          testId="first-tours-command"
+          copyLabel="Copy command"
+        />
       </div>
       <p className="mt-2 text-xs text-gray-500">
         Needs the{' '}

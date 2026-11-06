@@ -780,3 +780,46 @@ test.describe('empty map points to /first-tours', () => {
     await expect(page.getByRole('region', { name: "Don't start from a blank page" })).toHaveCount(0);
   });
 });
+
+test.describe('Claude Code skills panel', () => {
+  const SKILLS = ['first-tours', 'suggest-waypoint', 'suggest-tour', 'audit-waypoints', 'audit-tours'];
+
+  test('lists every skill with this site filled in, copies a command, and closes on Escape', async ({ page, context, baseURL }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Claude Code skills' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Claude Code skills for this map' });
+    await expect(dialog).toBeVisible();
+
+    await expect(dialog.getByTestId('install-command')).toHaveText(
+      'claude plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours',
+    );
+    const origin = new URL(baseURL!).origin;
+    for (const skill of SKILLS) {
+      await expect(dialog.getByTestId(`command-${skill}`)).toHaveText(`/cognitive-tours:${skill} site ${origin}`);
+    }
+    // This map has waypoints, so first-tours says it's meant for an empty one.
+    await expect(dialog.getByTestId('skill-first-tours')).toContainText('Meant for an empty map');
+
+    const row = dialog.getByTestId('skill-suggest-waypoint');
+    await row.getByRole('button', { name: 'Copy' }).click();
+    await expect(row.getByRole('button', { name: 'Copied' })).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      `/cognitive-tours:suggest-waypoint site ${origin}`,
+    );
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+  });
+
+  test('Escape closes the panel without leaving an active tour', async ({ page }) => {
+    await page.goto('/');
+    await page.getByLabel('Tour:').selectOption({ label: 'New Developer Orientation' });
+    await expect(page.getByText(/Step 1 of/)).toBeVisible();
+
+    await page.getByRole('button', { name: 'Claude Code skills' }).click();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog', { name: 'Claude Code skills for this map' })).toHaveCount(0);
+    await expect(page.getByText(/Step 1 of/)).toBeVisible();
+  });
+});
