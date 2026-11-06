@@ -47,7 +47,14 @@ Use **Download backup** (top right) to save a copy, and **Export tour** or
 
 Five [Claude Code](https://claude.com/claude-code) skills come as one
 plugin, **cognitive-tours**. Install it once and it works in every repo you
-open Claude Code in:
+open Claude Code in. **In your terminal:**
+
+```
+claude plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours
+```
+
+**Or inside Claude Code** (at Claude's prompt; typed into the shell, a
+`/plugin` command fails with "no such file or directory"):
 
 ```
 /plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours
@@ -55,7 +62,8 @@ open Claude Code in:
 
 (On an older Claude Code, use two commands: `/plugin marketplace add
 margaretstorey/cognitive-tours`, then `/plugin install
-cognitive-tours@cognitive-tours`.)
+cognitive-tours@cognitive-tours`.) Restart any open Claude Code session to
+pick up the skills.
 
 | Skill | What it does |
 |---|---|

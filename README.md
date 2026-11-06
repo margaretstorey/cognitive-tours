@@ -57,14 +57,21 @@ Tours link waypoints according to a goal (name of the tour)
 ## Skills for Claude Code
 
 A Claude Code plugin, **cognitive-tours**, bundles five skills that work in
-any repo. Install it once:
+any repo. Install it once, **in your terminal**:
+
+```
+claude plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours
+```
+
+or **inside Claude Code** (at Claude's prompt, not the shell's):
 
 ```
 /plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours
 ```
 
 (Older Claude Code: `/plugin marketplace add margaretstorey/cognitive-tours`,
-then `/plugin install cognitive-tours@cognitive-tours`.)
+then `/plugin install cognitive-tours@cognitive-tours`.) Restart any open
+Claude Code session to pick up the skills.
 
 - **`/cognitive-tours:first-tours site <url>`**: no blank page on a repo you
   don't know yet. It reads the repo and, after you OK the plan, adds a
