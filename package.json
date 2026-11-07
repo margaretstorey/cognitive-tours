@@ -15,6 +15,7 @@
     "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@prisma/adapter-libsql": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@vercel/analytics": "2.0.1",
     "@vercel/blob": "^2.8.2",
     "@xyflow/react": "^12.10.2",
     "better-sqlite3": "^12.10.0",

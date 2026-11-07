@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: November 5 2026
+Last updated: November 7 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -280,6 +280,15 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   marked "meant for an empty map" when the map isn't. Escape closes it 
   without leaving an active tour. The empty-map card shares its Copy 
   control (`CopyCommand`). Covered by Playwright tests ✅
+- **Visitor counts on every site** (Nov 7): Vercel Web Analytics 
+  (`@vercel/analytics` pinned at 2.0.1, `<Analytics />` in 
+  `app/layout.tsx`). A site counts only once its Vercel project's 
+  **Analytics** tab is **Enabled**, and only from that day; the numbers 
+  (visitors, page views, referrers, countries) are on that tab. 
+  Cookieless, no IP addresses or personal data kept. Added so the user can 
+  see how many people try the demo. The user's decision (Nov 7): it's on 
+  all sites, and visits to student and team sites are not used as 
+  research data ✅
 
 ---
 
