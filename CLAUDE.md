@@ -255,7 +255,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   anyone else can use them in their own repos: 
   `/plugin install cognitive-tours --marketplace 
   margaretstorey/cognitive-tours` (this repo is the marketplace: 
-  `.claude-plugin/marketplace.json` → `plugins/cognitive-tours/`, v0.1.0). 
+  `.claude-plugin/marketplace.json` → `plugins/cognitive-tours/`, v0.1.1 since Nov 7, when each skill's description gained the plain requests that should start it). 
   All five ship: first-tours, suggest-waypoint, suggest-tour, 
   audit-waypoints and audit-tours, typed as 
   `/cognitive-tours:<skill>`. **One copy of each:** the files live in 
@@ -511,7 +511,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `#1e3a8a` with "Sandbox: try writing waypoints and tours. …". Team sites and your own site set neither (black header). 
   A third, `NEXT_PUBLIC_START_HERE_TOUR` (Nov 7), names the tour the 
   "Start here" walkthrough opens (else the map's first tour; 
-  `pickStartHereTourId` in `app/lib/project.ts`). Only the demo sets it, 
+  `pickStartHereTourId` in `app/lib/project.ts`). The demo and your own site set it, 
   to "A Research Story Behind Cognitive Tours", the tour the ICSE paper 
   points readers to. 
   **The main demo resets itself every hour, on the hour** (nightly from 

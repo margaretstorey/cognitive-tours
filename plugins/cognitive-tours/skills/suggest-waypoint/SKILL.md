@@ -1,6 +1,6 @@
 ---
 name: "suggest-waypoint"
-description: "Help the user record recent work as waypoints: find what's worth explaining later (decisions first), ask questions so the user writes the understanding, and give the fact fields to enter in the app. Reads the site's /api/data; never writes to the map."
+description: "Help the user record recent work as waypoints: find what's worth explaining later (decisions first), ask questions so the user writes the understanding, and give the fact fields to enter in the app. Reads the site's /api/data; never writes to the map. Use when the user asks to record what they just did, add a waypoint for a change, or update their map or Cognitive Tours after a change or a work session."
 user-invocable: true
 disable-model-invocation: false
 ---

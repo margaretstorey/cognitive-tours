@@ -143,7 +143,8 @@ export function ClaudeCodeSkillsButton({ mapIsEmpty }: { mapIsEmpty: boolean }) 
                 <p className="mt-1" data-testid="first-time-note">
                   The first time, copy a full command below: it tells the skill which map is yours, and the
                   skill offers to remember it. After that, just type <code>/cognitive-tours:</code> and the
-                  skill’s name.
+                  skill’s name. Or just ask Claude Code in your own words, e.g. “make a starting map of
+                  this repo” or “help me record what I just did”.
                 </p>
                 <ul className="mt-1.5 flex flex-col gap-3">
                   {SKILLS.map((s) => (

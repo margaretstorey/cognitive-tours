@@ -824,6 +824,7 @@ test.describe('Claude Code skills panel', () => {
       expect(await command.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     }
     await expect(dialog.getByTestId('first-time-note')).toContainText('The first time, copy a full command');
+    await expect(dialog.getByTestId('first-time-note')).toContainText('Or just ask Claude Code in your own words');
     // This map has waypoints, so first-tours says it's meant for an empty one.
     await expect(dialog.getByTestId('skill-first-tours')).toContainText('Meant for an empty map');
 

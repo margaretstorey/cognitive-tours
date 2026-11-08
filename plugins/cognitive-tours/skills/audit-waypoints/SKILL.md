@@ -1,6 +1,6 @@
 ---
 name: "audit-waypoints"
-description: "Check Code Component, ADR, and Test waypoint descriptions against the actual current contents of their linked files, and report factual drift as a list of manual edits — never writes to the waypoint data itself."
+description: "Check Code Component, ADR, and Test waypoint descriptions against the actual current contents of their linked files, and report factual drift as a list of manual edits — never writes to the waypoint data itself. Use when the user asks to check their waypoints, whether the map is out of date with the code, or which waypoint descriptions are wrong."
 user-invocable: true
 disable-model-invocation: false
 ---

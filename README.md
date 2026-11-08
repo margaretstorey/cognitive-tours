@@ -71,7 +71,13 @@ or **inside Claude Code** (at Claude's prompt, not the shell's):
 
 (Older Claude Code: `/plugin marketplace add margaretstorey/cognitive-tours`,
 then `/plugin install cognitive-tours@cognitive-tours`.) Restart any open
-Claude Code session to pick up the skills.
+Claude Code session to pick up the skills. To get a newer version later:
+`claude plugin update cognitive-tours`.
+
+You don't have to remember the commands: ask Claude Code in your own words,
+such as "make a starting map of this repo", "help me record what I just
+did", "add this to a tour" or "which of my tours are stale?", and it picks
+the right skill.
 
 - **`/cognitive-tours:first-tours site <url>`**: no blank page on a repo you
   don't know yet. It reads the repo and, after you OK the plan, adds a

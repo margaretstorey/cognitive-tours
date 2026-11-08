@@ -1,6 +1,6 @@
 ---
 name: "audit-tours"
-description: "Check tours against the current code and map: which recently changed files have no waypoint or no tour, stale or non-bridging stop narratives, redundant edges and possible missing stops. Reads the site's /api/data; reports only, never writes to the map."
+description: "Check tours against the current code and map: which recently changed files have no waypoint or no tour, stale or non-bridging stop narratives, redundant edges and possible missing stops. Reads the site's /api/data; reports only, never writes to the map. Use when the user asks to check their tours, which tours are stale, or what recent work no tour covers."
 user-invocable: true
 disable-model-invocation: false
 ---

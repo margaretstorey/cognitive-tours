@@ -1,6 +1,6 @@
 ---
 name: "suggest-tour"
-description: "Help the user fit recent waypoints into tours: suggest stops to add to existing tours or a new tour with a starting order, ask what the tour is for, and have the user write the narratives. Reads the site's /api/data; never writes to the map."
+description: "Help the user fit recent waypoints into tours: suggest stops to add to existing tours or a new tour with a starting order, ask what the tour is for, and have the user write the narratives. Reads the site's /api/data; never writes to the map. Use when the user asks to add something to a tour, make a new tour of part of the map, or where new waypoints fit in their tours."
 user-invocable: true
 disable-model-invocation: false
 ---

@@ -1,6 +1,6 @@
 ---
 name: "first-tours"
-description: "Give an unfamiliar repo a starting Cognitive Tours map: read the repo, draft about a dozen waypoints and two short tours (the user's view and the builder's view, at most 8 stops each), show the plan, and after one OK add it to the site through its API. A starting point to read and then revise in your own words."
+description: "Give an unfamiliar repo a starting Cognitive Tours map: read the repo, draft about a dozen waypoints and two short tours (the user's view and the builder's view, at most 8 stops each), show the plan, and after one OK add it to the site through its API. A starting point to read and then revise in your own words. Use when the user asks to make a map, tour or Cognitive Tours of this repo or codebase, to help them get to know a repo, or for a starting tour, and the site's map is empty. Not for a map that already has waypoints (use suggest-waypoint)."
 user-invocable: true
 disable-model-invocation: false
 ---
