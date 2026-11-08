@@ -306,6 +306,21 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 
 ---
 
+- **A red halo on what's new to you** (Nov 7; `app/lib/seen.ts`). 
+  Waypoints and tour stops added since this browser last looked (by a 
+  suggest skill, or a teammate on a shared site) get a red ring and 
+  glow: a waypoint on the graph until you click it (selecting it any 
+  way counts) or it has a description; a stop in **Edit tour**, with a 
+  "new" label, until you click into its narrative box or it has a 
+  narrative. The browser remembers what it has seen in localStorage 
+  (`cognitiveTours.seen`), per site; on a browser's first visit 
+  everything there counts as seen, so nothing lights up, and what you 
+  make yourself in the app is never new to you. No schema change, not 
+  in exports or markdown view. Asked for while trying the 0.2.0 suggest 
+  skills ("the new waypoints can be hidden"); chosen over a dashed 
+  border on every empty waypoint, which would mark old ones too. 
+  Covered by `tests/new-halo.spec.ts` ✅
+
 ### What is NOT yet built
 - File content preview in detail panel
 - AI-guided waypoint creation

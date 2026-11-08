@@ -177,7 +177,9 @@ The description is where the understanding goes, so it's the user's.
 List the waypoints just added, by label and where they are, and say:
 
 > Open the map (refresh it if it was already open). To find each one,
-> type its label in the **search box** at the top right of the map.
+> type its label in the **search box** at the top right of the map;
+> new ones have a **red halo** until you click them or write a
+> description.
 > **Double-click** it and write its description.
 > Start from: what would you want to read here in three months? Why
 > does it exist, and what would confuse someone without it? Reply

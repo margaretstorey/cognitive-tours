@@ -15,6 +15,7 @@ import { StartHere } from '@/app/components/StartHere';
 import { EDIT_PASSCODE_HEADER } from '@/app/lib/edit-passcode';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 import { githubFileLink, linkLabel, useRepoUrl } from '@/app/lib/repo';
+import { stopKey, useSeen } from '@/app/lib/seen';
 
 type FormState =
   | { open: false }
@@ -127,6 +128,13 @@ export default function CognitiveToursApp() {
   // Set by WaypointGraph while the map is shown: where a new waypoint should go.
   const placementRef = useRef<(() => { x: number; y: number } | null) | null>(null);
 
+  // Red "new" halo on what this browser hasn't seen yet (app/lib/seen.ts).
+  const { isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen } = useSeen(waypoints, tours, loadState === 'ready');
+  // Selecting a waypoint (click, search, tour step) counts as seeing it.
+  useEffect(() => {
+    if (selectedWaypointId) markWaypointsSeen([selectedWaypointId]);
+  }, [selectedWaypointId, markWaypointsSeen]);
+
   const selectedWaypoint = waypoints.find(w => w.id === selectedWaypointId) ?? null;
   const activeTour = tours.find(t => t.id === activeTourId) ?? null;
   const activeTourLength = activeTour?.stops.length ?? 0;
@@ -222,6 +230,7 @@ export default function CognitiveToursApp() {
       const minY = waypoints.length > 0 ? Math.min(...waypoints.map(w => w.position.y)) : 100;
       const position = placement ?? { x: maxX + 150, y: minY };
       const newWaypoint: Waypoint = { id, position, ...data };
+      markWaypointsSeen([id]); // your own waypoint is never "new" to you
       setWaypoints(prev => [...prev, newWaypoint]);
       void (async () => {
         try {
@@ -237,7 +246,7 @@ export default function CognitiveToursApp() {
         }
       })();
     },
-    [waypoints, clearErrorAfterDelay],
+    [waypoints, clearErrorAfterDelay, markWaypointsSeen],
   );
 
   // T019
@@ -357,6 +366,7 @@ export default function CognitiveToursApp() {
     (data: Omit<Tour, 'id'>) => {
       const id = newId('t');
       const newTour: Tour = { id, ...data };
+      markStopsSeen(data.stops.map(st => stopKey(id, st.waypointId)));
       setTours(prev => [...prev, newTour]);
       void (async () => {
         try {
@@ -372,7 +382,7 @@ export default function CognitiveToursApp() {
         }
       })();
     },
-    [clearErrorAfterDelay],
+    [clearErrorAfterDelay, markStopsSeen],
   );
 
   const deleteTour = useCallback(
@@ -401,6 +411,12 @@ export default function CognitiveToursApp() {
     (id: string, data: Partial<Omit<Tour, 'id'>>) => {
       const original = tours.find(t => t.id === id);
       if (!original) return;
+      // Stops you add in the editor are yours, so not "new"; stops that were
+      // already there keep their halo until clicked into or narrated.
+      if (data.stops) {
+        const before = new Set(original.stops.map(st => st.waypointId));
+        markStopsSeen(data.stops.filter(st => !before.has(st.waypointId)).map(st => stopKey(id, st.waypointId)));
+      }
       setTours(prev => prev.map(t => (t.id === id ? { ...t, ...data } : t)));
       void (async () => {
         try {
@@ -416,7 +432,7 @@ export default function CognitiveToursApp() {
         }
       })();
     },
-    [tours, clearErrorAfterDelay],
+    [tours, clearErrorAfterDelay, markStopsSeen],
   );
 
   const onToggleMarkdownView = useCallback(() => setMarkdownViewOpen(v => !v), []);
@@ -648,6 +664,8 @@ export default function CognitiveToursApp() {
         onUpdateTour={updateTour}
         onDeleteTour={deleteTour}
         waypoints={waypoints}
+        isNewStop={isNewStop}
+        onStopSeen={(tourId, waypointId) => markStopsSeen([stopKey(tourId, waypointId)])}
         markdownViewOpen={markdownViewOpen}
         onToggleMarkdownView={onToggleMarkdownView}
         onEditorOpenChange={setTourEditorOpen}
@@ -683,6 +701,7 @@ export default function CognitiveToursApp() {
               panelCollapsed={panelCollapsed}
               tourOverview={tourOverview}
               placementRef={placementRef}
+              isNewWaypoint={isNewWaypoint}
             />
           )}
         </div>

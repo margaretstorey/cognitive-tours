@@ -23,7 +23,7 @@ import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { WaypointTypeIcon } from '@/app/lib/waypoint-icons';
 import { CopyCommand, PLUGIN_INSTALL_URL, skillCommand, useSiteOrigin } from '@/app/components/ClaudeCodePanel';
 
-type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean; isCurrentMatch: boolean };
+type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean; isCurrentMatch: boolean; isNew: boolean };
 
 function WaypointNode({ data, selected }: NodeProps & { data: WaypointNodeData }) {
   const colorClass = WAYPOINT_COLORS[data.waypoint.type];
@@ -31,12 +31,17 @@ function WaypointNode({ data, selected }: NodeProps & { data: WaypointNodeData }
     <div
       data-current-stop={data.isActiveTourStep ? 'true' : undefined}
       data-current-match={data.isCurrentMatch ? 'true' : undefined}
+      data-new={data.isNew ? 'true' : undefined}
+      title={data.isNew ? 'New: click it, or double-click to write its description' : undefined}
       // nopan: React Flow's double-click zoom skips nodes, so a double-click
       // opens the edit form without also zooming in. Wheel zoom still works.
       className={`nopan px-3 py-2 rounded-lg border-2 transition-transform text-sm font-medium max-w-[180px] shadow-sm ${colorClass} ${
         data.isActiveTourStep || data.isCurrentMatch
           ? 'scale-[1.2] ring-[6px] ring-offset-2 ring-blue-500 shadow-xl shadow-blue-500/60'
-          : selected ? 'ring-2 ring-offset-1 ring-blue-500' : ''
+          : data.isNew
+            // Red "new" halo: added since this browser last looked (app/lib/seen.ts).
+            ? 'ring-4 ring-offset-2 ring-red-500 shadow-lg shadow-red-500/60'
+            : selected ? 'ring-2 ring-offset-1 ring-blue-500' : ''
       }`}
     >
       <Handle type="target" position={Position.Left} className="!bg-gray-400" />
@@ -75,6 +80,8 @@ interface WaypointGraphProps {
   tourOverview?: boolean;
   /** Filled in by the graph: where a new waypoint should go, in map coordinates (null while the map isn't shown). */
   placementRef?: React.MutableRefObject<(() => { x: number; y: number } | null) | null>;
+  /** New to this browser and not yet described: drawn with a red halo. */
+  isNewWaypoint?: (w: Waypoint) => boolean;
 }
 
 // Roughly a waypoint node's size on screen at zoom 1 (nodes are max-w-[180px]),
@@ -102,6 +109,7 @@ function Graph({
   panelCollapsed,
   tourOverview = false,
   placementRef,
+  isNewWaypoint,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const { getNodesBounds, setViewport, setCenter, getInternalNode, getViewport, screenToFlowPosition, getNodes } = useReactFlow();
@@ -226,14 +234,14 @@ function Graph({
             id: w.id,
             type: 'waypointNode',
             position: w.position,
-            data: { waypoint: w, isActiveTourStep: isCurrentStop, isCurrentMatch },
+            data: { waypoint: w, isActiveTourStep: isCurrentStop, isCurrentMatch, isNew: isNewWaypoint?.(w) ?? false },
             selected: w.id === selectedWaypointId,
             // Draw the enlarged current stop above neighbours it grows into.
             zIndex: isCurrentStop || isCurrentMatch ? 1000 : undefined,
             style: opacity !== undefined ? { opacity } : undefined,
           };
         }),
-    [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds, searching, currentMatchId, matchIds]
+    [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds, searching, currentMatchId, matchIds, isNewWaypoint]
   );
 
   const nodesRef = useRef(nodes);

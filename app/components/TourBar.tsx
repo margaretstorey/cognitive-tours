@@ -30,6 +30,10 @@ interface TourBarProps {
   onUpdateTour: (id: string, data: Partial<Omit<Tour, 'id'>>) => void;
   onDeleteTour: (id: string) => void;
   waypoints: Waypoint[];
+  /** A stop new to this browser with no narrative yet: red halo in Edit tour. */
+  isNewStop?: (tourId: string, waypointId: string, narrative: string | null | undefined) => boolean;
+  /** Clicking into a stop's narrative box counts as seeing it. */
+  onStopSeen?: (tourId: string, waypointId: string) => void;
   markdownViewOpen: boolean;
   onToggleMarkdownView: () => void;
   onEditorOpenChange?: (open: boolean) => void;
@@ -58,6 +62,8 @@ export default function TourBar({
   onUpdateTour,
   onDeleteTour,
   waypoints,
+  isNewStop,
+  onStopSeen,
   markdownViewOpen,
   onToggleMarkdownView,
   onEditorOpenChange,
@@ -434,12 +440,22 @@ export default function TourBar({
                   const nextStop = editor.stops[idx + 1];
                   const nextWp = nextStop && waypoints.find(w => w.id === nextStop.waypointId);
                   const descShown = shownDescriptions.has(stop.waypointId);
+                  const tourId = editor.mode === 'edit' ? editor.tourId : undefined;
+                  const isNew = !!tourId && !!isNewStop?.(tourId, stop.waypointId, stop.narrative);
                   return (
-                    <li key={`${stop.waypointId}-${idx}`} className="flex flex-col gap-1 text-sm" data-testid="tour-editor-stop">
+                    <li
+                      key={`${stop.waypointId}-${idx}`}
+                      className={`flex flex-col gap-1 text-sm ${isNew ? 'rounded ring-2 ring-red-500 shadow-md shadow-red-500/40 p-1' : ''}`}
+                      data-testid="tour-editor-stop"
+                      data-new={isNew ? 'true' : undefined}
+                    >
                       <div className={`flex flex-col gap-1 border-l-4 pl-2 ${wp ? typeBorderColor(wp.type) : 'border-gray-200'}`}>
                         <div className="flex items-center gap-2">
                           <span className="flex-1 truncate">
                             <span className="text-gray-400 font-normal">Stop {idx + 1}: </span>
+                            {isNew && (
+                              <span className="mr-1 text-xs font-semibold text-red-600" title="Added since you last looked: write its narrative below">new</span>
+                            )}
                             {wp?.label ?? stop.waypointId}
                           </span>
                           {wp && (
@@ -481,6 +497,7 @@ export default function TourBar({
                         className="text-sm border border-gray-200 rounded px-2 py-1 w-full resize-none"
                         placeholder="Narrative for this stop (optional)"
                         value={stop.narrative ?? ''}
+                        onFocus={() => { if (tourId) onStopSeen?.(tourId, stop.waypointId); }}
                         onChange={ev => setEditor(ed => {
                           const stops = ed.stops.map((s, i) => i === idx ? { ...s, narrative: ev.target.value } : s);
                           return { ...ed, stops };

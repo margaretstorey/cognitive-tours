@@ -138,7 +138,8 @@ to the tour **Architecture**" or "Created the tour **Skills** with 5
 stops". Never just "the tour has changed". Then, briefly:
 
 > Open the map (refresh it if it was open), pick **<tour name>** from
-> the tour menu, and click **Edit tour**. Write:
+> the tour menu, and click **Edit tour**; the new stops have a **red
+> halo** and a "new" label. Write:
 > - the **tour description** (new tour): what it's for and who it's for;
 > - the narrative for stops <N, M, …> (each new stop, and any stop
 >   before one): each box is headed "→ to stop N+1: <label>". Why does
