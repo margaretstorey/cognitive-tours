@@ -1,5 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { START_HERE_SEEN_KEY } from '../app/components/StartHere';
+import { keepPositions } from './keep-positions';
+
+keepPositions(test);
 
 // The red "new" halo (app/lib/seen.ts): waypoints and tour stops added since
 // this browser last looked, until clicked or written in. Each test gets a
@@ -30,7 +33,7 @@ test.describe('red halo on new waypoints and stops', () => {
   async function addWaypoint(request: import('@playwright/test').APIRequestContext, label: string, description = '') {
     const id = `w-${Date.now()}-${rand()}`;
     const res = await request.post('/api/waypoints', {
-      data: { id, label, type: 'Feature', description, notes: null, filePath: null, position: { x: 0, y: -400 } },
+      data: { id, label, type: 'Feature', description, notes: null, filePath: null, position: { x: 100, y: 80 } },
     });
     expect(res.ok()).toBeTruthy();
     made.waypoints.push(id);

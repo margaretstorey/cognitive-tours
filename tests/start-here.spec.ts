@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { keepPositions } from './keep-positions';
+
+keepPositions(test);
 
 // The "Start here" walkthrough (app/components/StartHere.tsx).
 

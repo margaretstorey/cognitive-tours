@@ -21,6 +21,7 @@ import {
 import type { Waypoint, WaypointEdge, FilterState } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { WaypointTypeIcon } from '@/app/lib/waypoint-icons';
+import { makeRoom, type Box } from '@/app/lib/make-room';
 import { CopyCommand, PLUGIN_INSTALL_URL, skillCommand, useSiteOrigin } from '@/app/components/ClaudeCodePanel';
 
 type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean; isCurrentMatch: boolean; isNew: boolean };
@@ -82,6 +83,9 @@ interface WaypointGraphProps {
   placementRef?: React.MutableRefObject<(() => { x: number; y: number } | null) | null>;
   /** New to this browser and not yet described: drawn with a red halo. */
   isNewWaypoint?: (w: Waypoint) => boolean;
+  /** Waypoints to make room for (pushing overlapping ones aside), once they're on screen. */
+  makeRoomFor?: string[];
+  onRoomMade?: () => void;
 }
 
 // Roughly a waypoint node's size on screen at zoom 1 (nodes are max-w-[180px]),
@@ -110,6 +114,8 @@ function Graph({
   tourOverview = false,
   placementRef,
   isNewWaypoint,
+  makeRoomFor,
+  onRoomMade,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const { getNodesBounds, setViewport, setCenter, getInternalNode, getViewport, screenToFlowPosition, getNodes } = useReactFlow();
@@ -340,6 +346,47 @@ function Graph({
   const [pendingConnection, setPendingConnection] = useState<{ source: string; target: string } | null>(null);
   const [pendingLabel, setPendingLabel] = useState('');
 
+  // Make room (app/lib/make-room.ts): push waypoints that overlap the given
+  // ones aside, like moving stickies; nothing else moves. Sizes come from
+  // React Flow's measurements (180x60 for one not drawn, e.g. filtered out).
+  const [roomAnimating, setRoomAnimating] = useState(false);
+  const runMakeRoom = useCallback(
+    (fixedIds: string[]) => {
+      const boxes: Box[] = waypoints.map(w => {
+        const internal = getInternalNode(w.id);
+        const pos = internal?.position ?? w.position;
+        return { id: w.id, x: pos.x, y: pos.y, w: internal?.measured.width ?? 180, h: internal?.measured.height ?? 60 };
+      });
+      const moved = makeRoom(boxes, fixedIds);
+      if (moved.size === 0) return;
+      setRoomAnimating(true);
+      moved.forEach((pos, id) => onNodePositionChange(id, pos));
+      setTimeout(() => setRoomAnimating(false), 400);
+    },
+    [waypoints, getInternalNode, onNodePositionChange]
+  );
+
+  // Once every waypoint to make room for has been drawn and measured.
+  useEffect(() => {
+    if (!makeRoomFor || makeRoomFor.length === 0) return;
+    let frame = 0;
+    let tries = 0;
+    const attempt = () => {
+      const ready = makeRoomFor.every(id => getInternalNode(id)?.measured.width || hiddenNodeIds.has(id));
+      if (ready || ++tries > 30) {
+        runMakeRoom(makeRoomFor);
+        onRoomMade?.();
+      } else {
+        frame = requestAnimationFrame(attempt);
+      }
+    };
+    frame = requestAnimationFrame(attempt);
+    return () => cancelAnimationFrame(frame);
+  }, [makeRoomFor, getInternalNode, hiddenNodeIds, runMakeRoom, onRoomMade]);
+
+  // Dropping a waypoint on others pushes them aside.
+  const onNodeDragStop = useCallback((_: React.MouseEvent, node: Node) => runMakeRoom([node.id]), [runMakeRoom]);
+
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       changes.forEach(change => {
@@ -442,7 +489,12 @@ function Graph({
   return (
     <div className="h-full w-full flex flex-col">
       {tourHeader}
-      <div className="flex-1 min-h-0 relative" ref={paneRef} onMouseMove={onPaneMouseMove}>
+      <div
+        // Waypoints slide aside while making room, and only then (drags stay instant).
+        className={`flex-1 min-h-0 relative ${roomAnimating ? '[&_.react-flow__node]:[transition:transform_300ms_ease]' : ''}`}
+        ref={paneRef}
+        onMouseMove={onPaneMouseMove}
+      >
         <ReactFlow
           nodes={nodes}
           edges={rfEdges}
@@ -452,6 +504,7 @@ function Graph({
           onConnect={handleConnect}
           onNodeClick={onNodeClick}
           onNodeDoubleClick={onNodeDoubleClick}
+          onNodeDragStop={onNodeDragStop}
           onPaneClick={onPaneClick}
           onEdgeDoubleClick={onEdgeDoubleClick}
           fitView

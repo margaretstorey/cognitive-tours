@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import type { Waypoint, WaypointEdge, Tour, FilterState } from '@/app/lib/types';
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
@@ -129,7 +129,19 @@ export default function CognitiveToursApp() {
   const placementRef = useRef<(() => { x: number; y: number } | null) | null>(null);
 
   // Red "new" halo on what this browser hasn't seen yet (app/lib/seen.ts).
-  const { isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen } = useSeen(waypoints, tours, loadState === 'ready');
+  const { newAtLoad, isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen } = useSeen(waypoints, tours, loadState === 'ready');
+  // Waypoints the graph should make room for (app/lib/make-room.ts): ones you
+  // create, and, once per page load, the new ones a skill or teammate added.
+  const [createdNeedingRoom, setCreatedNeedingRoom] = useState<string[]>([]);
+  const [roomMadeOnLoad, setRoomMadeOnLoad] = useState(false);
+  const makeRoomFor = useMemo(
+    () => (roomMadeOnLoad ? createdNeedingRoom : [...newAtLoad, ...createdNeedingRoom]),
+    [roomMadeOnLoad, newAtLoad, createdNeedingRoom],
+  );
+  const onRoomMade = useCallback(() => {
+    setCreatedNeedingRoom([]);
+    if (newAtLoad.length > 0) setRoomMadeOnLoad(true);
+  }, [newAtLoad]);
   // Selecting a waypoint (click, search, tour step) counts as seeing it.
   useEffect(() => {
     if (selectedWaypointId) markWaypointsSeen([selectedWaypointId]);
@@ -232,6 +244,7 @@ export default function CognitiveToursApp() {
       const newWaypoint: Waypoint = { id, position, ...data };
       markWaypointsSeen([id]); // your own waypoint is never "new" to you
       setWaypoints(prev => [...prev, newWaypoint]);
+      setCreatedNeedingRoom(prev => [...prev, id]);
       void (async () => {
         try {
           await apiFetch('/api/waypoints', {
@@ -702,6 +715,8 @@ export default function CognitiveToursApp() {
               tourOverview={tourOverview}
               placementRef={placementRef}
               isNewWaypoint={isNewWaypoint}
+              makeRoomFor={makeRoomFor}
+              onRoomMade={onRoomMade}
             />
           )}
         </div>

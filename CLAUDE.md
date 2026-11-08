@@ -321,6 +321,23 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   border on every empty waypoint, which would mark old ones too. 
   Covered by `tests/new-halo.spec.ts` ✅
 
+- **The map makes room for new waypoints** (Nov 7; `app/lib/make-room.ts`), 
+  like pushing sticky notes aside: layout *adjustment*, not automatic 
+  layout, so the map you know stays put. Waypoints that overlap a new 
+  one are pushed straight away from it, the shorter way (along x or y), 
+  and can push others in turn; nothing else moves, and the result is 
+  the same in every browser. It runs when you create a waypoint, when 
+  you drop a dragged one on others, and once on load around the 
+  red-halo waypoints a skill or teammate added; moved waypoints slide 
+  into place and save like a drag. After Misue, Eades, Lai and 
+  Sugiyama, "Layout adjustment and the mental map" (1995), and Storey 
+  and Müller, "Graph layout adjustment strategies" (GD '95). The user's 
+  call (Nov 7): automatic, not a button ("cumbersome"). Tests keep 
+  test.db stable despite it: `tests/snapshot-positions.ts` 
+  (globalSetup) records every position before a run and 
+  `tests/keep-positions.ts` puts back anything pushed aside. Covered by 
+  `tests/make-room.spec.ts` ✅
+
 ### What is NOT yet built
 - File content preview in detail panel
 - AI-guided waypoint creation
@@ -655,6 +672,9 @@ presets in "What is built and working" for the concrete implementation.
   link is provided as a convenience but the tool doesn't require VS Code.
 - **Single user for now** — no auth, no multi-project, no collaboration yet.
 - **Turso for cloud, SQLite locally** — Vercel deployment live; Turso provides persistent SQLite across deploys.
+- **Layout adjustment, not auto-layout** (Nov 7): new waypoints get room 
+  by pushing neighbours aside (`app/lib/make-room.ts`), never by 
+  re-laying out the map, to preserve the user's mental map.
 - **Tours will move to their own tab** — the main graph is a map for exploration; tours are guided paths. These are different purposes and warrant separate views. Dimming non-tour nodes on the main graph is no longer the desired approach. Tours tab should use Dagre auto-layout (left-to-right or top-to-bottom) rather than manual positioning. But - a counterpoint is that "preserving the users' mental map" is also key... so not working on this for now!
 - **Waypoint content must be context-free.** A waypoint's description/notes should make sense regardless of which tour (or no tour) brought a reader to it. Tour-specific transition narrative ("now that you've seen X, let's look at Y") does not belong in waypoint notes — it contaminates the waypoint for every other entry point. For now, if a transition insight is worth keeping, prefer rephrasing it as a standalone true fact about the waypoint itself, or hold it in the tour's own description field as a stopgap. 
 - **Tours as markdown.** Using live-render for a tour's markdown versus archived snapshot and the markodwn view is toggled from the tour bar.

@@ -9,6 +9,9 @@ import { parseSiteColor, parseSiteNotice, pickStartHereTourId } from '../app/lib
 import { resetPlan } from '../app/api/reset-nightly/reset';
 import { EDIT_PASSCODE_HEADER, editAllowed, requireEditPasscode } from '../app/lib/edit-passcode';
 import { START_HERE_SEEN_KEY } from '../app/components/StartHere';
+import { keepPositions } from './keep-positions';
+
+keepPositions(test);
 
 // The Start here walkthrough opens on a first visit; these tests are about
 // everything else, so mark it as seen (tests/start-here.spec.ts covers it).

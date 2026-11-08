@@ -38,6 +38,8 @@ function write(waypoints: Set<string>, stops: Set<string>) {
 export function useSeen(waypoints: Waypoint[], tours: Tour[], loaded: boolean) {
   // null until the map has loaded, so nothing shows as new before then.
   const [seen, setSeen] = useState<{ waypoints: Set<string>; stops: Set<string> } | null>(null);
+  // Waypoints that were new (and undescribed) when this page loaded.
+  const [newAtLoad, setNewAtLoad] = useState<string[]>([]);
   const started = useRef(false);
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export function useSeen(waypoints: Waypoint[], tours: Tour[], loaded: boolean) {
     const s = new Set(stored?.stops ?? tours.flatMap(t => t.stops.map(st => stopKey(t.id, st.waypointId))));
     if (!stored) write(w, s); // first visit: everything here is the baseline
     setSeen({ waypoints: w, stops: s });
+    setNewAtLoad(waypoints.filter(x => !w.has(x.id) && !x.description?.trim()).map(x => x.id));
   }, [loaded, waypoints, tours]);
 
   const markWaypointsSeen = useCallback((ids: string[]) => {
@@ -83,5 +86,5 @@ export function useSeen(waypoints: Waypoint[], tours: Tour[], loaded: boolean) {
     [seen],
   );
 
-  return { isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen };
+  return { newAtLoad, isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen };
 }
