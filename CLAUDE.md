@@ -681,7 +681,7 @@ Full constitution: .specify/memory/constitution.md
 - **SpecStory** — saves AI coding conversations as Markdown ("Intent is the new source code"); captures intent automatically, without curation
 - **/grill-me** (Matt Pocock) — a Claude Code skill where the AI interviews you about a plan before writing code; questions first, like the suggest skills, but for the agent's benefit
 - **DeepWiki, Google Code Wiki** — AI-generated repository wikis, the opposite approach (AI writes the understanding)
-- **ICSE 2027 demo paper** — *Cognitive Tours: Making Understanding a Team Deliverable in AI-Assisted Development*, under review: `docs/papers/icse2027demo.pdf`. Changes planned for the arXiv version: Worklist `reminder-arxiv-revision`
+- **ICSE 2027 demo paper** — *Cognitive Tours: Making Understanding a Team Deliverable in AI-Assisted Development*, under review: `docs/papers/icse2027demo.pdf`; a longer version is on arXiv as *Cognitive Tours: Making Understanding a Deliverable in AI-Assisted Development*, https://arxiv.org/abs/2611.08456. Changes planned for the arXiv version: Worklist `reminder-arxiv-revision`
 - **Missing Stop Sign blog post** (June 9, margaretstorey.com) — intent debt explained via the out-of-town-driver metaphor; first in a series
 - **LACY - cognitive tours for onboarding**, to be presented at FSE 2026. Focused on code, semi-automated. See [here](https://arxiv.org/pdf/2603.25391)
 - **Narrative driven development** https://specdriven.com/dialects/narrative-driven 

@@ -50,7 +50,7 @@ Then restart Claude Code. Details, other ways to install, and updating: [Skills 
 ## The research
 
 - [From Technical Debt to Cognitive and Intent Debt](https://arxiv.org/abs/2603.22106) (Storey, 2026), the research foundation.
-- *Cognitive Tours: Making Understanding a Team Deliverable in AI-Assisted Development*, ICSE 2027 demo paper (under review).
+- [*Cognitive Tours: Making Understanding a Deliverable in AI-Assisted Development*](https://arxiv.org/abs/2611.08456) (arXiv, 2026), a longer version of the ICSE 2027 demo paper, which is under review.
 - [An early demo video](https://www.youtube.com/watch?v=I2S5Ee3bzi8) (4 min, Oct 23, 2026); newer walkthroughs coming soon.
 
 **Domains:** cognitive.tours | cognitivetours.dev
