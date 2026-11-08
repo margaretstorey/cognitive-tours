@@ -57,6 +57,34 @@ test.describe('create a waypoint', () => {
     expect(Math.abs(node.x + node.width / 2 - cursor.x)).toBeLessThan(node.width);
     expect(Math.abs(node.y + node.height / 2 - cursor.y)).toBeLessThan(node.height);
   });
+
+  test('a new waypoint from the canvas button goes where you last clicked on the map', async ({ page }) => {
+    waypointLabel = `Playwright Click Waypoint ${Date.now()}`;
+    await page.goto('/');
+    const pane = (await page.locator('.react-flow__pane').boundingBox())!;
+    // An empty spot on the map, away from the top-right controls.
+    const click = await page.evaluate(({ x, y, w, h }) => {
+      for (let fy = 0.3; fy < 0.9; fy += 0.05) {
+        for (let fx = 0.1; fx < 0.6; fx += 0.05) {
+          const px = x + w * fx, py = y + h * fy;
+          if (document.elementFromPoint(px, py)?.classList.contains('react-flow__pane')) return { x: px, y: py };
+        }
+      }
+      return null;
+    }, { x: pane.x, y: pane.y, w: pane.width, h: pane.height });
+    if (!click) throw new Error('no empty canvas point found');
+    await page.mouse.click(click.x, click.y);
+    // The canvas's own button, top right: the cursor ends up there, not at the click.
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(waypointLabel);
+    await form.locator('select').selectOption('Feature');
+    await form.getByRole('button', { name: 'Save' }).click();
+
+    const node = (await page.locator('.react-flow__node', { hasText: waypointLabel }).boundingBox())!;
+    expect(Math.abs(node.x + node.width / 2 - click.x)).toBeLessThan(node.width);
+    expect(Math.abs(node.y + node.height / 2 - click.y)).toBeLessThan(node.height * 1.5);
+  });
 });
 
 test.describe('double-click a waypoint', () => {

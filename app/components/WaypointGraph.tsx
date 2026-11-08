@@ -124,13 +124,17 @@ function Graph({
   // Last cursor position over the map, in window coordinates, and whether it
   // was over the canvas's own controls (+ Add Waypoint, Search).
   const lastCursorRef = useRef<{ x: number; y: number; overControls: boolean } | null>(null);
+  // Last click on the map, in map coordinates (so panning or zooming after
+  // doesn't shift it): where the next new waypoint goes, while it's in view.
+  const lastClickRef = useRef<{ x: number; y: number } | null>(null);
 
   const onPaneMouseMove = useCallback((e: React.MouseEvent) => {
     const overControls = e.target instanceof Element && !!controlsRef.current?.contains(e.target);
     lastCursorRef.current = { x: e.clientX, y: e.clientY, overControls };
   }, []);
 
-  // A new waypoint goes under the cursor's last position on the map; just
+  // A new waypoint goes where you last clicked on the map, if that's still
+  // in view. Otherwise under the cursor's last position on the map; just
   // below the canvas controls if that's where the cursor was (the canvas's
   // + Add Waypoint); or in the middle of the view if the cursor never came
   // over the map. Always kept fully inside the visible map.
@@ -144,9 +148,17 @@ function Graph({
       const w = NEW_NODE_WIDTH * zoom;
       const h = NEW_NODE_HEIGHT * zoom;
       const cursor = lastCursorRef.current;
+      const click = lastClickRef.current;
+      const topLeft = screenToFlowPosition({ x: pane.left, y: pane.top });
+      const bottomRight = screenToFlowPosition({ x: pane.right, y: pane.bottom });
+      const clickInView =
+        !!click && click.x >= topLeft.x && click.x <= bottomRight.x && click.y >= topLeft.y && click.y <= bottomRight.y;
       let left: number;
       let top: number;
-      if (cursor?.overControls && controlsRef.current) {
+      if (clickInView) {
+        left = pane.left + (click.x - topLeft.x) * zoom - w / 2;
+        top = pane.top + (click.y - topLeft.y) * zoom - h / 2;
+      } else if (cursor?.overControls && controlsRef.current) {
         const controls = controlsRef.current.getBoundingClientRect();
         left = controls.right - w;
         top = controls.bottom + NEW_NODE_MARGIN;
@@ -432,10 +444,14 @@ function Graph({
   // box to clear.
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
+      // Clicking a waypoint: the next new one goes just below it, not on it.
+      const h = getInternalNode(node.id)?.measured.height ?? NEW_NODE_HEIGHT;
+      const wNode = getInternalNode(node.id)?.measured.width ?? NEW_NODE_WIDTH;
+      lastClickRef.current = { x: node.position.x + wNode / 2, y: node.position.y + h + NEW_NODE_HEIGHT };
       onSelectWaypoint(node.id);
       if (searchQuery) onSearchChange('');
     },
-    [onSelectWaypoint, searchQuery, onSearchChange]
+    [onSelectWaypoint, searchQuery, onSearchChange, getInternalNode]
   );
 
   const onNodeDoubleClick = useCallback(
@@ -443,10 +459,11 @@ function Graph({
     [onEditWaypoint]
   );
 
-  const onPaneClick = useCallback(() => {
+  const onPaneClick = useCallback((e: React.MouseEvent) => {
+    lastClickRef.current = screenToFlowPosition({ x: e.clientX, y: e.clientY });
     onSelectWaypoint(null);
     if (searchQuery) onSearchChange('');
-  }, [onSelectWaypoint, searchQuery, onSearchChange]);
+  }, [onSelectWaypoint, searchQuery, onSearchChange, screenToFlowPosition]);
 
   const onEdgeDoubleClick = useCallback(
     (_: React.MouseEvent, edge: Edge) => {

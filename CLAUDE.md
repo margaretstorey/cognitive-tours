@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: November 7 2026
+Last updated: November 8 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -189,7 +189,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   the button; if the cursor never came over the map, mid-view; always 
   inside the visible map. Several in a row stack in a column instead 
   of on top of each other. Markdown view and the empty-map screen keep 
-  the old placement. Covered by a Playwright test ✅
+  the old placement. Covered by a Playwright test ✅ 
+  **Since Nov 8, your last click on the map comes first:** a new 
+  waypoint (from either + Add Waypoint) goes where you last clicked 
+  on empty canvas, or just below a waypoint you clicked, as long as 
+  that spot is still in view (it's kept in map coordinates, so 
+  panning or zooming after doesn't shift it); otherwise the cursor 
+  rule above. Asked for because the canvas's button always put new 
+  waypoints top right. Covered by a Playwright test ✅
 - Tour Controls text one more size larger (Nov 3), for projecting and 
   the demo video: every size in the panel stepped up together (stop 
   title text-lg, body and buttons text-base, small print text-sm), 
