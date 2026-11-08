@@ -2,8 +2,9 @@ import { prisma } from '@/app/lib/db';
 import { applyReset, resetPlan } from './reset';
 
 /**
- * Nightly reset of a demo site, triggered by the cron in vercel.json at
- * 08:00 UTC (midnight Pacific in winter, 1 a.m. in summer).
+ * Reset of a demo site, triggered by the cron in vercel.json every hour,
+ * on the hour (Nov 7; it was nightly at 08:00 UTC until then, hence the
+ * route's name, kept so logs and docs still match).
  *
  * Every Vercel project builds from this repo, so every project gets the cron.
  * It does nothing (204) unless the site opted in with RESET_NIGHTLY_FROM and

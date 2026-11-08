@@ -33,8 +33,8 @@ It's read-only: it only reads each site and saves a file. Yours goes to
 The demo has a fixed good copy, `backups/demo-canonical.json` (committed),
 so resetting it always puts back the same map.
 
-**Usually you don't need to:** since Nov 4 the demo site resets itself
-every night around midnight Pacific (`/api/reset-nightly`; see `CLAUDE.md`
+**Usually you don't need to:** the demo site resets itself
+every hour, on the hour (`/api/reset-nightly`, nightly from Nov 4, hourly since Nov 7; see `CLAUDE.md`
 → Team sites), back to `backups/demo-canonical.json`. Use the steps below
 only to reset it straight away. The other demo sites (demo-flask and the
 blank ones) don't reset themselves; reset one the same way, with its own

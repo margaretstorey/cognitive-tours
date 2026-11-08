@@ -391,7 +391,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   is a deliberate step: `git push origin main:stable` (a fast-forward; 
   never commit to `stable` directly), then check the 18 Deployments tabs. 
   A push to `main` still builds preview deployments for the 18; they 
-  aren't on the sites' addresses. The demo's nightly reset uses the 
+  aren't on the sites' addresses. The demo's hourly reset uses the 
   `demo-canonical.json` bundled into `stable`'s build, so a refreshed 
   copy reaches the demo only when released. Chosen over forking the 
   repo (two repos, marketplaces and backup setups to keep in step).
@@ -490,9 +490,11 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   and demo-flask use dark red `#7f1d1d` with "Demonstration site: … 
   Anyone can edit it; changes may be lost."; the sandboxes use dark blue 
   `#1e3a8a` with "Sandbox: try writing waypoints and tours. …". Team sites and your own site set neither (black header). 
-  **The main demo resets itself every night** (Nov 4; only that one, by 
-  the user's choice): a second cron (`vercel.json` → `/api/reset-nightly`, 
-  08:00 UTC, i.e. midnight Pacific in winter and 1 a.m. in summer) 
+  **The main demo resets itself every hour, on the hour** (nightly from 
+  Nov 4, hourly since Nov 7 because visitors from the paper and LinkedIn 
+  rearranged it during the day; only that one, by the user's choice): a 
+  second cron (`vercel.json` → `/api/reset-nightly`, `0 * * * *`; the 
+  route keeps its old name) 
   replaces the whole map on a site that sets `RESET_NIGHTLY_FROM` **and** 
   whose `NEXT_PUBLIC_PROJECT_NAME` contains the word "demo"; it also needs 
   that project's `CRON_SECRET`. Only cognitive-tours-demo sets them 

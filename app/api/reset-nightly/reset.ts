@@ -4,7 +4,7 @@ import demoCanonical from '@/backups/demo-canonical.json';
 import demoFlask from '@/backups/demo-flask.json';
 
 /**
- * The nightly reset of a demo site (route.ts beside this file).
+ * The hourly reset of a demo site (route.ts beside this file).
  *
  * It deletes the whole map, so it runs only when a site has opted in AND is
  * named as a demo: a slip in one setting on a team site or the owner's own
