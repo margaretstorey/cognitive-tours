@@ -5,7 +5,7 @@ import type { Tour, Waypoint } from '../app/lib/types';
 import { githubFileLink, isLinkPath, linkLabel, normalizeGitHubRepo } from '../app/lib/repo';
 import { vscodeLink } from '../app/lib/code-folder';
 import { getSites } from '../app/lib/sites';
-import { parseSiteColor, parseSiteNotice } from '../app/lib/project';
+import { parseSiteColor, parseSiteNotice, pickStartHereTourId } from '../app/lib/project';
 import { resetPlan } from '../app/api/reset-nightly/reset';
 import { EDIT_PASSCODE_HEADER, editAllowed, requireEditPasscode } from '../app/lib/edit-passcode';
 import { START_HERE_SEEN_KEY } from '../app/components/StartHere';
@@ -757,6 +757,19 @@ test.describe('edit passcode', () => {
       new Request('http://x/api/waypoints', { method: 'POST', headers: { [EDIT_PASSCODE_HEADER]: 'owl-river' } }),
     );
     expect(allowed).toBeNull();
+  });
+});
+
+test.describe('Start here tour setting', () => {
+  const tours = [
+    { id: 't-arch', name: 'Architecture' },
+    { id: 't-story', name: 'A Research Story Behind Cognitive Tours' },
+  ];
+  test('opens the named tour, else the first, else none', () => {
+    expect(pickStartHereTourId(tours, 'A Research Story Behind Cognitive Tours')).toBe('t-story');
+    expect(pickStartHereTourId(tours, 'Renamed or deleted')).toBe('t-arch');
+    expect(pickStartHereTourId(tours, null)).toBe('t-arch');
+    expect(pickStartHereTourId([], 'A Research Story Behind Cognitive Tours')).toBeNull();
   });
 });
 

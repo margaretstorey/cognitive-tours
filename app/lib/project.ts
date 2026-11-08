@@ -30,3 +30,19 @@ export function parseSiteColor(raw: string | undefined): string | null {
 // Each set per Vercel project and inlined at build time; unset everywhere by default.
 export const SITE_NOTICE: string | null = parseSiteNotice(process.env.NEXT_PUBLIC_SITE_NOTICE);
 export const SITE_COLOR: string | null = parseSiteColor(process.env.NEXT_PUBLIC_SITE_COLOR);
+
+/**
+ * Which tour the "Start here" walkthrough opens (Nov 7): the tour with exactly
+ * the name in NEXT_PUBLIC_START_HERE_TOUR, else the map's first tour. Set only
+ * on the demo, to the tour the ICSE paper points readers to. Null when the map
+ * has no tours (the walkthrough then skips its tour steps).
+ */
+export function pickStartHereTourId(
+  tours: readonly { id: string; name: string }[],
+  preferredName: string | null,
+): string | null {
+  const preferred = preferredName ? tours.find(t => t.name === preferredName) : undefined;
+  return (preferred ?? tours[0])?.id ?? null;
+}
+
+export const START_HERE_TOUR: string | null = process.env.NEXT_PUBLIC_START_HERE_TOUR?.trim() || null;

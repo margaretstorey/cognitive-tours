@@ -9,7 +9,7 @@ import WaypointDetail from './WaypointDetail';
 import TourBar from './TourBar';
 import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
-import { PROJECT_NAME, SITE_COLOR, SITE_NOTICE } from '@/app/lib/project';
+import { PROJECT_NAME, SITE_COLOR, SITE_NOTICE, START_HERE_TOUR, pickStartHereTourId } from '@/app/lib/project';
 import { ClaudeCodeSkillsButton } from '@/app/components/ClaudeCodePanel';
 import { StartHere } from '@/app/components/StartHere';
 import { EDIT_PASSCODE_HEADER } from '@/app/lib/edit-passcode';
@@ -461,9 +461,12 @@ export default function CognitiveToursApp() {
     return () => document.removeEventListener('keydown', handler);
   }, [activeTourId, tourEditorOpen, form.open, selectTour]);
 
-  // "Start here" shows Tour Controls by starting the first tour, unless one is running.
+  // "Start here" shows Tour Controls by starting a tour, unless one is running:
+  // the site's NEXT_PUBLIC_START_HERE_TOUR if it's on the map, else the first.
   const showTourForStartHere = useCallback(() => {
-    if (!activeTourId && tours.length > 0) selectTour(tours[0].id);
+    if (activeTourId) return;
+    const id = pickStartHereTourId(tours, START_HERE_TOUR);
+    if (id) selectTour(id);
   }, [activeTourId, tours, selectTour]);
 
   const onNext = useCallback(() => {

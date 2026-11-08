@@ -509,6 +509,11 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   and demo-flask use dark red `#7f1d1d` with "Demonstration site: … 
   Anyone can edit it; changes may be lost."; the sandboxes use dark blue 
   `#1e3a8a` with "Sandbox: try writing waypoints and tours. …". Team sites and your own site set neither (black header). 
+  A third, `NEXT_PUBLIC_START_HERE_TOUR` (Nov 7), names the tour the 
+  "Start here" walkthrough opens (else the map's first tour; 
+  `pickStartHereTourId` in `app/lib/project.ts`). Only the demo sets it, 
+  to "A Research Story Behind Cognitive Tours", the tour the ICSE paper 
+  points readers to. 
   **The main demo resets itself every hour, on the hour** (nightly from 
   Nov 4, hourly since Nov 7 because visitors from the paper and LinkedIn 
   rearranged it during the day; only that one, by the user's choice): a 
