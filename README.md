@@ -54,8 +54,6 @@ Then restart Claude Code. Details, other ways to install, and updating: [Skills 
 - [An early demo video](https://www.youtube.com/watch?v=I2S5Ee3bzi8) (4 min, Oct 23, 2026); newer walkthroughs coming soon.
 - **Earlier work, 20 years ago:** [*Shared waypoints and social tagging to support collaboration in software development*](https://doi.org/10.1145/1180875.1180906) (Storey, Cheng, Bull and Rigby, CSCW 2006), which introduced waypoints in TagSEA, and [*Presentations by programmers for programmers*](https://doi.org/10.1109/ICSE.2007.67) (Cheng, Desmond and Storey, ICSE 2007), which introduced tours of code ([PDF](docs/papers/tours-2006.pdf)).
 
-**Domains:** cognitive.tours | cognitivetours.dev
-
 ---
 
 ## What it does
