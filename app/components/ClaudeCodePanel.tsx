@@ -90,7 +90,7 @@ export function ClaudeCodeSkillsButton({ mapIsEmpty }: { mapIsEmpty: boolean }) 
     <>
       <button
         onClick={() => setOpen(true)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full border border-white/70 px-3 py-0.5 text-sm font-semibold text-white hover:bg-white/15"
+        className="rounded-full border border-white/70 px-3 py-0.5 text-sm font-semibold text-white hover:bg-white/15"
       >
         Claude Code skills
       </button>

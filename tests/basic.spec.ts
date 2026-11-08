@@ -8,6 +8,13 @@ import { getSites } from '../app/lib/sites';
 import { parseSiteColor, parseSiteNotice } from '../app/lib/project';
 import { resetPlan } from '../app/api/reset-nightly/reset';
 import { EDIT_PASSCODE_HEADER, editAllowed, requireEditPasscode } from '../app/lib/edit-passcode';
+import { START_HERE_SEEN_KEY } from '../app/components/StartHere';
+
+// The Start here walkthrough opens on a first visit; these tests are about
+// everything else, so mark it as seen (tests/start-here.spec.ts covers it).
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(key => localStorage.setItem(key, '1'), START_HERE_SEEN_KEY);
+});
 
 test.describe('create a waypoint', () => {
   let waypointLabel: string;

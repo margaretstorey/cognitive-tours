@@ -11,6 +11,7 @@ import TourMarkdownView from './TourMarkdownView';
 import WaypointForm from './WaypointForm';
 import { PROJECT_NAME, SITE_COLOR, SITE_NOTICE } from '@/app/lib/project';
 import { ClaudeCodeSkillsButton } from '@/app/components/ClaudeCodePanel';
+import { StartHere } from '@/app/components/StartHere';
 import { EDIT_PASSCODE_HEADER } from '@/app/lib/edit-passcode';
 import { useCodeFolder, vscodeLink } from '@/app/lib/code-folder';
 import { githubFileLink, linkLabel, useRepoUrl } from '@/app/lib/repo';
@@ -460,6 +461,11 @@ export default function CognitiveToursApp() {
     return () => document.removeEventListener('keydown', handler);
   }, [activeTourId, tourEditorOpen, form.open, selectTour]);
 
+  // "Start here" shows Tour Controls by starting the first tour, unless one is running.
+  const showTourForStartHere = useCallback(() => {
+    if (!activeTourId && tours.length > 0) selectTour(tours[0].id);
+  }, [activeTourId, tours, selectTour]);
+
   const onNext = useCallback(() => {
     if (!activeTour) return;
     const next = activeTourStep + 1;
@@ -611,8 +617,19 @@ export default function CognitiveToursApp() {
             );
           })()
         )}
-        {/* Pinned right, mirroring the Project pill: the plugin's commands with this site filled in. */}
-        <ClaudeCodeSkillsButton mapIsEmpty={waypoints.length === 0} />
+        {/* Pinned right, mirroring the Project pill: the Start here walkthrough, and the
+            plugin's commands with this site filled in. */}
+        {/* No transform here: it would make the fixed-position walkthrough and skills panel inside it position relative to this box. */}
+        <div className="absolute right-4 inset-y-0 flex items-center gap-2">
+          <StartHere
+            mapIsEmpty={waypoints.length === 0}
+            hasTours={tours.length > 0}
+            onShowTour={showTourForStartHere}
+          />
+          <span data-start-here="skills">
+            <ClaudeCodeSkillsButton mapIsEmpty={waypoints.length === 0} />
+          </span>
+        </div>
       </div>
       {/* T017: Error banner for mutation failures */}
       {errorMessage !== null && (
@@ -639,7 +656,7 @@ export default function CognitiveToursApp() {
         showExitTour={controlPanelCollapsed || markdownViewOpen}
       />
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 relative overflow-hidden">
+        <div data-start-here="map" className="flex-1 relative overflow-hidden">
           {showingMarkdown ? (
             <TourMarkdownView tour={activeTour} waypoints={waypoints} activeStepIndex={activeTourStep} />
           ) : (
@@ -704,7 +721,7 @@ export default function CognitiveToursApp() {
               </button>
             </div>
           ) : (
-            <div className="w-96 border-l border-gray-200 bg-white overflow-hidden shrink-0">
+            <div data-start-here="tour-controls" className="w-96 border-l border-gray-200 bg-white overflow-hidden shrink-0">
               <div className="flex flex-col h-full">
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between shrink-0">
                   <h2 className="text-lg font-bold text-gray-900">Tour Controls</h2>

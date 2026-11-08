@@ -289,6 +289,20 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   see how many people try the demo. The user's decision (Nov 7): it's on 
   all sites, and visits to student and team sites are not used as 
   research data ✅
+- **A "Start here" walkthrough on every site** (Nov 7; 
+  `app/components/StartHere.tsx`), after floorplan's one-minute intro. 
+  Four steps on a map with tours (the map; the tour selector; Tour 
+  Controls, for which it starts the first tour and leaves it running; 
+  making your own), two on an empty map. Each step rings its target 
+  (found by `data-start-here="map" | "tour-controls" | "skills"` or 
+  `#tour-select`) and dims the rest. It opens on a browser's first 
+  visit to a site (localStorage `cognitive-tours:start-here-seen`) and 
+  replays from the **Start here** header button; Skip, Done or Escape 
+  closes it, and Escape never leaves an active tour (capture phase, as 
+  the skills panel). The header's right-hand button group must not use 
+  a CSS transform: it would position both fixed overlays relative to 
+  it. `tests/basic.spec.ts` marks it seen before every test; 
+  `tests/start-here.spec.ts` covers it ✅
 
 ---
 
