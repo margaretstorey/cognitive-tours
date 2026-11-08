@@ -113,8 +113,10 @@ the right skill.
   and the builder's view), marked as drafted by Claude for you to check and
   rewrite. An empty map's **Copy command** button gives you this command
   with the site filled in.
-- **`suggest-waypoint`, `suggest-tour`**: ask you questions so you record
-  recent work as waypoints and tours in your own words.
+- **`suggest-waypoint`, `suggest-tour`**: record recent work. After you OK
+  each small batch, they add the waypoints (placed beside related ones) or
+  the tour stops for you; you write the descriptions and narratives in the
+  app, with help if you ask.
 - **`audit-waypoints`, `audit-tours`**: report where the map has drifted from
   the code.
 

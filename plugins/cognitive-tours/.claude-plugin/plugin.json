@@ -1,7 +1,7 @@
 {
   "name": "cognitive-tours",
-  "version": "0.1.1",
-  "description": "Five skills for a Cognitive Tours map: first-tours drafts a starting map of an unfamiliar repo; suggest-waypoint and suggest-tour help you write your own; audit-waypoints and audit-tours check the map against the code.",
+  "version": "0.2.0",
+  "description": "Five skills for a Cognitive Tours map: first-tours drafts a starting map of an unfamiliar repo; suggest-waypoint and suggest-tour add your recent work to the map and leave the writing to you; audit-waypoints and audit-tours check the map against the code.",
   "author": { "name": "Margaret-Anne Storey", "url": "https://margaretstorey.com" },
   "homepage": "https://github.com/margaretstorey/cognitive-tours#skills-for-claude-code",
   "repository": "https://github.com/margaretstorey/cognitive-tours",

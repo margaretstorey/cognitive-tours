@@ -67,9 +67,9 @@ pick up the skills.
 
 | Skill | What it does |
 |---|---|
-| `/cognitive-tours:first-tours` | For a repo you **don't know yet**: reads it and, after you OK the plan, adds a starting map to an empty site (about a dozen waypoints and two short tours, the user's view and the builder's view), all marked as drafted by Claude. You then check it and rewrite it in your own words. The only skill that writes to the map. |
-| `/cognitive-tours:suggest-waypoint` | Finds recent work worth recording (decisions first), asks you about it, and gives the fact fields (label, type, file path, links) to enter. You write the description. |
-| `/cognitive-tours:suggest-tour` | Suggests where new waypoints fit in tours, and asks you to write each stop's narrative. |
+| `/cognitive-tours:first-tours` | For a repo you **don't know yet**: reads it and, after you OK the plan, adds a starting map to an empty site (about a dozen waypoints and two short tours, the user's view and the builder's view), all marked as drafted by Claude. You then check it and rewrite it in your own words. |
+| `/cognitive-tours:suggest-waypoint` | Finds recent work worth recording (decisions first) and, after you OK each small batch, adds the waypoints and links to the map, beside the waypoints they relate to. You write each description in the app (double-click the waypoint); it reads them back if you ask. |
+| `/cognitive-tours:suggest-tour` | Suggests where new waypoints fit in tours and, after you OK it, makes the change, one tour at a time, keeping every existing narrative. You write the tour description and the new narratives in **Edit tour**. |
 | `/cognitive-tours:audit-waypoints` | Checks code, ADR and test waypoints against the files they link to, and lists what has drifted. |
 | `/cognitive-tours:audit-tours` | Finds recently changed files that no waypoint or tour covers, stale or repetitive narratives, and redundant links. |
 
@@ -77,8 +77,13 @@ pick up the skills.
 commands with that site's address already filled in, each with a Copy
 button: copy one, paste it into Claude Code, press Return.
 
-Apart from `first-tours`, they **ask questions and report; you write
-everything in the app.** They only read the map (the site's `/api/data`).
+**What they write.** `first-tours` writes a whole starting map, marked as
+drafted. The suggest skills write only what you've just approved (new
+waypoints, links and tour stops) and leave the descriptions and narratives,
+the understanding, to you. They never delete anything or change text you
+wrote without asking. Each time, they also offer to let you make the change
+yourself in the app instead: the more you do by hand, the more you'll
+remember. The audit skills only read the map and report.
 
 **Which map.** The map lives on a website, so each skill needs the site's
 address. Give it with the command (`site https://<your-site>`), or let the

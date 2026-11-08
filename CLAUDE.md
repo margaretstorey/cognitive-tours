@@ -255,7 +255,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   anyone else can use them in their own repos: 
   `/plugin install cognitive-tours --marketplace 
   margaretstorey/cognitive-tours` (this repo is the marketplace: 
-  `.claude-plugin/marketplace.json` → `plugins/cognitive-tours/`, v0.1.1 since Nov 7, when each skill's description gained the plain requests that should start it). 
+  `.claude-plugin/marketplace.json` → `plugins/cognitive-tours/`, v0.2.0 since Nov 7, when the suggest skills started adding what you approve to the map; 0.1.1 earlier the same day gave each skill's description the plain requests that should start it). 
   All five ship: first-tours, suggest-waypoint, suggest-tour, 
   audit-waypoints and audit-tours, typed as 
   `/cognitive-tours:<skill>`. **One copy of each:** the files live in 
@@ -353,7 +353,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - **Update "Last updated" date** at the top of this file each session.
 - **Create a waypoint** for any significant new feature or decision before closing a session. 
   Run `/suggest-waypoint`, then `/suggest-tour`: they find what's worth 
-  recording (decisions first) and ask questions while you write it. 
+  recording (decisions first) and, once you OK them, add the waypoints and stops; you write the descriptions and narratives. 
   Also useful any time you suspect work went unrecorded 
   (`/suggest-waypoint since YYYY-MM-DD`).
 - **Auditing reads the live site.** /audit-waypoints and /audit-tours 
@@ -625,7 +625,14 @@ presets in "What is built and working" for the concrete implementation.
 - **Tours you create yourself** are more valuable than prepackaged ones.
   Someone else's tours give the appearance of understanding, not the real thing.
 - **AI as scaffold, not substitute** — AI helps you capture your understanding,
-  it doesn't generate understanding for you.
+  it doesn't generate understanding for you. **Where the line sits (Nov 7):**
+  the suggest skills do the clerical part (creating waypoints, links and
+  tour stops, in small batches the user approves, placed beside related
+  waypoints); the user writes the understanding (descriptions, tour
+  descriptions, stop narratives) in the app, with help only on request.
+  first-tours is the one skill that writes the understanding too, marked
+  as drafted. A setting for where this line sits is parked (Worklist
+  `skill-help-slider`), as is authorship marking (`author-and-edited-by`).
 - **Not a knowledge graph** — knowledge graphs are about information retrieval.
   Cognitive Tours is about understanding construction. The graph is a scaffold,
   not a deliverable.
@@ -837,7 +844,19 @@ Full constitution: .specify/memory/constitution.md
   path, edges, stop order) directly; descriptions and narratives are 
   drafted only on request, after a nudge to try first. Still open: 
   whether questions-first actually builds understanding (try it, and 
-  with students), and adding them to the student kit.
+  with students), and adding them to the student kit. 
+  **Second version (Nov 7, plugin 0.2.0):** after "mighty tedious" 
+  (Nov 5), the suggest skills now write what the user approves: 
+  suggest-waypoint creates waypoints and links in related batches of 
+  2–5, placed beside the waypoints they link to (else in a row below 
+  the map), with empty descriptions for the user to write in the app 
+  (double-click); suggest-tour creates a tour or adds stops one tour 
+  at a time, resending every existing narrative unchanged (a tour PUT 
+  replaces the whole stop list) and checking afterwards, and points the 
+  user to Edit tour for the description and narratives. "check" reads 
+  them back; drafting still only on request, marked in Notes or the 
+  tour description. They never delete, move existing waypoints, or 
+  change the user's text without asking.
 
 
 ---
