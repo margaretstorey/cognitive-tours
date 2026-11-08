@@ -390,8 +390,13 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   people trying the sandboxes never see half-finished work. **Releasing** 
   is a deliberate step: `git push origin main:stable` (a fast-forward; 
   never commit to `stable` directly), then check the 18 Deployments tabs. 
-  A push to `main` still builds preview deployments for the 18; they 
-  aren't on the sites' addresses. The demo's hourly reset uses the 
+  The 18 build nothing but `stable`: each has the Ignored Build Step 
+  `[ "$VERCEL_GIT_COMMIT_REF" != "stable" ]` (Settings → Build and 
+  Deployment; Nov 7, after previews of `main` showed 18 failed checks on 
+  GitHub, failing by design because their database settings are 
+  Production-only). So a red X on `main` means your own site's build 
+  failed. **A new team site needs the same setting** and Production 
+  Branch `stable`. The demo's hourly reset uses the 
   `demo-canonical.json` bundled into `stable`'s build, so a refreshed 
   copy reaches the demo only when released. Chosen over forking the 
   repo (two repos, marketplaces and backup setups to keep in step).
