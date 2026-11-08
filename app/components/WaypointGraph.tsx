@@ -551,7 +551,7 @@ function FirstToursCard() {
     >
       <h2 className="text-base font-semibold text-gray-900">Don&apos;t start from a blank page</h2>
       <p className="mt-2">
-        New to this repo? Open Claude Code inside it and run the <code>first-tours</code> skill. It reads the
+        New to this repo? Open Claude Code inside it and run the <code>first-tours</code>{' '}skill. It reads the
         code and docs, then adds a starting map here: about a dozen waypoints and two short tours
         (one from the user&apos;s side, one from the builder&apos;s; at most 8 stops each).
       </p>
@@ -571,7 +571,9 @@ function FirstToursCard() {
         <a href={PLUGIN_INSTALL_URL} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-700">
           Cognitive Tours plugin
         </a>{' '}
-        for Claude Code. This card only appears while the map is completely empty.
+        for Claude Code. The skill offers to remember this site, so later skills need only{' '}
+        <code>/cognitive-tours:</code> and their name. This card only appears while the map is
+        completely empty.
       </p>
     </section>
   );

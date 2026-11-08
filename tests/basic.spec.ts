@@ -762,6 +762,8 @@ test.describe('empty map points to /first-tours', () => {
     await page.goto('/');
     const card = page.getByRole('region', { name: "Don't start from a blank page" });
     await expect(card).toBeVisible();
+    // The build once dropped the space after <code>first-tours</code>.
+    await expect(card).toContainText('first-tours skill');
     await expect(page.getByRole('button', { name: 'Add first waypoint' })).toBeVisible();
     const origin = new URL(baseURL!).origin;
     await expect(card.getByTestId('first-tours-command')).toHaveText(`/cognitive-tours:first-tours site ${origin}`);
@@ -796,8 +798,12 @@ test.describe('Claude Code skills panel', () => {
     );
     const origin = new URL(baseURL!).origin;
     for (const skill of SKILLS) {
-      await expect(dialog.getByTestId(`command-${skill}`)).toHaveText(`/cognitive-tours:${skill} site ${origin}`);
+      const command = dialog.getByTestId(`command-${skill}`);
+      await expect(command).toHaveText(`/cognitive-tours:${skill} site ${origin}`);
+      // The whole command is visible (wrapped), not cut off.
+      expect(await command.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     }
+    await expect(dialog.getByTestId('first-time-note')).toContainText('The first time, copy a full command');
     // This map has waypoints, so first-tours says it's meant for an empty one.
     await expect(dialog.getByTestId('skill-first-tours')).toContainText('Meant for an empty map');
 

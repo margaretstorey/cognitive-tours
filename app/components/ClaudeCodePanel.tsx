@@ -45,8 +45,9 @@ export function CopyCommand({
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <code data-testid={testId} className="flex-1 truncate rounded bg-gray-100 px-2 py-1 text-xs" title={command}>
+    <div className="flex items-start gap-2">
+      {/* Wraps instead of truncating, so the whole command (site address included) can be read before copying. */}
+      <code data-testid={testId} className="min-w-0 flex-1 whitespace-normal break-all rounded bg-gray-100 px-2 py-1 text-xs">
         {command}
       </code>
       <button
@@ -139,6 +140,11 @@ export function ClaudeCodeSkillsButton({ mapIsEmpty }: { mapIsEmpty: boolean }) 
 
               <section aria-label="Skills">
                 <h3 className="font-semibold text-gray-900">2. Then, in Claude Code, in your repo’s folder</h3>
+                <p className="mt-1" data-testid="first-time-note">
+                  The first time, copy a full command below: it tells the skill which map is yours, and the
+                  skill offers to remember it. After that, just type <code>/cognitive-tours:</code> and the
+                  skill’s name.
+                </p>
                 <ul className="mt-1.5 flex flex-col gap-3">
                   {SKILLS.map((s) => (
                     <li key={s.name} data-testid={`skill-${s.name}`}>
@@ -156,10 +162,6 @@ export function ClaudeCodeSkillsButton({ mapIsEmpty }: { mapIsEmpty: boolean }) 
                 </ul>
               </section>
 
-              <p className="text-xs text-gray-500">
-                When a skill offers to remember this site, say yes, and next time you can leave out{' '}
-                <code>site …</code>.
-              </p>
             </div>
           </div>
         </div>
