@@ -891,7 +891,14 @@ Full constitution: .specify/memory/constitution.md
   user to Edit tour for the description and narratives. "check" reads 
   them back; drafting still only on request, marked in Notes or the 
   tour description. They never delete, move existing waypoints, or 
-  change the user's text without asking.
+  change the user's text without asking. 
+  **Placement (Nov 7, plugin 0.2.3):** suggest-waypoint puts each new 
+  waypoint at the average position of what it links to and makes room 
+  the way the map does (a Python copy of `app/lib/make-room.ts` in the 
+  skill, so it runs in any repo); the plan lists which existing 
+  waypoints shift and how far, and offers the nearest empty spot 
+  instead if more than ~8 would move or any by over 300 px. On Batch 
+  A of the owner's map: 5 of 66 shifted, by 8–102 px.
 
 
 ---

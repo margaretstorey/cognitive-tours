@@ -110,8 +110,12 @@ For the batch picked, show exactly what will be added, as fact fields:
   Feature), **threatens** (Risk → Feature or ADR). Waypoint types: Goal,
   User Need, Feature, ADR, Code Component, Test, Risk, AI Instruction,
   Open Question, Deprecated.
-- **Where it goes**, in words the user can find on the map: "right of
-  *TourBar*", "below the map, on the left".
+- **Where it goes**, worked out as in **Placement** below, in words the
+  user can find on the map: "between *TourBar* and *Tour Controls*",
+  "below the map, on the left".
+- **What shifts to make room:** the existing waypoints the new ones push
+  aside, each with how far ("*Read the spec…* 91 px down; 4 others under
+  60 px"), or "nothing moves".
 - **Description: left empty**, for the user to write in the app, unless
   the user has already said in this conversation what it is or why; then
   use their words, and say so.
@@ -143,23 +147,83 @@ application/json' --data @<file> <site>/api/<route>`.
 - **Edges** → `POST /api/edges`: `{id, source, target, label}`, after
   their waypoints exist.
 
-**Placement**, from the positions in `/api/data` (re-read it first: the
-user may have moved things):
+**Placement** (worked out for the plan in step 3, from `/api/data`):
+put each new waypoint **where it belongs**, beside what it links to,
+and push the few waypoints it overlaps aside, like moving sticky notes.
+Nothing else moves, so the map the user knows stays put. (Layout
+adjustment, not re-layout: Misue et al., "Layout adjustment and the
+mental map", 1995.) The site's own map does the same when it loads new
+waypoints, so this only makes it happen once, visibly, in the plan.
 
-- A new waypoint linked to an existing one goes **beside it**: right
-  (`x + 300`, same `y`), else below (`x`, `y + 200`), else left, else
-  above. A spot is free when no waypoint, existing or just placed, has
-  its position within **260 px horizontally and 140 px vertically** of
-  it (nodes are up to 180 px wide and two or three lines tall). Take
-  the first free spot; if none is, step another 300 right and try
-  again.
-- Several new waypoints linked to the same one go in a **column** beside
-  it (`y`, `y + 150`, `y + 300`, …), each still checked for space.
-- One linked only to other new waypoints goes beside them, by the same
-  rule, once they're placed.
-- One with no links goes in a **row below the whole map**: `y = (largest
+- **Best spot:** the average position of the waypoints it links to.
+  New waypoints linked to each other settle over a few rounds. One with
+  no links goes in a **row below the whole map**: `y = (largest
   existing y) + 300`, from the smallest existing `x`, 300 apart.
-- Never move an existing waypoint.
+- **Then make room,** with this script (Python 3, no packages). Put the
+  batch in a scratch `batch.json` as `[{"id": "<new id>", "links":
+  ["<waypoint id>", …]}]`, with new ids made as in step 4, and run
+  `python3 place.py map.json batch.json`. It prints each new waypoint's
+  position and each existing waypoint that shifts:
+
+  ```python
+  import json, sys
+  m = json.load(open(sys.argv[1])); batch = json.load(open(sys.argv[2]))
+  W, H, GAP = 180, 70, 40
+  pos = {w["id"]: dict(w["position"]) for w in m["waypoints"]}
+  label = {w["id"]: w["label"] for w in m["waypoints"]}
+  new = [b["id"] for b in batch]; links = {b["id"]: b["links"] for b in batch}
+  ys = [p["y"] for p in pos.values()] or [0]; xs = [p["x"] for p in pos.values()] or [0]
+  row = 0
+  for i in new:
+      if not links[i]:
+          pos[i] = {"x": min(xs) + 300 * row, "y": max(ys) + 300}; row += 1
+  for _ in range(10):  # average of linked waypoints, settling new-to-new links
+      for i in new:
+          ns = [n for n in links[i] if n in pos]
+          if ns:
+              pos[i] = {"x": sum(pos[n]["x"] for n in ns) / len(ns), "y": sum(pos[n]["y"] for n in ns) / len(ns)}
+  def overlap(a, b):
+      return a["x"] < b["x"] + W + GAP and b["x"] < a["x"] + W + GAP and a["y"] < b["y"] + H + GAP and b["y"] < a["y"] + H + GAP
+  def make_room(ids, fixed):  # as app/lib/make-room.ts: push overlapping ones away, the shorter way
+      active = sorted(i for i in ids if i in fixed)
+      for _ in range(50):
+          changed = False
+          for p in list(active):
+              for q in sorted(ids):
+                  if q == p or q in fixed or not overlap(pos[p], pos[q]): continue
+                  P, Q = pos[p], pos[q]
+                  dx = P["x"] + W + GAP - Q["x"] if Q["x"] >= P["x"] else P["x"] - GAP - (Q["x"] + W)
+                  dy = P["y"] + H + GAP - Q["y"] if Q["y"] >= P["y"] else P["y"] - GAP - (Q["y"] + H)
+                  if abs(dx) <= abs(dy): Q["x"] += dx
+                  else: Q["y"] += dy
+                  if q not in active: active.append(q)
+                  changed = True
+          if not changed: break
+  for k, i in enumerate(new):  # new ones apart from each other first
+      make_room(new, set(new[: k + 1]))
+  before = {w["id"]: dict(w["position"]) for w in m["waypoints"]}
+  make_room(list(pos), set(new))
+  for i in new:
+      print("NEW", i, round(pos[i]["x"]), round(pos[i]["y"]))
+  for i, b in before.items():
+      p = pos[i]
+      if (p["x"], p["y"]) != (b["x"], b["y"]):
+          print("SHIFT", i, round(p["x"]), round(p["y"]), f'{round(((p["x"]-b["x"])**2 + (p["y"]-b["y"])**2) ** 0.5)}px', label[i])
+  ```
+
+- **If it's a lot** (more than about 8 waypoints shift, or any by more
+  than 300 px), say so in the plan and offer the alternative: the
+  nearest empty spot beside a linked waypoint (a spot is empty when no
+  waypoint is within 260 px horizontally and 140 px vertically),
+  moving nothing.
+- **When adding** (after the OK): re-read `/api/data` and run the
+  script again. If its output differs from the plan (the user moved
+  something), show the new shifts and ask again. Otherwise create the
+  waypoints at their `NEW` positions, then send each shift with
+  `PUT /api/waypoints/<id>` and `{"position": {"x": …, "y": …}}` only
+  (it changes only the fields sent).
+- Never move an existing waypoint except by a shift shown in the plan
+  and approved.
 
 **If a request returns 401**, the site has an edit passcode. Ask the
 user for it, and send it in the `x-edit-passcode` header. Keep it out of
@@ -179,8 +243,8 @@ List the waypoints just added, by label and where they are, and say:
 > Open the map (refresh it if it was already open). To find each one,
 > type its label in the **search box** at the top right of the map;
 > new ones have a **red halo** until you click them or write a
-> description. The map makes room for them when you open it, pushing
-> any waypoints they overlap aside.
+> description. A few nearby waypoints were shifted aside to make room,
+> as the plan showed.
 > **Double-click** it and write its description.
 > Start from: what would you want to read here in three months? Why
 > does it exist, and what would confuse someone without it? Reply
@@ -217,7 +281,8 @@ to place the new waypoints in tours.
 
 - Write anything the user hasn't seen and approved, in this
   conversation, for this batch.
-- Delete a waypoint or an edge, or move an existing waypoint.
+- Delete a waypoint or an edge, or move an existing waypoint other than
+  by the shifts shown in the plan and approved.
 - Change text the user wrote (a description, notes, a label) without
   their OK, or draft a description they didn't ask for.
 - Edit the app's database files directly, or the user's repo.
