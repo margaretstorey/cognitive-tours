@@ -366,7 +366,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   ```
   (3) check each with the same loop running `turso db shell "$db" 
   ".schema Tour"` (or the affected table); (4) merge and push `main`, 
-  which deploys all sites. Apply the migration *before* 
+  which deploys your own site, then release to `stable` (below) so 
+  the other 18 get the new code too; never remove or rename a column 
+  without releasing first, since `stable` sites run older code on the 
+  new schema until then. Apply the migration *before* 
   the deploy, or the new code will query columns that don't exist yet. 
   Run only the new migration's SQL: production already has everything 
   earlier, including `TourWaypoint.narrative`, which was added by hand 
@@ -376,7 +379,22 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `npx dotenv -e .env.test -- npx prisma db push`.
   - **Team sites (Fall 2026 Startup Studio).** Each team has its own 
   Vercel project and Turso database, all deploying from this repo's 
-  `main`; only the env vars differ. Your own site is untouched.
+  `stable` branch (since Nov 7, below); only the env vars differ. Your own site is untouched.
+
+  **Two branches, `main` and `stable`** (Nov 7). Only your own site 
+  (cognitive-tours) deploys from `main`, so it shows every change as you 
+  work. The other 18 (demo, demo-flask, the team sites, Sandbox 1–9) 
+  deploy from `stable` (each project's Settings → Git → Production 
+  Branch), so the demo the ICSE paper and LinkedIn link 
+  (`https://cognitive-tours-demo.vercel.app/`), students' sites and 
+  people trying the sandboxes never see half-finished work. **Releasing** 
+  is a deliberate step: `git push origin main:stable` (a fast-forward; 
+  never commit to `stable` directly), then check the 18 Deployments tabs. 
+  A push to `main` still builds preview deployments for the 18; they 
+  aren't on the sites' addresses. The demo's nightly reset uses the 
+  `demo-canonical.json` bundled into `stable`'s build, so a refreshed 
+  copy reaches the demo only when released. Chosen over forking the 
+  repo (two repos, marketplaces and backup setups to keep in step).
 
   **The team sites aren't listed in the repo** (Nov 4): a site's address 
   is `cognitive-tours-<name>.vercel.app` and the sites have no login, so 
@@ -448,7 +466,7 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   waypoints and tours; they never reset (empty one by restoring an
   empty backup). All ten 
   are in `SITE_NAMES`, so they're backed up and migrated with the rest: 
-  every push to `main` now builds 19 sites. Anyone can edit the demo, so back it 
+  every release builds 19 sites (`main` your own, `stable` the other 18). Anyone can edit the demo, so back it 
   up before sharing the link; resetting it means restoring 
   `backups/demo-canonical.json` (see "Restoring a site from a backup" 
   above).
@@ -486,7 +504,8 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   nothing there (204). Check a night's run in the demo's Vercel logs 
   (`nightlyReset`). Only the main demo's notice promises a reset; the 
   others say "changes may be lost". **How changes reach every site:** 
-  code: one push to `main` deploys all of them; afterwards, check each 
+  code: a push to `main` deploys your own site, and a release 
+  (`git push origin main:stable`) the other 18; afterwards, check each 
   project's Deployments tab for the new build (see the Vercel Git 
   disconnect known issue). Schema: the migration loop above, never just 
   `cognitive-tours`. Backups: each site's `/api/data`, with team 
