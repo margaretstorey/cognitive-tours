@@ -674,8 +674,8 @@ Full constitution: .specify/memory/constitution.md
 ## Research connections
 
 - **Triple Debt paper** — cognitive debt + intent debt + technical debt
-- **TagSEA** (2006) — predecessor, waypoints and routes in Eclipse
-- **Tours Eclipse plugin** (2006) — direct ancestor of tour concept
+- **TagSEA** (2006) — predecessor, waypoints and routes in Eclipse: Storey, Cheng, Bull, Rigby, *Shared waypoints and social tagging to support collaboration in software development*, CSCW 2006, https://doi.org/10.1145/1180875.1180906
+- **Tours Eclipse plugin** (2006) — direct ancestor of tour concept: Cheng, Desmond, Storey, *Presentations by programmers for programmers*, ICSE 2007, https://doi.org/10.1109/ICSE.2007.67 (`docs/papers/tours-2006.pdf`)
 - **Habitat engineering** — Russ Miles, *The Sovereign Engineer*, and the AI Literacy Superpowers plugin: environments that make good AI output the default (related; intent for the agent)
 - **Lattice** — Rahul Garg's open-source skills for AI coding assistants, from his martinfowler.com series on reducing friction in AI-assisted development (related; context for the agent)
 - **SpecStory** — saves AI coding conversations as Markdown ("Intent is the new source code"); captures intent automatically, without curation

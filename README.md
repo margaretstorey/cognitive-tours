@@ -52,6 +52,7 @@ Then restart Claude Code. Details, other ways to install, and updating: [Skills 
 - [From Technical Debt to Cognitive and Intent Debt](https://arxiv.org/abs/2603.22106) (Storey, 2026), the research foundation.
 - [*Cognitive Tours: Making Understanding a Deliverable in AI-Assisted Development*](https://arxiv.org/abs/2611.08456) (arXiv, 2026), a longer version of the ICSE 2027 demo paper, which is under review.
 - [An early demo video](https://www.youtube.com/watch?v=I2S5Ee3bzi8) (4 min, Oct 23, 2026); newer walkthroughs coming soon.
+- **Earlier work, 20 years ago:** [*Shared waypoints and social tagging to support collaboration in software development*](https://doi.org/10.1145/1180875.1180906) (Storey, Cheng, Bull and Rigby, CSCW 2006), which introduced waypoints in TagSEA, and [*Presentations by programmers for programmers*](https://doi.org/10.1109/ICSE.2007.67) (Cheng, Desmond and Storey, ICSE 2007), which introduced tours of code ([PDF](docs/papers/tours-2006.pdf)).
 
 **Domains:** cognitive.tours | cognitivetours.dev
 
