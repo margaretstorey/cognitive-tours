@@ -1,30 +1,59 @@
 # Cognitive Tours
 
-<!-- Semi-automated by Claude-->
+**Maps and guided tours of your code that you write yourself, linking why to how.**
 
-A software comprehension tool where developers create waypoints and guided 
-tours to navigate intent, decisions, and code together.
+**[Try the demo](https://cognitive-tours-demo.vercel.app)** · [Install](#install) · [Quick start](#quick-start) · [Things to try](#things-to-try) · [The research](#the-research)
 
-**Status:** a research prototype, built by its author with AI assistance 
-(Claude Code), and used on itself: the map and tours describe how it was 
-built. Feedback and ideas are welcome.
+[![A tour in Cognitive Tours: the map of waypoints on the left, the current stop and the bridge to the next one in Tour Controls on the right](docs/images/graph-view.png)](https://cognitive-tours-demo.vercel.app)
 
-The core thesis: understanding cannot be outsourced or automated. Tours you 
-create yourself repair your own cognitive debt, tours you create for others are sharing some
-of your understanding with others. AI is a scaffold, an amplifier, not a 
-substitute.
+## Why
 
-**If you are a new collaborator, start here:** Open the live app and follow 
-the tours before reading any code. "Cognitive Tours - A Research Story" explains 
-the research motivation. "How Cognitive Tours Work" walks through the code 
-architecture. The app is self-documenting — the tours are the onboarding.
+- **Code outruns understanding.** With AI writing more of it, teams ship code nobody fully understands, and lose track of *why* it is the way it is (cognitive debt and intent debt).
+- **Writing the tour is how you get it back.** You place waypoints (goals, needs, decisions, code, tests, risks, open questions), connect them, and write guided tours that walk from why to how. Tours you write yourself rebuild your own understanding; tours you share pass some of it on.
+- **AI is a scaffold, not a substitute.** Claude Code skills can draft a starting map or ask you the right questions, but the understanding stays yours.
 
-**Try it:** see **[Getting started](docs/GETTING-STARTED.md)**: the public demo
-(https://cognitive-tours-demo.vercel.app, a copy of the self-documenting
-Cognitive Tours map, reset nightly), a Flask example, blank sandboxes to try
-writing your own tours, and how to use the AI skills in your own repo.  
-**Domains:** cognitive.tours | cognitivetours.dev  
-**Research foundation:** [From Technical Debt to Cognitive and Intent Debt](https://arxiv.org/abs/2603.22106) (Storey, 2026)
+**Status:** a research prototype, built by its author with AI assistance (Claude Code), and used on itself: the map and tours describe how it was built. Feedback and ideas are welcome.
+
+## Try it in two minutes, no install
+
+- **[The demo](https://cognitive-tours-demo.vercel.app):** a real map, of Cognitive Tours itself. Click **Start here** for a one-minute walkthrough, then pick **"A Research Story Behind Cognitive Tours"** and step through it. Anyone can edit it; it resets every hour.
+- **A sandbox of your own** to write waypoints and tours: ask the author for one.
+
+More in **[Getting started](docs/GETTING-STARTED.md)**, including a map of Flask, a codebase the author didn't write.
+
+## Install
+
+The Claude Code plugin **cognitive-tours** works in any repo. In your terminal:
+
+```
+claude plugin install cognitive-tours --marketplace margaretstorey/cognitive-tours
+```
+
+Then restart Claude Code. Details, other ways to install, and updating: [Skills for Claude Code](#skills-for-claude-code).
+
+## Quick start
+
+1. Open your repo in Claude Code.
+2. Ask: **"Make a starting map of this repo."** The first time, use the full command from your site's **Claude Code skills** button, which tells the skill which map is yours; it offers to remember it.
+3. Read the drafted map on your site, then rewrite it in your own words: it's marked as drafted by Claude until you do.
+
+## Things to try
+
+| Ask Claude Code | On the map |
+|---|---|
+| "Make a starting map of this repo" | Click **Start here** for the walkthrough |
+| "Help me record what I just did" | Pick a tour and step through it with **Next** |
+| "Add this to a tour" | Open a stop's file in VS Code or on GitHub |
+| "Is my map out of date with the code?" | Write the bridge from one stop to the next in **Edit tour** |
+| "Which of my tours are stale?" | Filter by layer (intent, technical) to see one view of the map |
+
+## The research
+
+- [From Technical Debt to Cognitive and Intent Debt](https://arxiv.org/abs/2603.22106) (Storey, 2026), the research foundation.
+- *Cognitive Tours: Making Understanding a Team Deliverable in AI-Assisted Development*, ICSE 2027 demo paper (under review).
+- [An early demo video](https://www.youtube.com/watch?v=I2S5Ee3bzi8) (4 min, Oct 23, 2026); newer walkthroughs coming soon.
+
+**Domains:** cognitive.tours | cognitivetours.dev
 
 ---
 
@@ -90,7 +119,7 @@ the right skill.
 - **`audit-waypoints`, `audit-tours`**: report where the map has drifted from
   the code.
 
-Try it on a blank sandbox: https://cognitive-tours-sandbox1.vercel.app.
+Try it on a blank sandbox of your own (ask the author for one).
 Details in [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md#3-the-ai-skills-claude-code).
 The plugin's files are in [`plugins/cognitive-tours/`](plugins/cognitive-tours/).
 
@@ -146,6 +175,12 @@ See `CLAUDE.md` for the full project state, key decisions, and backlog.
 ---
 
 ## Contributing
+
+**If you are a new collaborator, start here:** open the demo and follow 
+the tours before reading any code. "A Research Story Behind Cognitive Tours" 
+explains the research motivation, and "Architecture of the Cognitive Tours 
+App Code" walks through the code. The app is self-documenting: the tours are 
+the onboarding.
 
 Read `CLAUDE.md` before touching any code. It is the cognitive layer — the 
 bridge between intent, understanding, and code.
