@@ -72,6 +72,13 @@ also be toggled to a **markdown view** and exported as dated snapshots to the
 `tours/` folder. The graph panel has a **search/filter bar** to find nodes 
 quickly as the map grows.
 
+New waypoints, whether a skill added them, a teammate did, or you just made 
+one, wear a **red halo** until you click into their description, so nothing 
+slips in unnoticed; the filter panel's **New to you only** shows just those. 
+When something new lands on top of others, the map **makes room** by nudging 
+only the waypoints in the way, so the layout you know stays put. Deleting a 
+waypoint or a link can be **undone** (Undo, or Ctrl/⌘-Z).
+
 ---
 
 ## Ontology (in progress!)
@@ -118,7 +125,9 @@ the right skill.
   the tour stops for you; you write the descriptions and narratives in the
   app, with help if you ask.
 - **`audit-waypoints`, `audit-tours`**: report where the map has drifted from
-  the code.
+  the code: descriptions that no longer match their files, file paths that
+  no longer exist (with the commit that removed them), stale tour
+  narratives, and edge labels drifting apart.
 
 Try it on a blank sandbox of your own (ask the author for one).
 Details in [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md#3-the-ai-skills-claude-code).
@@ -193,7 +202,8 @@ start Claude Code from the repo root and it will read CLAUDE.md
 automatically.
 
 **Note for collaborators:** Before making significant changes, visit 
-/api/data and save the JSON as a backup. There is no undo.
+/api/data and save the JSON as a backup. Deleting a waypoint or a link can 
+be undone; nothing else can.
 
 The constitution (8 principles) lives at `.specify/memory/constitution.md`. 
 Read it before adding any feature.

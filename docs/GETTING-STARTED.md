@@ -70,8 +70,8 @@ pick up the skills.
 | `/cognitive-tours:first-tours` | For a repo you **don't know yet**: reads it and, after you OK the plan, adds a starting map to an empty site (about a dozen waypoints and two short tours, the user's view and the builder's view), all marked as drafted by Claude. You then check it and rewrite it in your own words. |
 | `/cognitive-tours:suggest-waypoint` | Finds recent work worth recording (decisions first) and, after you OK each small batch, adds the waypoints and links to the map, beside the waypoints they relate to. You write each description in the app (double-click the waypoint); it reads them back if you ask. |
 | `/cognitive-tours:suggest-tour` | Suggests where new waypoints fit in tours and, after you OK it, makes the change, one tour at a time, keeping every existing narrative. You write the tour description and the new narratives in **Edit tour**. |
-| `/cognitive-tours:audit-waypoints` | Checks code, ADR and test waypoints against the files they link to, and lists what has drifted. |
-| `/cognitive-tours:audit-tours` | Finds recently changed files that no waypoint or tour covers, stale or repetitive narratives, and redundant links. |
+| `/cognitive-tours:audit-waypoints` | Checks code, ADR and test waypoints against the files they link to, and lists what has drifted, and checks every waypoint's file path still exists (naming the commit that removed a missing file). |
+| `/cognitive-tours:audit-tours` | Finds recently changed files that no waypoint or tour covers, stale or repetitive narratives, redundant links, and edge labels drifting apart (near-duplicates, reversed directions). |
 
 **Every site's header has a Claude Code skills button** that lists these
 commands with that site's address already filled in, each with a Copy
@@ -98,5 +98,5 @@ also read its worklist history for the "why" behind changes. Not needed.
 
 ## Before you share a link
 
-There's **no login and no undo**: anyone with a site's link can change its
-map. Download a backup before sharing it, and again after a working session.
+There's **no login**, and **undo only for deletes** (in that browser, until
+you reload): anyone with a site's link can change its map. Download a backup before sharing it, and again after a working session.
