@@ -330,8 +330,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   border on every empty waypoint, which would mark old ones too. 
   Covered by `tests/new-halo.spec.ts` ✅ 
   **What you just made glows too** (Nov 8): a waypoint you create in the 
-  app gets the same red ring until you click it or open it to edit (this 
-  page view only, never added to the seen list), and the map centres on 
+  app gets the same red ring, under the same rule since Nov 10: until 
+  you click into its Description field or it has a description (one 
+  created with a description doesn't glow; a click no longer clears it). 
+  This page view only, never added to the seen list. The map centres on 
   it (zoom 1.0–1.5). On load, the map zooms to fit the new waypoints a 
   skill or teammate added. Covered by `tests/basic.spec.ts` and 
   `tests/new-halo.spec.ts` ✅

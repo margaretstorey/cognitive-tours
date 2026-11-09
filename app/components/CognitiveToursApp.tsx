@@ -170,9 +170,10 @@ export default function CognitiveToursApp() {
     () => (roomMadeOnLoad ? createdNeedingRoom : [...newAtLoad, ...createdNeedingRoom]),
     [roomMadeOnLoad, newAtLoad, createdNeedingRoom],
   );
-  // What you just created glows until you click or edit it (this page view
-  // only), and the map zooms to it. On load, the map zooms to fit the new
-  // waypoints a skill or teammate added (they glow via the seen list).
+  // What you just created glows, like a skill's new waypoint, until you click
+  // into its Description field or it has a description (this page view only),
+  // and the map zooms to it. On load, the map zooms to fit the new waypoints a
+  // skill or teammate added (they glow via the seen list).
   const [justCreated, setJustCreated] = useState<string[]>([]);
   const [createdFocus, setCreatedFocus] = useState<{ ids: string[]; key: number } | null>(null);
   const focusRequest = useMemo(
@@ -187,14 +188,19 @@ export default function CognitiveToursApp() {
     if (newAtLoad.length > 0) setRoomMadeOnLoad(true);
   }, [newAtLoad]);
   // Selecting a waypoint doesn't count as seeing it: its red halo stays until
-  // you click into its Description field (WaypointForm) or it has one.
+  // you click into its Description field (WaypointForm) or it has one. The
+  // same goes for the glow on one you just created.
+  const glowingCreated = useMemo(
+    () => justCreated.filter(id => !waypoints.find(w => w.id === id)?.description?.trim()),
+    [justCreated, waypoints],
+  );
 
   // Filter panel's "New to you only": show just the waypoints with a red halo
   // (new to this browser, or just created). It unticks itself once none are
   // left, so you're never left looking at an empty map.
   const newWaypointIds = useMemo(
-    () => new Set(waypoints.filter(w => isNewWaypoint(w) || justCreated.includes(w.id)).map(w => w.id)),
-    [waypoints, isNewWaypoint, justCreated],
+    () => new Set(waypoints.filter(w => isNewWaypoint(w) || glowingCreated.includes(w.id)).map(w => w.id)),
+    [waypoints, isNewWaypoint, glowingCreated],
   );
   const [newOnly, setNewOnly] = useState(false);
   if (newOnly && newWaypointIds.size === 0) setNewOnly(false);
@@ -287,7 +293,6 @@ export default function CognitiveToursApp() {
   const selectWaypoint = useCallback(
     (id: string | null) => {
       setSelectedWaypointId(id);
-      clearJustCreated(id);
       // Clicking an off-tour node suspends the tour rather than ending it:
       // Tour Controls collapses (its existing collapse affordance) and the
       // Waypoint panel opens to show the clicked node.
@@ -297,7 +302,7 @@ export default function CognitiveToursApp() {
         setPanelCollapsed(false);
       }
     },
-    [activeTour, currentStopWaypointId, clearJustCreated],
+    [activeTour, currentStopWaypointId],
   );
 
   const resumeTour = useCallback(() => {
@@ -830,11 +835,8 @@ export default function CognitiveToursApp() {
     [],
   );
   const openEditForm = useCallback(
-    (waypoint: Waypoint) => {
-      clearJustCreated(waypoint.id);
-      setForm({ open: true, mode: 'edit', waypoint });
-    },
-    [clearJustCreated],
+    (waypoint: Waypoint) => setForm({ open: true, mode: 'edit', waypoint }),
+    [],
   );
   const editWaypointById = useCallback(
     (id: string) => {
@@ -986,7 +988,7 @@ export default function CognitiveToursApp() {
               isNewWaypoint={isNewWaypoint}
               makeRoomFor={makeRoomFor}
               onRoomMade={onRoomMade}
-              justCreatedIds={justCreated}
+              justCreatedIds={glowingCreated}
               focusRequest={focusRequest}
             />
           )}
@@ -1198,7 +1200,14 @@ export default function CognitiveToursApp() {
           initialValues={form.mode === 'edit' ? form.waypoint : undefined}
           onSave={handleFormSave}
           onCancel={closeForm}
-          onDescriptionFocus={form.mode === 'edit' ? () => markWaypointsSeen([form.waypoint.id]) : undefined}
+          onDescriptionFocus={
+            form.mode === 'edit'
+              ? () => {
+                  markWaypointsSeen([form.waypoint.id]);
+                  clearJustCreated(form.waypoint.id);
+                }
+              : undefined
+          }
         />
       )}
       {undoToast && (

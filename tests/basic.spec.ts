@@ -91,7 +91,7 @@ test.describe('create a waypoint', () => {
     expect(Math.abs(got.y - expected.y)).toBeLessThan(60);
   });
 
-  test('a waypoint you create glows and is centred until you click it', async ({ page }) => {
+  test('a waypoint you create glows and is centred, through a click, until its Description field is clicked', async ({ page }) => {
     waypointLabel = `Playwright Glow Waypoint ${Date.now()}`;
     await page.goto('/');
     await page.getByTestId('canvas-add-waypoint').click();
@@ -109,7 +109,32 @@ test.describe('create a waypoint', () => {
       return Math.abs(b.x + b.width / 2 - (pane.x + pane.width / 2)) + Math.abs(b.y + b.height / 2 - (pane.y + pane.height / 2));
     }, { timeout: 5000 }).toBeLessThan(40);
 
+    // A click (selecting it) and opening the form don't clear the glow;
+    // clicking into Description does, as for a skill's new waypoint.
     await node.click();
+    await expect(node.locator('[data-new]')).toHaveAttribute('data-new', 'true');
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    const description = page.getByPlaceholder('What is this waypoint about?');
+    await expect(description).toBeVisible();
+    await expect(node.locator('[data-new]')).toHaveAttribute('data-new', 'true');
+    await description.click();
+    await page.keyboard.press('Escape');
+    await expect(description).toHaveCount(0);
+    await expect(node.locator('[data-new]')).toHaveCount(0);
+  });
+
+  test('a waypoint you create with a description has no glow', async ({ page }) => {
+    waypointLabel = `Playwright Described Waypoint ${Date.now()}`;
+    await page.goto('/');
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(waypointLabel);
+    await form.locator('select').selectOption('Feature');
+    await form.getByPlaceholder('What is this waypoint about?').fill('Already described.');
+    await form.getByRole('button', { name: 'Save' }).click();
+
+    const node = page.locator('.react-flow__node', { hasText: waypointLabel });
+    await expect(node).toBeVisible();
     await expect(node.locator('[data-new]')).toHaveCount(0);
   });
 
