@@ -102,6 +102,59 @@ test.describe('red halo on new waypoints and stops', () => {
     }, { timeout: 5000 }).toBeGreaterThan(pane.width * 0.5);
   });
 
+  test('"New to you only" in the filter panel shows just the haloed waypoints, and unticks itself', async ({ page, request }) => {
+    const baseline = `Halo Filter Old ${rand()}`;
+    await addWaypoint(request, baseline, 'Already here.');
+    await firstLoad(page);
+    const label = `Halo Filter New ${rand()}`;
+    await addWaypoint(request, label);
+    await page.reload();
+
+    const waypoint = page.locator('.react-flow__node', { hasText: label });
+    const old = page.locator('.react-flow__node', { hasText: baseline });
+    await expect(waypoint).toBeVisible();
+    await expect(old).toBeVisible();
+
+    // Other test files run in parallel and may add waypoints that are also
+    // new to this browser, so counts are checked loosely (at least ours).
+    const filterButton = page.getByRole('button', { name: /^Filter/ });
+    await filterButton.click();
+    const newOnly = page.getByRole('checkbox', { name: /New to you only/ });
+    await expect(newOnly).toBeEnabled();
+    await expect(page.getByText(/New to you only \([1-9]\d*\)/)).toBeVisible();
+    await newOnly.check();
+    await expect(waypoint).toBeVisible();
+    await expect(old).toHaveCount(0);
+    await expect(filterButton).toHaveText('Filter (1 hidden)');
+
+    // Close the panel and open the edit form from the Waypoint panel: select
+    // it, then Edit. (Not a double-click: other tests' new waypoints, at the
+    // same spot and also shown by this filter, can be under the pointer.)
+    await filterButton.click();
+    const description = page.getByPlaceholder('What is this waypoint about?');
+    await expect(async () => {
+      await waypoint.click();
+      await expect(page.getByRole('heading', { name: label })).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await expect(description).toBeVisible();
+
+    // Clear the halo: into Description and out again.
+    await description.click();
+    await page.keyboard.press('Escape');
+    await expect(description).toHaveCount(0);
+
+    // Ours is no longer new: either nothing new is left, so the filter turned
+    // itself off and the rest are back, or (another test's waypoint is still
+    // new) ours has dropped out of the filtered view.
+    await expect.poll(async () => (await old.count()) > 0 || (await waypoint.count()) === 0).toBe(true);
+    if ((await old.count()) > 0) {
+      await expect(filterButton).toHaveText('Filter');
+      await filterButton.click();
+      await expect(newOnly).not.toBeChecked();
+    }
+  });
+
   test('a waypoint added later with a description has no halo', async ({ page, request }) => {
     await firstLoad(page);
     const label = `Halo Described ${rand()}`;

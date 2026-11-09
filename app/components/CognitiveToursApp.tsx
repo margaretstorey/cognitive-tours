@@ -189,6 +189,16 @@ export default function CognitiveToursApp() {
   // Selecting a waypoint doesn't count as seeing it: its red halo stays until
   // you click into its Description field (WaypointForm) or it has one.
 
+  // Filter panel's "New to you only": show just the waypoints with a red halo
+  // (new to this browser, or just created). It unticks itself once none are
+  // left, so you're never left looking at an empty map.
+  const newWaypointIds = useMemo(
+    () => new Set(waypoints.filter(w => isNewWaypoint(w) || justCreated.includes(w.id)).map(w => w.id)),
+    [waypoints, isNewWaypoint, justCreated],
+  );
+  const [newOnly, setNewOnly] = useState(false);
+  if (newOnly && newWaypointIds.size === 0) setNewOnly(false);
+
   const selectedWaypoint = waypoints.find(w => w.id === selectedWaypointId) ?? null;
   const activeTour = tours.find(t => t.id === activeTourId) ?? null;
   const activeTourLength = activeTour?.stops.length ?? 0;
@@ -707,6 +717,7 @@ export default function CognitiveToursApp() {
           setSelectedWaypointId(tour?.stops[0]?.waypointId ?? null);
         }
         setFilterState(DEFAULT_FILTER_STATE);
+        setNewOnly(false);
       }
     },
     [tours, markdownViewOpen],
@@ -938,6 +949,9 @@ export default function CognitiveToursApp() {
         onEditorOpenChange={setTourEditorOpen}
         filterState={filterState}
         onFilterChange={(type, visible) => setFilterState(prev => ({ ...prev, [type]: visible }))}
+        newOnly={newOnly}
+        newCount={newWaypointIds.size}
+        onNewOnlyChange={setNewOnly}
         onExitTour={() => selectTour(null)}
         // Exactly one Exit on screen: the top-bar one whenever Tour Controls'
         // own isn't visible (collapsed, or hidden entirely in markdown view).
@@ -961,6 +975,7 @@ export default function CognitiveToursApp() {
               onNodePositionChange={onNodePositionChange}
               onAddWaypointClick={openCreateForm}
               filterState={filterState}
+              newOnlyIds={newOnly ? newWaypointIds : null}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               tourName={activeTour?.name}

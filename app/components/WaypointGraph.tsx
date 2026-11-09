@@ -72,6 +72,8 @@ interface WaypointGraphProps {
   onNodePositionChange: (id: string, position: { x: number; y: number }) => void;
   onAddWaypointClick: () => void;
   filterState: FilterState;
+  /** "New to you only" in the filter panel: show only these waypoints (null: off). */
+  newOnlyIds?: Set<string> | null;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   tourName?: string;
@@ -110,6 +112,7 @@ function Graph({
   onNodePositionChange,
   onAddWaypointClick,
   filterState,
+  newOnlyIds,
   searchQuery,
   onSearchChange,
   tourName,
@@ -192,10 +195,16 @@ function Graph({
     };
   }, [placementRef, getViewport, screenToFlowPosition, getNodes]);
 
-  // Only the type filter hides waypoints; search highlights instead.
+  // Only the filter panel hides waypoints (by type, and "New to you only");
+  // search highlights instead.
   const hiddenNodeIds = useMemo(
-    () => new Set(waypoints.filter(w => !filterState[w.type]).map(w => w.id)),
-    [waypoints, filterState]
+    () =>
+      new Set(
+        waypoints
+          .filter(w => !filterState[w.type] || (newOnlyIds != null && !newOnlyIds.has(w.id)))
+          .map(w => w.id)
+      ),
+    [waypoints, filterState, newOnlyIds]
   );
 
   // Visible waypoints whose label contains the query, alphabetical like the
@@ -205,11 +214,11 @@ function Graph({
       const q = query.trim().toLowerCase();
       if (!q) return [];
       return waypoints
-        .filter(w => filterState[w.type] && w.label.toLowerCase().includes(q))
+        .filter(w => !hiddenNodeIds.has(w.id) && w.label.toLowerCase().includes(q))
         .sort((a, b) => a.label.localeCompare(b.label))
         .map(w => w.id);
     },
-    [waypoints, filterState]
+    [waypoints, hiddenNodeIds]
   );
   const matchIds = useMemo(() => matchesFor(searchQuery), [matchesFor, searchQuery]);
   // Which match is current; a new query starts again at the first.

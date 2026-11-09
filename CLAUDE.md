@@ -373,6 +373,18 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   undo for edits and moves are left for later. Covered by 
   `tests/undo.spec.ts` ✅
 
+- **"New to you only" in the filter panel** (Nov 10; `TourBar.tsx`). 
+  A checkbox at the top of the panel, "New to you only (N)", shows 
+  only the waypoints with a red halo (new to this browser and not yet 
+  described, or just created by you) and hides the rest, the way type 
+  filters do; edges between two shown waypoints stay. It combines with 
+  the type checkboxes, counts toward the Filter button's badge, is 
+  greyed out when N is 0, unticks itself when the last halo clears, 
+  and resets when a tour is loaded. Asked for after a suggest-waypoint 
+  batch was hard to find on a 60+ waypoint map; chosen over dimming 
+  the rest (that's what search does). Covered by 
+  `tests/new-halo.spec.ts` ✅
+
 ### What is NOT yet built
 - File content preview in detail panel
 - AI-guided waypoint creation

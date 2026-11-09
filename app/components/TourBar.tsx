@@ -39,6 +39,11 @@ interface TourBarProps {
   onEditorOpenChange?: (open: boolean) => void;
   filterState: FilterState;
   onFilterChange: (type: WaypointType, visible: boolean) => void;
+  /** "New to you only": show just the waypoints with a red halo. */
+  newOnly: boolean;
+  /** How many waypoints have a red halo right now. */
+  newCount: number;
+  onNewOnlyChange: (on: boolean) => void;
   onExitTour: () => void;
   /** Show a top-bar Exit tour when Tour Controls' own Exit isn't visible. */
   showExitTour: boolean;
@@ -69,6 +74,9 @@ export default function TourBar({
   onEditorOpenChange,
   filterState,
   onFilterChange,
+  newOnly,
+  newCount,
+  onNewOnlyChange,
   onExitTour,
   showExitTour,
 }: TourBarProps) {
@@ -85,7 +93,8 @@ export default function TourBar({
   // Closed by default, and closed again whenever the editor closes.
   const [shownDescriptions, setShownDescriptions] = useState<Set<string>>(new Set());
   const filterPanelRef = useRef<HTMLDivElement>(null);
-  const hiddenCount = WAYPOINT_TYPES.filter(t => !filterState[t]).length;
+  // Hidden types, plus one for "New to you only" when it's on.
+  const hiddenCount = WAYPOINT_TYPES.filter(t => !filterState[t]).length + (newOnly ? 1 : 0);
 
   const sortedTours = useMemo(
     () => [...tours].sort((a, b) => a.name.localeCompare(b.name)),
@@ -282,6 +291,21 @@ export default function TourBar({
             </button>
             {filterPanelOpen && (
               <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px] z-10">
+                <label
+                  className={`flex items-center gap-2 text-sm px-2 pt-1 pb-1.5 mb-0.5 border-b border-gray-100 ${
+                    newCount === 0 ? 'text-gray-400 cursor-default' : 'cursor-pointer'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={newOnly}
+                    disabled={newCount === 0}
+                    onChange={e => onNewOnlyChange(e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0 ring-2 ring-red-500" />
+                  <span>New to you only ({newCount})</span>
+                </label>
                 <div className="flex gap-2 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
                   <button
                     onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, true))}
