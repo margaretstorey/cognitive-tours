@@ -242,8 +242,8 @@ List the waypoints just added, by label and where they are, and say:
 
 > Open the map (refresh it if it was already open). To find each one,
 > type its label in the **search box** at the top right of the map;
-> new ones have a **red halo** until you click them or write a
-> description. A few nearby waypoints were shifted aside to make room,
+> new ones have a **red halo** until you click into their Description
+> field or write a description. A few nearby waypoints were shifted aside to make room,
 > as the plan showed.
 > **Double-click** it and write its description.
 > Start from: what would you want to read here in three months? Why

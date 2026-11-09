@@ -1,6 +1,6 @@
 ---
 name: "audit-waypoints"
-description: "Check Code Component, ADR, and Test waypoint descriptions against the actual current contents of their linked files, and report factual drift as a list of manual edits — never writes to the waypoint data itself. Use when the user asks to check their waypoints, whether the map is out of date with the code, or which waypoint descriptions are wrong."
+description: "Check Code Component, ADR, and Test waypoint descriptions against the actual current contents of their linked files, and check that every waypoint's file path still exists; report factual drift and broken paths as a list of manual edits — never writes to the waypoint data itself. Use when the user asks to check their waypoints, whether the map is out of date with the code, or which waypoint descriptions are wrong."
 user-invocable: true
 disable-model-invocation: false
 ---
@@ -9,7 +9,8 @@ disable-model-invocation: false
 
 Purpose: check Code Component, ADR, and Test waypoint descriptions
 against the actual current contents of their linked files, and flag
-factual drift. This skill is read-only with respect to waypoint data:
+factual drift; and check that every waypoint's file path, of any type,
+still exists. This skill is read-only with respect to waypoint data:
 it reads the map from the site's `/api/data` and never writes to it or
 edits anything on the user's behalf. All corrections are applied by
 the user, by hand, through the app's own Edit Waypoint UI.
@@ -42,6 +43,14 @@ Usage: `/audit-waypoints`, optionally `site <url>`.
    how many waypoints it has.
 
 ## Procedure
+
+**Why only these three types are checked for drift:** Code Component,
+ADR and Test are the types whose descriptions make claims about a
+file's contents (what the code does, what a decision names, what a test
+checks). Goal, User Need, Risk, Open Question and AI Instruction
+usually describe intent, which has nothing in a file to be checked
+against, and a Feature has no one canonical file (see below). Every
+type's file *path* is still checked, in the next section.
 
 1. From that JSON, take all waypoints of type "Code Component", "ADR",
    or "Test" that have a non-empty filePath.
@@ -96,33 +105,45 @@ Usage: `/audit-waypoints`, optionally `site <url>`.
    production. Each fix is applied by the user, by hand, in the app's
    own Edit Waypoint form, at whatever pace they choose.
 
-## Feature filePath existence check (separate from the drift audit above)
+## File path check, every type (separate from the drift audit above)
 
-Features don't have one canonical implementation file the way Code
-Components do, so there's nothing reliable to diff a Feature's
-description against. This check is narrower and purely mechanical: does
-the referenced file exist, yes or no. It is not a judgment about
-whether the description is still accurate, and it runs and reports
+Any waypoint can point at a file, and a path that no longer exists
+breaks the link whatever the type (an Open Question pointing at a
+deleted note, a Goal pointing at a moved doc). Features also get only
+this check: they don't have one canonical implementation file the way
+Code Components do, so there's nothing reliable to diff a Feature's
+description against. This check is purely mechanical: does the
+referenced file exist, yes or no. It is not a judgment about whether
+the description is still accurate, and it runs and reports
 independently of the numbered, one-at-a-time drift findings above.
 
-1. Fetch all waypoints of type "Feature".
-2. For each one, check whether its filePath is empty/null or points to
-   a file that exists on disk. Do not read or evaluate the file's
+1. Take **every** waypoint with a non-empty filePath, of any type.
+   Skip external links (`http://` or `https://`); they're listed at the
+   end as "external, not checked".
+2. For each one, check whether the file exists on disk (compare
+   ignoring a leading `./`). Do not read or evaluate the file's
    contents — existence only.
-3. Report all Feature waypoints together in one block (not one at a
-   time, and not mixed into the drift-audit list), in this format:
+3. For each missing file, ask git what happened to it:
+   `git log --diff-filter=DR -1 --format='%h %ad %s' --date=short -- <path>`
+   gives the commit that deleted or renamed it, if any; for a rename,
+   `git log --diff-filter=R -1 --name-status --format= -- <path>` shows
+   the new path.
+4. Report them together in one block, grouped by type (not one at a
+   time, and not mixed into the drift-audit list). List the missing
+   ones in full and only count the rest:
 
    ```
-   Feature filePath existence check:
-   - <id> "<label>" → filePath: <path or "(none)"> → <MISSING | OK | OK, no spec file expected>
+   File path check (every type): 41 OK, 2 missing, 3 external
+   - [Open Question] <id> "<label>" → <path> → MISSING (deleted in 73d0eed, 2026-06-26: "delete some old files…")
+   - [Code Component] <id> "<label>" → <path> → MISSING (renamed in <hash>; now <new path>?)
    ```
 
-   Use `MISSING` when a filePath is set but the file doesn't exist,
-   `OK` when a filePath is set and the file exists, and `OK, no spec
-   file expected` when filePath is empty/null.
-4. As with the rest of this skill: report only. Never write to the
+   Waypoints with no filePath aren't listed: many types have none, on
+   purpose.
+5. As with the rest of this skill: report only. Never write to the
    waypoint data, and never offer to create the missing file or edit
-   the waypoint.
+   the waypoint. The fix (a new path, or clearing it) is the user's, in
+   the app.
 
 ## Never
 

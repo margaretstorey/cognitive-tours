@@ -1,6 +1,6 @@
 ---
 name: "audit-tours"
-description: "Check tours against the current code and map: which recently changed files have no waypoint or no tour, stale or non-bridging stop narratives, redundant edges and possible missing stops. Reads the site's /api/data; reports only, never writes to the map. Use when the user asks to check their tours, which tours are stale, or what recent work no tour covers."
+description: "Check tours against the current code and map: which recently changed files have no waypoint or no tour, stale or non-bridging stop narratives, redundant edges, possible missing stops and drifting edge labels. Reads the site's /api/data; reports only, never writes to the map. Use when the user asks to check their tours, which tours are stale, or what recent work no tour covers."
 user-invocable: true
 disable-model-invocation: false
 ---
@@ -98,7 +98,9 @@ Flag only these:
 - **Redundant path.** Two edges reach the same waypoint where one is
   implied by the other, e.g. A→contains→C when A→contains→B→contains→C
   exists. Report the edge that looks redundant; deleting it is the
-  user's call.
+  user's call. This uses labels as written, so drifting labels
+  ("implemented in" beside "implemented by") can hide a redundant
+  path; Section D lists them.
 - **Missing stop (suggestion only).** A waypoint connected by edges to
   two consecutive stops of a tour, but not itself in the tour. Phrase
   it as "consider", never as an error.
@@ -124,6 +126,38 @@ more, say so explicitly ("that's all of them").
 
 List any waypoint whose `filePath` starts with `http://` or `https://`
 as "external, not checked". Don't fetch them.
+
+## Section D — Edge labels (one block)
+
+The map's edge vocabulary (source → target): **motivates** (Goal → User
+Need), **supported by** (User Need → Feature), **contains** (Feature →
+Feature), **implemented by** (Feature → Code Component), **decomposes
+into** (Code Component → Code Component), **leads to** (ADR → Code
+Component or Feature), **validates** (Test → Feature), **threatens**
+(Risk → Feature or ADR). Other labels are allowed; this section only
+makes drift visible, so the user can decide.
+
+1. Count every edge label (`jq -r '.edges[].label // "(none)"' | sort |
+   uniq -c | sort -rn`).
+2. List the labels **not** in the vocabulary, with counts, most used
+   first.
+3. Pair likely near-duplicates with the vocabulary label they seem to
+   mean ("implemented in" ×5 → *implemented by*?; "address by" ×1 →
+   "addressed by"?), and flag any label whose direction looks reversed
+   from the vocabulary ("implements": Code Component → Feature, the
+   reverse of *implemented by*). Name one example edge for each
+   (source → target labels).
+4. Report it in one block and stop:
+
+   ```
+   Edge labels: 31 in use, 8 in the vocabulary, 23 others
+   - "implemented in" ×5 → same as "implemented by"? e.g. Tours → Core data types
+   - "implements" ×1 → reversed "implemented by"? e.g. TourBar → Tours
+   - "renders" ×4, "depends on" ×4, … (no close match: fine if meant)
+   ```
+
+Suggestions only. Relabelling an edge is done in the app; never edit
+edges yourself.
 
 ## When the user asks for a draft
 
