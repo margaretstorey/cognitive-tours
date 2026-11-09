@@ -47,16 +47,28 @@ test.describe('red halo on new waypoints and stops', () => {
     await expect(page.locator('[data-new="true"]')).toHaveCount(0);
   });
 
-  test('a waypoint added later has a halo until it is clicked', async ({ page, request }) => {
+  test('a waypoint added later keeps its halo through a click, until its Description field is clicked', async ({ page, request }) => {
     await firstLoad(page);
     const label = `Halo New ${rand()}`;
     await addWaypoint(request, label);
     await page.reload();
 
-    const node = page.locator('.react-flow__node', { hasText: label }).locator('[data-new]');
-    await expect(node).toHaveAttribute('data-new', 'true');
-    await page.locator('.react-flow__node', { hasText: label }).click();
-    await expect(page.locator('.react-flow__node', { hasText: label }).locator('[data-new]')).toHaveCount(0);
+    const waypoint = page.locator('.react-flow__node', { hasText: label });
+    await expect(waypoint.locator('[data-new]')).toHaveAttribute('data-new', 'true');
+
+    // A plain click (selecting it) no longer clears the halo.
+    await waypoint.click();
+    await expect(waypoint.locator('[data-new]')).toHaveAttribute('data-new', 'true');
+
+    // Opening the form doesn't either; clicking into Description does, even if you cancel.
+    await waypoint.dblclick();
+    const description = page.getByPlaceholder('What is this waypoint about?');
+    await expect(description).toBeVisible();
+    await expect(waypoint.locator('[data-new]')).toHaveAttribute('data-new', 'true');
+    await description.click();
+    await page.keyboard.press('Escape');
+    await expect(description).toHaveCount(0);
+    await expect(waypoint.locator('[data-new]')).toHaveCount(0);
 
     // Seen stays seen after a reload.
     await page.reload();

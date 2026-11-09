@@ -154,10 +154,8 @@ export default function CognitiveToursApp() {
     setCreatedNeedingRoom([]);
     if (newAtLoad.length > 0) setRoomMadeOnLoad(true);
   }, [newAtLoad]);
-  // Selecting a waypoint (click, search, tour step) counts as seeing it.
-  useEffect(() => {
-    if (selectedWaypointId) markWaypointsSeen([selectedWaypointId]);
-  }, [selectedWaypointId, markWaypointsSeen]);
+  // Selecting a waypoint doesn't count as seeing it: its red halo stays until
+  // you click into its Description field (WaypointForm) or it has one.
 
   const selectedWaypoint = waypoints.find(w => w.id === selectedWaypointId) ?? null;
   const activeTour = tours.find(t => t.id === activeTourId) ?? null;
@@ -947,6 +945,7 @@ export default function CognitiveToursApp() {
           initialValues={form.mode === 'edit' ? form.waypoint : undefined}
           onSave={handleFormSave}
           onCancel={closeForm}
+          onDescriptionFocus={form.mode === 'edit' ? () => markWaypointsSeen([form.waypoint.id]) : undefined}
         />
       )}
     </div>

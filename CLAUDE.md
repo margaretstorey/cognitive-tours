@@ -1,5 +1,5 @@
 @AGENTS.md
-Last updated: November 8 2026
+Last updated: November 10 2026
 
 # CLAUDE.md — The Cognitive Bridge
 > This file is the cognitive layer — the bridge between intent (Spec Kit), 
@@ -316,8 +316,10 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - **A red halo on what's new to you** (Nov 7; `app/lib/seen.ts`). 
   Waypoints and tour stops added since this browser last looked (by a 
   suggest skill, or a teammate on a shared site) get a red ring and 
-  glow: a waypoint on the graph until you click it (selecting it any 
-  way counts) or it has a description; a stop in **Edit tour**, with a 
+  glow: a waypoint on the graph until you click into its **Description** 
+  field (double-click it to open the form; since Nov 10, a plain click 
+  or selecting it no longer counts, so the halo reminds you it still 
+  needs your words) or it has a description; a stop in **Edit tour**, with a 
   "new" label, until you click into its narrative box or it has a 
   narrative. The browser remembers what it has seen in localStorage 
   (`cognitiveTours.seen`), per site; on a browser's first visit 

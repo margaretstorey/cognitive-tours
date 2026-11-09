@@ -9,9 +9,11 @@ interface WaypointFormProps {
   initialValues?: Partial<Omit<Waypoint, 'id' | 'position'>>;
   onSave: (data: Omit<Waypoint, 'id' | 'position'>) => void;
   onCancel: () => void;
+  /** Clicking into Description clears a waypoint's red "new" halo (app/lib/seen.ts). */
+  onDescriptionFocus?: () => void;
 }
 
-export default function WaypointForm({ mode, initialValues, onSave, onCancel }: WaypointFormProps) {
+export default function WaypointForm({ mode, initialValues, onSave, onCancel, onDescriptionFocus }: WaypointFormProps) {
   const [label, setLabel] = useState(initialValues?.label ?? '');
   const [type, setType] = useState<WaypointType | ''>(initialValues?.type ?? '');
   const [description, setDescription] = useState(initialValues?.description ?? '');
@@ -76,6 +78,7 @@ export default function WaypointForm({ mode, initialValues, onSave, onCancel }: 
             rows={3}
             value={description}
             onChange={e => setDescription(e.target.value)}
+            onFocus={onDescriptionFocus}
             placeholder="What is this waypoint about?"
           />
         </div>
