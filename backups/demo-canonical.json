@@ -8,8 +8,8 @@
       "notes": "",
       "filePath": "",
       "position": {
-        "x": -635.8601053975508,
-        "y": 59.23392526392776
+        "x": -691,
+        "y": 59
       }
     },
     {
@@ -20,8 +20,8 @@
       "notes": "Waypoints can be filtered by type. There is a small ontology of waypoint types that include waypoints to represent data about user needs (e.g., from customer interviews), proposed features, decisions made, code components, tests, AI instructions, and open questions/ideas.",
       "filePath": "app/lib/types.ts",
       "position": {
-        "x": 201.8684475431208,
-        "y": -179.58163738323833
+        "x": 302.9934475431208,
+        "y": -71.58163738323833
       }
     },
     {
@@ -32,8 +32,8 @@
       "notes": "Originated in TagSEA Routes (2006) and the Tours Eclipse plugin",
       "filePath": "app/lib/types.ts",
       "position": {
-        "x": 73.56944496832185,
-        "y": 88.07160131905654
+        "x": -56.43055503167815,
+        "y": 52.07160131905654
       }
     },
     {
@@ -45,7 +45,7 @@
       "filePath": "specs/003-waypoint-filepath/spec.md",
       "position": {
         "x": 342.75803233010527,
-        "y": 163.10582465899267
+        "y": 228.41836261676167
       }
     },
     {
@@ -56,8 +56,8 @@
       "notes": "One limitation: edge deletion via keyboard is unreliable on Mac — requires a workaround.",
       "filePath": "docs/adr/001-use-react-flow.md",
       "position": {
-        "x": -141.80748641913766,
-        "y": -432.359421233737
+        "x": -142,
+        "y": -515.8779725202007
       }
     },
     {
@@ -68,8 +68,8 @@
       "notes": "For cloud deployment, Turso (a hosted libSQL service) is used instead of a local SQLite file. Both are SQLite-compatible via Prisma. See the \"Use Turso for cloud persistence\" ADR.",
       "filePath": "docs/adr/005-sqlite-prisma-persistence.md",
       "position": {
-        "x": -239.05129873450528,
-        "y": -566.4162274668331
+        "x": -239,
+        "y": -665.8044038080544
       }
     },
     {
@@ -92,8 +92,8 @@
       "notes": "Tour stops are represented as TourStop objects (not bare waypoint IDs), which carry each stop's docent narrative alongside its waypoint reference.",
       "filePath": "app/components/CognitiveToursApp.tsx",
       "position": {
-        "x": 450.7742091766767,
-        "y": -143.58404558434825
+        "x": 522.9934475431207,
+        "y": -96.93338245637847
       }
     },
     {
@@ -136,7 +136,7 @@
       "id": "w16",
       "label": "WaypointForm — create/edit form",
       "type": "Code Component",
-      "description": "Modal form for creating and editing waypoints. Fields: title, type (dropdown populated from all defined waypoint types), description, notes, and linked artifact (file path). Opened from the '+ Add Waypoint' button in the waypoint detail panel's pinned action row, the graph's 'Add first waypoint' empty-state button, or the detail panel's Edit action.",
+      "description": "Modal form for creating and editing waypoints. Fields: title, type (dropdown populated from all defined waypoint types), description, notes, and linked artifact (file path). Opened from either '+ Add Waypoint' button (the map's top-right corner, or the Waypoint panel's pinned action row), the graph's 'Add first waypoint' empty-state button, the Waypoint panel's Edit action, or by double-clicking a waypoint on the map. Clicking into the Description field clears that waypoint's red \"new\" halo.",
       "notes": "",
       "filePath": "app/components/WaypointForm.tsx",
       "position": {
@@ -153,7 +153,7 @@
       "filePath": "app/lib/types.ts",
       "position": {
         "x": 255.93904185883156,
-        "y": -336.4110639847413
+        "y": -305.93338245637847
       }
     },
     {
@@ -200,8 +200,8 @@
       "notes": "\"Before we could deploy, we hit a wall. Here's the problem that forced two architectural decisions...\"  read on\n\nMitigation: use Turso when ready to deploy\n\nUpdate: \nVercel's filesystem is ephemeral — every deployment wipes local files. This risk forced us to find a cloud-compatible database solution. Next: the deployment decision.\n\nHistory: \"But Vercel's filesystem is ephemeral — every deploy wipes local files. The SQLite database we'd built everything on simply couldn't survive in this environment.\"",
       "filePath": "",
       "position": {
-        "x": 194.44659204583107,
-        "y": -615.4166195926866
+        "x": 268,
+        "y": -582
       }
     },
     {
@@ -212,8 +212,8 @@
       "notes": "I. Simplicity Over Complexity — YAGNI enforced\nII. Incremental Growth — one small verifiable step at a time\nIII. Intent Before Implementation — spec before code\nIV. Clean Readable TypeScript — strict mode, no any\nV. Minimal Clear UI — every element earns its place\nVI. Waypoints and Tours are Universal — not just for code\nVII. Flexible Navigation — code, intent, or both\nVIII. Human and Agent Readable — every waypoint meaningful to humans AND agents",
       "filePath": ".specify/memory/constitution.md",
       "position": {
-        "x": -407.52542857506353,
-        "y": -115.39744606151596
+        "x": -344.18831133607875,
+        "y": 74.09750200798321
       }
     },
     {
@@ -241,18 +241,6 @@
       }
     },
     {
-      "id": "w29",
-      "label": "Mitigate and repair cognitive debt",
-      "type": "Goal",
-      "description": "The overarching purpose of Cognitive Tours — helping developers and teams construct and maintain shared understanding of software systems, so that cognitive and intent debt don't accumulate and paralyze them.\n\nStorey (2026): proposes a triple debt model for software health. Technical debt lives in code, cognitive debt lives in people (eroded shared understanding), intent debt lives in artifacts (missing rationale and goals). Cognitive Tours addresses cognitive and in part intent debt.",
-      "notes": "The research motivation for Cognitive Tours\n\nBackground: \n\nCheng, Desmond, Storey (2006) (see below): Tours is an Eclipse plugin that lets programmers give live technical presentations by combining slideware with guided navigation through code waypoints.  \"Like Routes, but with a tour guide equipped with a flashlight and a dimmer switch.\"",
-      "filePath": "https://www.researchgate.net/publication/4251316_Presentations_by_Programmers_for_Programmers",
-      "position": {
-        "x": -1187.2052952945994,
-        "y": -397.2197698057725
-      }
-    },
-    {
       "id": "w-1780379099199",
       "label": "Filter waypoints by type (to reduce clutter)",
       "type": "Feature",
@@ -261,7 +249,7 @@
       "filePath": "specs/005-waypoint-type-filter/spec.md",
       "position": {
         "x": 344.01519817391124,
-        "y": -268.919270012353
+        "y": -209.93338245637847
       }
     },
     {
@@ -270,7 +258,7 @@
       "type": "Open Question",
       "description": "Could the skill output (markdown tour) be imported into the graph app to create clickable, navigable waypoints automatically? Would close the loop between the dialogue-based authoring approach and the visual navigation layer. Currently these are two separate workflows — import would make them complementary rather than parallel.",
       "notes": "",
-      "filePath": "cognitive-tours-skill.md",
+      "filePath": "import-test.md",
       "position": {
         "x": -537.9551452892754,
         "y": 720.4274616805181
@@ -306,8 +294,8 @@
       "notes": "The fix — Turso, a hosted version of SQLite, extending the same Prisma layer we already had\n\nTurso is a hosted libSQL service — SQLite-compatible but lives in the cloud. Both local and production now point to the same database.",
       "filePath": "docs/adr/003-use-turso.md",
       "position": {
-        "x": 343.65522478856167,
-        "y": -741.9333824563785
+        "x": 413.65522478856167,
+        "y": -731.9333824563785
       }
     },
     {
@@ -318,8 +306,8 @@
       "notes": "Note: Vercel gives us zero-config Next.js hosting with auto-deploy on every push to main. But deploying here exposed the SQLite problem. Next: how we solved the database.",
       "filePath": "docs/adr/004-deploy-to-vercel.md",
       "position": {
-        "x": 4.281427891204572,
-        "y": -567.8746695842112
+        "x": 112,
+        "y": -682
       }
     },
     {
@@ -330,8 +318,8 @@
       "notes": "The single file that switches between local SQLite and Turso based on environment variables. This is where the deployment architecture lives in code.\n\nDocent: \"Here's where it all comes together: one file that decides which database to talk to, Turso in production, local SQLite in development.\"",
       "filePath": "app/lib/db.ts",
       "position": {
-        "x": 650.7778679504131,
-        "y": -721.6896341726244
+        "x": 697.6552247885617,
+        "y": -647.6896341726244
       }
     },
     {
@@ -416,8 +404,8 @@
       "notes": "This text generated by Claude ... (example of what an agent could do)\nLink to code not right... fix later.",
       "filePath": "specs/006-docent-mode/spec.md",
       "position": {
-        "x": 273.3290821891752,
-        "y": -46.71727442708813
+        "x": 261.7742091766767,
+        "y": 28.41836261676167
       }
     },
     {
@@ -446,7 +434,7 @@
       "id": "w-1782760613840",
       "label": "TourMarkdownView",
       "type": "Code Component",
-      "description": "Read-only client component that renders an active tour as flowing prose. Shows the tour title as H1, description as intro paragraph, then each waypoint stop in sequence — label as H2, description, notes, filePath as inline code, and docent narrative as an amber blockquote. Scrollable. No edit controls. [written by claude]",
+      "description": "Read-only client component that renders an active tour as flowing prose. Shows the tour title as H1, the \"By <author> · Updated <date>\" byline, and the tour description, then each stop in sequence: \"Step N:\" with the label and a type chip (colour and icon) as H2, the description (\"What this is:\"), notes, the file path in monospace (a VS Code link when a code folder is set in this browser, plus \"View on GitHub\" when the repo is known), and the docent narrative in an amber box headed \"Next stop commentary:\". The current stop is highlighted and scrolled to. Scrollable. No edit controls. [co-written by claude, updated Nov 10]",
       "filePath": "app/components/TourMarkdownView.tsx",
       "position": {
         "x": 1201.4198975681393,
@@ -469,12 +457,12 @@
       "id": "w-1782778490775",
       "label": "Playwright smoke tests",
       "type": "Test",
-      "description": "Nineteen automated tests in tests/basic.spec.ts. They cover creating and deleting waypoints; tour navigation, docent narrative and stop focus/spotlight; Exit tour and the Markdown View (author/date byline, jumping to the current stop); the filter panel closing on a canvas click; the project name pill and exports; VS Code and GitHub file links; and downloading the site's map as a backup. Run locally with npx playwright test, which starts its own dev server on localhost:3000 against the isolated prisma/test.db (see CLAUDE.md for more details).",
+      "description": "Forty automated tests in tests/basic.spec.ts, plus sixteen in four newer files (new-halo, make-room, start-here, undo), 56 in all. basic.spec.ts covers creating and deleting waypoints (including where a new one lands and its glow), double-click to edit; tour navigation, docent narrative, stop focus/spotlight and the tour editor's bridges; Exit tour and the Markdown View (author/date byline, jumping to the current stop); search, type icons, and the filter panel closing on a canvas click; the project name pill, site notice and exports; VS Code and GitHub file links; downloading the site's map as a backup; the edit passcode, the hourly demo reset and the site list; and the empty-map and Claude Code skills panels. Run locally with npx playwright test, which starts its own dev server on localhost:3000 against the isolated prisma/test.db (see CLAUDE.md for more details).",
       "notes": "Acceptance tests perhaps to be written using Playwright: (1) persistence — create waypoint, refresh, verify present; (2) tour navigation — step through all waypoints, verify highlight; (3) delete cascade — delete waypoint, verify removed from graph, edges, and tours.",
       "filePath": "tests/basic.spec.ts",
       "position": {
         "x": 393.6481544072435,
-        "y": 40.04161312447152
+        "y": 128.41836261676167
       }
     },
     {
@@ -518,8 +506,8 @@
       "notes": "Deliberately scoped to verifiable facts only, not interpretive language — flags a stale \"8 types\" claim, but wouldn't touch \"this is the brain of the app.\" Distinguishing mechanical fact-corrections (safe to batch-approve) from conceptual drift (worth rewriting by hand, since accepting a rewritten story risks the same understanding-outsourcing concern as AI Suggest) is left as a judgment call for whoever runs it — not something the skill itself decides. The skills never write to the map; any write would be a separate, deliberate request, outside the skills.",
       "filePath": ".claude/skills/audit-tours/SKILL.md",
       "position": {
-        "x": -155.07164207607968,
-        "y": -232.2685031590616
+        "x": -111,
+        "y": -278.8779725202008
       }
     },
     {
@@ -539,7 +527,7 @@
       "description": "The default view for the app. Displays the understanding map as an interactive React Flow graph, scoped to the active tour when one is selected (dimming/hiding non-tour nodes) or showing everything when none is. Docent mode's amber narrative appears here, in the Tour Control Panel, when the current tour stop has narrative text.",
       "notes": "Distinct from Full Map Mode, which shows the entire graph unscoped to any tour and does not support docent narrative, since there's no active tour stop for narrative to attach to.",
       "position": {
-        "x": 602.053586312187,
+        "x": 613.6481544072435,
         "y": 187.61132039707095
       }
     },
@@ -551,7 +539,7 @@
       "notes": "Could serve as a manual backup alongside /api/data, though not yet relied on for that purpose.",
       "position": {
         "x": 302.7096808603463,
-        "y": -423.3001474916589
+        "y": -401.93338245637847
       }
     },
     {
@@ -573,7 +561,7 @@
       "notes": "Note for example it was easy to add this waypoint because of this interface.",
       "position": {
         "x": -394.015048076916,
-        "y": -475.88225030356426
+        "y": -552.8044038080544
       }
     },
     {
@@ -608,16 +596,6 @@
       }
     },
     {
-      "id": "w-1787345242753",
-      "label": "Ensure waypoints and tours stay consistent",
-      "type": "User Need",
-      "description": "Software changes - ideally the developer will update waypoints and tours as they go but things may drift",
-      "position": {
-        "x": -652.4634090787454,
-        "y": -225.19325819099888
-      }
-    },
-    {
       "id": "w-1792829588257",
       "label": "Export Tour tests",
       "type": "Test",
@@ -637,7 +615,7 @@
       "filePath": "docs/adr/008-one-site-per-team.md",
       "position": {
         "x": -415.2544291014729,
-        "y": -760.1997420662208
+        "y": -778.8044038080544
       }
     },
     {
@@ -648,8 +626,8 @@
       "notes": "Intended direction, but not before there are more than 2 or 3 outside users\".",
       "filePath": "docs/adr/007-single-database-team-scoping.md",
       "position": {
-        "x": -5.609769144013299,
-        "y": -823.6440437828127
+        "x": -5,
+        "y": -892.8044038080544
       }
     },
     {
@@ -660,8 +638,8 @@
       "notes": "Facts from Claude, Nov 3\n\nEach team gets their own clean site and won't be confused by other team sites.its own link, opening on an empty map (app/api/data/route.ts, SEED_ON_EMPTY=false);\na \"Project:\" label in the header, tab title and exports (app/lib/project.ts);\noptionally, file paths that open in the team's GitHub repo (app/lib/repo.ts).\n\nYes, that's your description. It says what a team gets (a clean site of its own) and why that matters (no confusion with other teams). Two optional additions:\n\nHow a team knows it's on the right site: e.g. the \"Project: Acme\" label in the header and tab title (app/lib/project.ts). That's the visible part of \"won't be confused\".\nIt's not only about confusion; it's also protection. One team can't change another team's map, because each site has its own database (ADR 008).",
       "filePath": "app/lib/project.ts",
       "position": {
-        "x": -140.17032299024748,
-        "y": -680.3099727770444
+        "x": -108,
+        "y": -761.8044038080544
       }
     },
     {
@@ -672,7 +650,7 @@
       "notes": "This waypoint doesn't link to any file - this user need is in my head (and now in this tour) only.",
       "position": {
         "x": -703.7829893266035,
-        "y": -669.1066501105479
+        "y": -676.7197698057724
       }
     },
     {
@@ -683,8 +661,8 @@
       "notes": "I sometimes ask Claude to override my instruction and suggest text without asking me questions or forcing me to draft - but with this map - I have never asked it to write to my database (but I have done so for other maps - but at the cost of not building any comprehension!).  The drafting step also costs in comprehension\n\nReverses my earlier idea (Open Question \"how to connect cognitive tours to claude code\") that Claude would add waypoints to the database. Decided Oct 21 when the suggest skills were built (779686e); provenance line added Nov 3 (4a80816). Description drafted with Claude's help, Nov 3.",
       "filePath": ".claude/skills/suggest-waypoint/SKILL.md",
       "position": {
-        "x": -411.6882767589862,
-        "y": -242.8877945792211
+        "x": -478,
+        "y": -294.8044038080544
       }
     },
     {
@@ -705,8 +683,8 @@
       "notes": "Description drafted with Claude's help, Nov 3.",
       "filePath": ".claude/skills/suggest-waypoint/SKILL.md",
       "position": {
-        "x": -154.015081443079,
-        "y": -313.8995451557827
+        "x": -168,
+        "y": -402.8779725202008
       }
     },
     {
@@ -716,8 +694,8 @@
       "description": "This is not intended to analyze the code automatically or do architecture recovery.\n\nThe act of creating waypoints and tours IS the cognitive debt repair.",
       "notes": "The user can override the instruction skill to not automate...  but that's not the point! But may be useful in some circumstances to speed up curation or for demo purposes.",
       "position": {
-        "x": -635.4901900030245,
-        "y": -359.286515012847
+        "x": -769.3856341424504,
+        "y": -389.57347074411086
       }
     },
     {
@@ -727,8 +705,63 @@
       "description": "Currently types are a TypeScript union in types.ts — adding or renaming a type requires a code change and deploy. Moving types to a database table would let researchers evolve the ontology without touching code. Tradeoff: more complexity, colour coding and filters would need to be dynamic too. Note relationships are not typed and do not even have to be labelled.",
       "filePath": "app/lib/types.ts",
       "position": {
-        "x": -697.7052952945994,
-        "y": -603.7197698057724
+        "x": -733.7052952945994,
+        "y": -563.7197698057724
+      }
+    },
+    {
+      "id": "w-1794245626180-c8ruwh",
+      "label": "Skills add what you approve; you write the understanding",
+      "type": "ADR",
+      "description": "This skill suggests new waypoints and what they connect to - the user approves (via claude) and the skill adds them to the map.  But the user must manually add the description for the red halo to go away.",
+      "filePath": "plugins/cognitive-tours/skills/suggest-waypoint/SKILL.md",
+      "position": {
+        "x": -472.6609586768818,
+        "y": -439.8044038080544
+      }
+    },
+    {
+      "id": "w-1794245626180-odd759",
+      "label": "Cognitive Tours skills as a Claude Code plugin",
+      "type": "Feature",
+      "description": "This plugin helps bundle the skills for cognitive tours. The why is that students and others can install the skills in their own repos with one command.",
+      "filePath": "plugins/cognitive-tours/.claude-plugin/plugin.json",
+      "position": {
+        "x": -508.2160321048005,
+        "y": -163.80440380805442
+      }
+    },
+    {
+      "id": "w-1794245626180-hzuyye",
+      "label": "First tours: a starting map for an unfamiliar repo",
+      "type": "AI Instruction",
+      "description": "This is to get over the blank page challenge when using Cognitive Tours with an existing repo... other tools generate views of everything in the repo - this one just generates two tours (and a few waypoints) one for the builder and one for the user to give a starting point...",
+      "filePath": "plugins/cognitive-tours/skills/first-tours/SKILL.md",
+      "position": {
+        "x": -256.7421353675744,
+        "y": -146.3627809927163
+      }
+    },
+    {
+      "id": "w29",
+      "label": "Mitigate and repair cognitive debt",
+      "type": "Goal",
+      "description": "The overarching purpose of Cognitive Tours — helping developers and teams construct and maintain shared understanding of software systems, so that cognitive and intent debt don't accumulate and paralyze them.\n\nStorey (2026): proposes a triple debt model for software health. Technical debt lives in code, cognitive debt lives in people (eroded shared understanding), intent debt lives in artifacts (missing rationale and goals). Cognitive Tours addresses cognitive and in part intent debt.",
+      "notes": "The research motivation for Cognitive Tours\n\nBackground: \n\nCheng, Desmond, Storey (2006) (see below): Tours is an Eclipse plugin that lets programmers give live technical presentations by combining slideware with guided navigation through code waypoints.  \"Like Routes, but with a tour guide equipped with a flashlight and a dimmer switch.\"",
+      "filePath": "https://www.researchgate.net/publication/4251316_Presentations_by_Programmers_for_Programmers",
+      "position": {
+        "x": -1187.2052952945994,
+        "y": -397.2197698057725
+      }
+    },
+    {
+      "id": "w-1787345242753",
+      "label": "Ensure waypoints and tours stay consistent",
+      "type": "User Need",
+      "description": "Software changes - ideally the developer will update waypoints and tours as they go but things may drift",
+      "position": {
+        "x": -798.4351592949963,
+        "y": -284.4289766102727
       }
     }
   ],
@@ -786,12 +819,6 @@
       "source": "w07",
       "target": "w16",
       "label": "implemented by"
-    },
-    {
-      "id": "e-1780364000600",
-      "source": "w29",
-      "target": "w02",
-      "label": "motivates"
     },
     {
       "id": "e-1780364287430",
@@ -1082,12 +1109,6 @@
       "label": "leads to"
     },
     {
-      "id": "e-1783548199360",
-      "source": "w29",
-      "target": "w-1783548172868",
-      "label": "motivates"
-    },
-    {
       "id": "e-1783548213679",
       "source": "w-1783548172868",
       "target": "w11",
@@ -1136,18 +1157,6 @@
       "label": "addressed by"
     },
     {
-      "id": "e-1792827808236",
-      "source": "w29",
-      "target": "w-1787345242753",
-      "label": "motivates"
-    },
-    {
-      "id": "e-1792827814496",
-      "source": "w29",
-      "target": "w-1782491878877",
-      "label": "motivates"
-    },
-    {
       "id": "e-1792829608373",
       "source": "w-1783546089293",
       "target": "w-1792829588257",
@@ -1170,12 +1179,6 @@
       "source": "w-1793743371612",
       "target": "w-1780457252868",
       "label": "leads to"
-    },
-    {
-      "id": "e-1793744732860",
-      "source": "w29",
-      "target": "w-1793744067277",
-      "label": "motivates"
     },
     {
       "id": "e-1793744817834",
@@ -1202,15 +1205,87 @@
       "label": "leads to"
     },
     {
-      "id": "e-1793747905245",
-      "source": "w-1787345242753",
+      "id": "e-1794245834456-qjuqcg",
+      "source": "w-1794245626180-c8ruwh",
+      "target": "w-1793747738966",
+      "label": "leads to"
+    },
+    {
+      "id": "e-1794245834499-touftp",
+      "source": "w-1794245626180-c8ruwh",
       "target": "w-1793746992534",
+      "label": "supersedes"
+    },
+    {
+      "id": "e-1794245834540-8b6c66",
+      "source": "w-1794245626180-odd759",
+      "target": "w-1793747738966",
+      "label": "contains"
+    },
+    {
+      "id": "e-1794245834588-synfaz",
+      "source": "w-1794245626180-odd759",
+      "target": "w-1783496581817",
+      "label": "contains"
+    },
+    {
+      "id": "e-1794245834631-b31xo8",
+      "source": "w-1794245626180-odd759",
+      "target": "w-1794245626180-hzuyye",
+      "label": "contains"
+    },
+    {
+      "id": "e-1794245834673-eyayor",
+      "source": "w02",
+      "target": "w-1794245626180-hzuyye",
+      "label": "supported by"
+    },
+    {
+      "id": "e-1780364000600",
+      "source": "w29",
+      "target": "w02",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1783548199360",
+      "source": "w29",
+      "target": "w-1783548172868",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1792827814496",
+      "source": "w29",
+      "target": "w-1782491878877",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1793744732860",
+      "source": "w29",
+      "target": "w-1793744067277",
       "label": "motivates"
     },
     {
       "id": "e-1793813233612",
       "source": "w29",
       "target": "w-1793813092861",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1793747905245",
+      "source": "w-1787345242753",
+      "target": "w-1793746992534",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1794245834279-f00bmo",
+      "source": "w-1787345242753",
+      "target": "w-1794245626180-c8ruwh",
+      "label": "motivates"
+    },
+    {
+      "id": "e-1792827808236",
+      "source": "w29",
+      "target": "w-1787345242753",
       "label": "motivates"
     }
   ],
@@ -1274,18 +1349,23 @@
       "description": "A tour to help a newcomer understand the story behind Cognitive Tours",
       "author": "Peggy",
       "createdAt": "2026-10-21T01:36:37.000Z",
-      "updatedAt": "2026-11-04T17:35:25.710Z",
+      "updatedAt": "2026-11-09T19:24:05.172Z",
       "stops": [
         {
           "waypointId": "w29",
           "narrative": "The overarching goal of this tool is to \"mitigate cognitive debt\". Cognitive debt accumulates when you go too fast using AI. One can \"lose the plot\" after hours of coding and it can creep up over time and across the team, not even knowing who knows what."
         },
         {
-          "waypointId": "w-1782491878877"
+          "waypointId": "w-1782491878877",
+          "narrative": "Not just catching up but also onboarding new developers - we visit that user need next"
         },
         {
           "waypointId": "w02",
-          "narrative": "To facilitate these user needs, we look at two main features, the first waypoints..."
+          "narrative": "To facilitate these user needs, we need some skills not just features in the app"
+        },
+        {
+          "waypointId": "w-1794245626180-hzuyye",
+          "narrative": "To meet these user needs though we need some core feeatures that we visit next..."
         },
         {
           "waypointId": "w04",
@@ -1456,27 +1536,35 @@
     },
     {
       "id": "t-1793748102731",
-      "name": "How AI Helps Repair Intent Debt Without Writing For Me",
-      "description": "Why my Claude Code skills ask questions and leave the writing to me, and which skills do what. Stop narratives drafted with Claude's help, Nov 3.",
+      "name": "How AI Helps Repair Intent Drift But Preserve Human Understanding",
+      "description": "This tour describes how I can use AI to help keep waypoints and tours up to date as the product evolves, and in a way that balances toil while still preserving friction to help promote understanding",
       "author": "Peggy",
       "createdAt": "2026-11-03T23:21:42.929Z",
-      "updatedAt": "2026-11-03T23:21:42.929Z",
+      "updatedAt": "2026-11-09T19:24:05.177Z",
       "stops": [
         {
           "waypointId": "w-1787345242753",
           "narrative": "Keeping the map in step with the code is too much to do by hand alone, but letting AI do it would undo the point of the tool. So first, the rule I set for AI."
         },
         {
-          "waypointId": "w-1793746992534",
-          "narrative": "With that rule in place, the first kind of skill helps while I work: it asks, I write."
+          "waypointId": "w-1794245626180-c8ruwh",
+          "narrative": "To meet this decision I need skills for suggesting new waypoints and tours first..."
         },
         {
           "waypointId": "w-1793747738966",
-          "narrative": "Recording as I go still leaves things to go stale, so a second kind of skill checks afterwards."
+          "narrative": "Recording as I go still leaves things to go stale as I make changes, so a second kind of skill checks afterwards (auditing)"
         },
         {
           "waypointId": "w-1783496581817",
-          "narrative": "Whether questions-first really builds understanding is still open: I tried it on Nov 3 and it helped, but it was also tiring."
+          "narrative": "These skills are useful so I'm packaging them as a claude code plugin to make it easier for people to access them to use with cognitive tours"
+        },
+        {
+          "waypointId": "w-1794245626180-odd759",
+          "narrative": "Another skill I added which is part of this plugin is for when people use cognitive tours on an existing repo and they could be faced with a blank page - there is a simple skill for creating some first tours that we visit next"
+        },
+        {
+          "waypointId": "w-1794245626180-hzuyye",
+          "narrative": "This concludes this tour of how to capture intent and keep it up to date to avoid drift as the project changes"
         }
       ]
     }
