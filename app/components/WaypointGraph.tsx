@@ -581,6 +581,9 @@ function Graph({
           onEdgeDoubleClick={onEdgeDoubleClick}
           fitView
           fitViewOptions={{ padding: 0.2 }}
+          // React Flow's default minimum is 0.5, too close to show a large map
+          // whole; 0.1 lets scrolling out and the fit-view control reach it.
+          minZoom={0.1}
           deleteKeyCode={null}
         >
           <Background />

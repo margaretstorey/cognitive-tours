@@ -965,3 +965,38 @@ test.describe('Claude Code skills panel', () => {
     await expect(page.getByText(/Step 1 of/)).toBeVisible();
   });
 });
+
+test.describe('zooming out on a large map', () => {
+  const made: string[] = [];
+  test.afterEach(async ({ request }) => {
+    for (const id of made) await request.delete(`/api/waypoints/${id}`);
+    made.length = 0;
+  });
+
+  test('the fit view control shows waypoints 6,000 units apart (below React Flow\'s default 0.5 zoom)', async ({ page, request }) => {
+    const rand = () => Math.random().toString(36).slice(2, 8);
+    const labels = [`Zoom Far West ${rand()}`, `Zoom Far East ${rand()}`];
+    const spots = [{ x: -3000, y: -2000 }, { x: 3000, y: 2000 }];
+    for (let i = 0; i < 2; i++) {
+      const id = `w-${Date.now()}-${rand()}`;
+      const res = await request.post('/api/waypoints', {
+        data: { id, label: labels[i], type: 'Feature', description: 'Far away.', notes: null, filePath: null, position: spots[i] },
+      });
+      expect(res.ok()).toBeTruthy();
+      made.push(id);
+    }
+
+    await page.goto('/');
+    // In dev mode the Next.js indicator ("N", bottom left) sits over this
+    // control, so send the click to it directly.
+    await page.locator('.react-flow__controls-fitview').dispatchEvent('click');
+    const pane = (await page.locator('.react-flow__pane').boundingBox())!;
+    for (const label of labels) {
+      const node = page.locator('.react-flow__node', { hasText: label });
+      await expect.poll(async () => {
+        const b = await node.boundingBox();
+        return !!b && b.x >= pane.x && b.y >= pane.y && b.x + b.width <= pane.x + pane.width && b.y + b.height <= pane.y + pane.height;
+      }, { timeout: 5000 }).toBe(true);
+    }
+  });
+});
