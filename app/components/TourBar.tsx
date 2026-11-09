@@ -291,21 +291,6 @@ export default function TourBar({
             </button>
             {filterPanelOpen && (
               <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-0.5 min-w-[190px] z-10">
-                <label
-                  className={`flex items-center gap-2 text-sm px-2 pt-1 pb-1.5 mb-0.5 border-b border-gray-100 ${
-                    newCount === 0 ? 'text-gray-400 cursor-default' : 'cursor-pointer'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={newOnly}
-                    disabled={newCount === 0}
-                    onChange={e => onNewOnlyChange(e.target.checked)}
-                    className="rounded"
-                  />
-                  <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0 ring-2 ring-red-500" />
-                  <span>New to you only ({newCount})</span>
-                </label>
                 <div className="flex gap-2 px-2 pb-1.5 mb-0.5 border-b border-gray-100">
                   <button
                     onClick={() => WAYPOINT_TYPES.forEach(type => onFilterChange(type, true))}
@@ -349,6 +334,21 @@ export default function TourBar({
                     <span>{type}</span>
                   </label>
                 ))}
+                <label
+                  className={`flex items-center gap-2 text-sm px-2 pt-1.5 mt-0.5 border-t border-gray-100 ${
+                    newCount === 0 ? 'text-gray-400 cursor-default' : 'cursor-pointer'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={newOnly}
+                    disabled={newCount === 0}
+                    onChange={e => onNewOnlyChange(e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0 ring-2 ring-red-500" />
+                  <span>New to you only ({newCount})</span>
+                </label>
               </div>
             )}
           </div>
