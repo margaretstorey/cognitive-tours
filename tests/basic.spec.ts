@@ -203,7 +203,8 @@ test.describe('delete a waypoint', () => {
     await form.getByRole('button', { name: 'Save' }).click();
     await page.getByText('Waypoint To Delete').click();
     await page.getByRole('button', { name: 'Delete' }).click();
-    await expect(page.getByText('Waypoint To Delete')).not.toBeVisible();
+    // Gone from the map (the Undo toast still names it).
+    await expect(page.locator('.react-flow__node', { hasText: 'Waypoint To Delete' })).toHaveCount(0);
   });
 });
 

@@ -353,6 +353,26 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `tests/keep-positions.ts` puts back anything pushed aside. Covered by 
   `tests/make-room.spec.ts` ✅
 
+- **Deletes can be undone** (Nov 10; `CognitiveToursApp.tsx`). After 
+  deleting a waypoint or a link, a toast at the bottom centre reads 
+  "Deleted <label>. Undo" (or "Deleted link <from> → <to>. Undo") for 
+  10 seconds or until the next delete, and Ctrl/⌘-Z undoes the most 
+  recent delete, then the one before (up to 20). Ctrl/⌘-Z is ignored 
+  while typing in a field or with a form, the tour editor or a dialog 
+  open, so it never fights text undo. Undoing a waypoint puts back, 
+  with the same ids, the waypoint (label, type, description, notes, 
+  file path, position), every link it had, and its stop in each tour, 
+  with its narrative, at its old position in the tour's *current* stop 
+  list, so stops added or moved since are kept. A restored waypoint 
+  gets no red halo. This page view only: a reload empties the stack. 
+  If something it needs is gone (a tour or the other end of a link 
+  deleted meanwhile), it restores what it can and says what it 
+  couldn't. No server or schema change: it re-sends the usual POST/PUT 
+  calls, with the edit passcode. The user asked for it ("I need 
+  this") and chose deletes only for a first version; tour deletes and 
+  undo for edits and moves are left for later. Covered by 
+  `tests/undo.spec.ts` ✅
+
 ### What is NOT yet built
 - File content preview in detail panel
 - AI-guided waypoint creation
@@ -598,14 +618,18 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
 - **Double-click means edit on a node but delete on an edge** (Nov 4). 
   Double-clicking an edge deletes it at once, with no confirmation 
   (`onEdgeDoubleClick` in WaypointGraph.tsx), so a double-click that 
-  misses a node by a few pixels can delete an edge. Asking first, or 
-  moving edge deletion into an edge panel (What to work on next, item 
-  6), would fix it.
+  misses a node by a few pixels can delete an edge. **Since Nov 10 
+  that delete can be undone** (the Undo toast, or Ctrl/⌘-Z), so a 
+  near-miss costs nothing; asking first, or moving edge deletion into 
+  an edge panel (What to work on next, item 6), would still be clearer.
 - Some tour connections point at wrong nodes (e.g. FileType → CognitiveTourApp should point to the Waypoints feature node instead) — needs a pass to verify across all tours
 - **Vercel Git connection can silently disconnect.** If pushes stop triggering deploys (commits show on `origin/main` via `git log`, but nothing new appears in Vercel's Deployments tab), check Project Settings → Git in Vercel. It may show "Connect Git" instead of a connected repo. Fix: reconnect via "Adjust GitHub App Permissions" if the repo isn't listed, then "Connect."
-- **No undo and no multi-user conflict protection** — the app has no undo 
-  and no locking. With multiple users, concurrent edits can overwrite each 
-  other silently. Back up /api/data before collaborative sessions.
+- **Undo for deletes only, and no multi-user conflict protection** — 
+  since Nov 10, deleting a waypoint or a link can be undone (Undo toast 
+  or Ctrl/⌘-Z, this page view only), but edits, moves and tour deletes 
+  can't, and there is no locking. With multiple users, concurrent edits 
+  can overwrite each other silently. Back up /api/data before 
+  collaborative sessions.
   - **Redeploy button doesn't always trigger a build.** Manually clicking "Redeploy" from the Deployments list may not produce a new deployment. Try Redeploy from inside a specific deployment's detail page instead; if that also fails, a trivial no-op commit (even via GitHub's web editor) reliably forces a fresh build.
 
 ### Small improvements (quality of life)

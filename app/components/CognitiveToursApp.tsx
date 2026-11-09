@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import type { Waypoint, WaypointEdge, Tour, FilterState } from '@/app/lib/types';
+import type { Waypoint, WaypointEdge, Tour, TourStop, FilterState } from '@/app/lib/types';
 import { WAYPOINT_TYPES } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import WaypointGraph from './WaypointGraph';
@@ -23,6 +23,38 @@ type FormState =
   | { open: true; mode: 'edit'; waypoint: Waypoint };
 
 type LoadState = 'loading' | 'ready' | 'error';
+
+// Undo for deletes (this page view only; a reload empties the stack). Each
+// entry holds what its delete removed. `saved` settles once the delete has
+// reached the server (true if it succeeded), so an undo never races the
+// delete it reverses.
+type UndoEntry =
+  | {
+      kind: 'waypoint';
+      key: number;
+      waypoint: Waypoint;
+      edges: WaypointEdge[];
+      // The stop's old position in each tour it was in, with its narrative.
+      stops: { tourId: string; tourName: string; index: number; stop: TourStop }[];
+      saved: Promise<boolean>;
+    }
+  | { kind: 'edge'; key: number; edge: WaypointEdge; from: string; to: string; saved: Promise<boolean> };
+
+const UNDO_LIMIT = 20;
+const UNDO_TOAST_MS = 10_000;
+
+function undoMessage(entry: UndoEntry): string {
+  return entry.kind === 'waypoint'
+    ? `Deleted ${entry.waypoint.label}.`
+    : `Deleted link ${entry.from} → ${entry.to}.`;
+}
+
+// Ctrl/⌘-Z belongs to text undo while you're typing.
+function isTyping(): boolean {
+  const el = document.activeElement;
+  if (!(el instanceof HTMLElement)) return false;
+  return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable;
+}
 
 interface BulkDataResponse {
   waypoints: Waypoint[];
@@ -196,6 +228,30 @@ export default function CognitiveToursApp() {
     setTimeout(() => setErrorMessage(null), 5000);
   }, []);
 
+  // Undo for deletes: a stack of the last UNDO_LIMIT deletes (a ref, so two
+  // quick Ctrl/⌘-Z presses never undo the same one twice), and a toast for
+  // the most recent, shown for 10 seconds or until the next delete.
+  const undoStackRef = useRef<UndoEntry[]>([]);
+  const undoKeyRef = useRef(0);
+  const [undoToast, setUndoToast] = useState<UndoEntry | null>(null);
+
+  useEffect(() => {
+    if (!undoToast) return;
+    const timer = setTimeout(() => setUndoToast(null), UNDO_TOAST_MS);
+    return () => clearTimeout(timer);
+  }, [undoToast]);
+
+  const pushUndo = useCallback((entry: UndoEntry) => {
+    undoStackRef.current = [...undoStackRef.current, entry].slice(-UNDO_LIMIT);
+    setUndoToast(entry);
+  }, []);
+
+  // A delete that failed was already rolled back, so there's nothing to undo.
+  const dropUndo = useCallback((key: number) => {
+    undoStackRef.current = undoStackRef.current.filter(e => e.key !== key);
+    setUndoToast(t => (t?.key === key ? null : t));
+  }, []);
+
   // Description/notes expansion in the Tour Controls panel always starts
   // collapsed again when the tour advances to a new stop.
   useEffect(() => {
@@ -308,6 +364,8 @@ export default function CognitiveToursApp() {
       const modifiedTours = tours
         .filter(t => t.stops.some(s => s.waypointId === id))
         .map(t => ({ ...t, stops: t.stops.filter(s => s.waypointId !== id) }));
+      const deleted = waypoints.find(w => w.id === id);
+      const undoKey = ++undoKeyRef.current;
 
       setWaypoints(prev => prev.filter(w => w.id !== id));
       setEdges(prev => prev.filter(e => e.source !== id && e.target !== id));
@@ -320,7 +378,7 @@ export default function CognitiveToursApp() {
       );
       setSelectedWaypointId(prev => (prev === id ? null : prev));
 
-      void (async () => {
+      const saved = (async () => {
         try {
           await apiFetch(`/api/waypoints/${id}`, { method: 'DELETE' });
           await Promise.all(removedEdges.map(e => apiFetch(`/api/edges/${e.id}`, { method: 'DELETE' })));
@@ -333,16 +391,33 @@ export default function CognitiveToursApp() {
               }),
             ),
           );
+          return true;
         } catch {
           setWaypoints(waypointSnapshot);
           setEdges(edgeSnapshot);
           setTours(tourSnapshot);
+          dropUndo(undoKey);
           setErrorMessage('Failed to delete waypoint.');
           clearErrorAfterDelay();
+          return false;
         }
       })();
+
+      if (deleted) {
+        pushUndo({
+          kind: 'waypoint',
+          key: undoKey,
+          waypoint: deleted,
+          edges: removedEdges,
+          stops: tours.flatMap(t => {
+            const index = t.stops.findIndex(s => s.waypointId === id);
+            return index < 0 ? [] : [{ tourId: t.id, tourName: t.name, index, stop: t.stops[index] }];
+          }),
+          saved,
+        });
+      }
     },
-    [waypoints, edges, tours, clearErrorAfterDelay],
+    [waypoints, edges, tours, clearErrorAfterDelay, pushUndo, dropUndo],
   );
 
   // T022
@@ -373,19 +448,168 @@ export default function CognitiveToursApp() {
   const deleteEdge = useCallback(
     (id: string) => {
       const snapshot = edges.find(e => e.id === id);
+      const undoKey = ++undoKeyRef.current;
       setEdges(prev => prev.filter(e => e.id !== id));
-      void (async () => {
+      const saved = (async () => {
         try {
           await apiFetch(`/api/edges/${id}`, { method: 'DELETE' });
+          return true;
         } catch {
           if (snapshot) setEdges(prev => [...prev, snapshot]);
+          dropUndo(undoKey);
           setErrorMessage('Failed to delete connection.');
+          clearErrorAfterDelay();
+          return false;
+        }
+      })();
+      if (snapshot) {
+        const labelOf = (wid: string) => waypoints.find(w => w.id === wid)?.label ?? wid;
+        pushUndo({
+          kind: 'edge',
+          key: undoKey,
+          edge: snapshot,
+          from: labelOf(snapshot.source),
+          to: labelOf(snapshot.target),
+          saved,
+        });
+      }
+    },
+    [edges, waypoints, clearErrorAfterDelay, pushUndo, dropUndo],
+  );
+
+  // Put back what a waypoint delete removed: the waypoint (same id), its
+  // links, and its stop in each tour, at its old position in the tour's
+  // current stop list, so stops added or moved since are kept. Restores
+  // what it can and says what it couldn't (e.g. a tour deleted meanwhile).
+  const restoreWaypoint = useCallback(
+    (entry: Extract<UndoEntry, { kind: 'waypoint' }>) => {
+      const { waypoint } = entry;
+      if (waypoints.some(w => w.id === waypoint.id)) return;
+      const problems: string[] = [];
+
+      const linksBack = entry.edges.filter(e => {
+        const other = e.source === waypoint.id ? e.target : e.source;
+        return other === waypoint.id || waypoints.some(w => w.id === other);
+      });
+      const linksGone = entry.edges.length - linksBack.length;
+      if (linksGone > 0) problems.push(`${linksGone} link${linksGone === 1 ? '' : 's'} to waypoints that are gone`);
+
+      const tourStops = entry.stops.flatMap(({ tourId, tourName, index, stop }) => {
+        const tour = tours.find(t => t.id === tourId);
+        if (!tour) {
+          problems.push(`its stop in "${tourName}" (that tour is gone)`);
+          return [];
+        }
+        if (tour.stops.some(s => s.waypointId === waypoint.id)) return [];
+        const stops = [...tour.stops];
+        stops.splice(Math.min(index, stops.length), 0, stop);
+        return [{ tourId, tourName, stops }];
+      });
+
+      const removeStopFrom = (tourIds: string[]) =>
+        setTours(prev =>
+          prev.map(t =>
+            tourIds.includes(t.id) ? { ...t, stops: t.stops.filter(s => s.waypointId !== waypoint.id) } : t,
+          ),
+        );
+
+      markWaypointsSeen([waypoint.id]); // not new to you: you made it, or saw it before
+      markStopsSeen(tourStops.map(ts => stopKey(ts.tourId, waypoint.id)));
+      setWaypoints(prev => [...prev, waypoint]);
+      setEdges(prev => [...prev, ...linksBack]);
+      setTours(prev =>
+        prev.map(t => {
+          const back = tourStops.find(ts => ts.tourId === t.id);
+          return back ? { ...t, stops: back.stops } : t;
+        }),
+      );
+
+      void (async () => {
+        // A failed delete was rolled back already and left nothing to undo.
+        if (!(await entry.saved)) return;
+        try {
+          await apiFetch('/api/waypoints', {
+            method: 'POST',
+            headers: JSON_HEADERS,
+            body: JSON.stringify(waypoint),
+          });
+        } catch {
+          setWaypoints(prev => prev.filter(w => w.id !== waypoint.id));
+          setEdges(prev => prev.filter(e => !linksBack.some(l => l.id === e.id)));
+          removeStopFrom(tourStops.map(ts => ts.tourId));
+          setErrorMessage(`Couldn't undo: ${waypoint.label} wasn't restored.`);
+          clearErrorAfterDelay();
+          return;
+        }
+
+        const linkResults = await Promise.allSettled(
+          linksBack.map(e =>
+            apiFetch('/api/edges', { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(e) }),
+          ),
+        );
+        const linksFailed = linksBack.filter((_, i) => linkResults[i].status === 'rejected');
+        if (linksFailed.length > 0) {
+          setEdges(prev => prev.filter(e => !linksFailed.some(l => l.id === e.id)));
+          problems.push(`${linksFailed.length} link${linksFailed.length === 1 ? '' : 's'}`);
+        }
+
+        const stopResults = await Promise.allSettled(
+          tourStops.map(ts =>
+            apiFetch(`/api/tours/${ts.tourId}`, {
+              method: 'PUT',
+              headers: JSON_HEADERS,
+              body: JSON.stringify({ stops: ts.stops }),
+            }),
+          ),
+        );
+        const stopsFailed = tourStops.filter((_, i) => stopResults[i].status === 'rejected');
+        if (stopsFailed.length > 0) {
+          removeStopFrom(stopsFailed.map(ts => ts.tourId));
+          problems.push(...stopsFailed.map(ts => `its stop in "${ts.tourName}"`));
+        }
+
+        if (problems.length > 0) {
+          setErrorMessage(`Restored ${waypoint.label}, but not ${problems.join(', ')}.`);
           clearErrorAfterDelay();
         }
       })();
     },
-    [edges, clearErrorAfterDelay],
+    [waypoints, tours, markWaypointsSeen, markStopsSeen, clearErrorAfterDelay],
   );
+
+  const restoreEdge = useCallback(
+    (entry: Extract<UndoEntry, { kind: 'edge' }>) => {
+      const { edge } = entry;
+      if (edges.some(e => e.id === edge.id)) return;
+      if (!waypoints.some(w => w.id === edge.source) || !waypoints.some(w => w.id === edge.target)) {
+        setErrorMessage(`Couldn't undo: the link ${entry.from} → ${entry.to} joins a waypoint that is gone.`);
+        clearErrorAfterDelay();
+        return;
+      }
+      setEdges(prev => [...prev, edge]);
+      void (async () => {
+        if (!(await entry.saved)) return;
+        try {
+          await apiFetch('/api/edges', { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(edge) });
+        } catch {
+          setEdges(prev => prev.filter(e => e.id !== edge.id));
+          setErrorMessage(`Couldn't undo: the link ${entry.from} → ${entry.to} wasn't restored.`);
+          clearErrorAfterDelay();
+        }
+      })();
+    },
+    [edges, waypoints, clearErrorAfterDelay],
+  );
+
+  // Undo the most recent delete still on the stack (toast button or Ctrl/⌘-Z).
+  const undoLast = useCallback(() => {
+    const entry = undoStackRef.current.at(-1);
+    if (!entry) return;
+    undoStackRef.current = undoStackRef.current.slice(0, -1);
+    setUndoToast(null);
+    if (entry.kind === 'waypoint') restoreWaypoint(entry);
+    else restoreEdge(entry);
+  }, [restoreWaypoint, restoreEdge]);
 
   // T024
   const createTour = useCallback(
@@ -502,6 +726,20 @@ export default function CognitiveToursApp() {
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [activeTourId, tourEditorOpen, form.open, selectTour]);
+
+  // Ctrl/⌘-Z undoes the most recent delete, except while typing or with a
+  // form, the tour editor, or a dialog (skills panel, Start here) open.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== 'z' || !(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey) return;
+      if (form.open || tourEditorOpen || isTyping() || document.querySelector('[role="dialog"]')) return;
+      if (undoStackRef.current.length === 0) return;
+      e.preventDefault();
+      undoLast();
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [form.open, tourEditorOpen, undoLast]);
 
   // "Start here" shows Tour Controls by starting a tour, unless one is running:
   // the site's NEXT_PUBLIC_START_HERE_TOUR if it's on the map, else the first.
@@ -947,6 +1185,21 @@ export default function CognitiveToursApp() {
           onCancel={closeForm}
           onDescriptionFocus={form.mode === 'edit' ? () => markWaypointsSeen([form.waypoint.id]) : undefined}
         />
+      )}
+      {undoToast && (
+        <div
+          data-testid="undo-toast"
+          role="status"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4 rounded-lg bg-gray-900 px-4 py-2.5 text-base text-white shadow-lg"
+        >
+          <span>{undoMessage(undoToast)}</span>
+          <button
+            onClick={undoLast}
+            className="font-semibold text-amber-300 hover:text-amber-200 hover:underline"
+          >
+            Undo
+          </button>
+        </div>
       )}
     </div>
   );
