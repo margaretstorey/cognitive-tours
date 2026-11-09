@@ -326,7 +326,13 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   in exports or markdown view. Asked for while trying the 0.2.0 suggest 
   skills ("the new waypoints can be hidden"); chosen over a dashed 
   border on every empty waypoint, which would mark old ones too. 
-  Covered by `tests/new-halo.spec.ts` ✅
+  Covered by `tests/new-halo.spec.ts` ✅ 
+  **What you just made glows too** (Nov 8): a waypoint you create in the 
+  app gets the same red ring until you click it or open it to edit (this 
+  page view only, never added to the seen list), and the map centres on 
+  it (zoom 1.0–1.5). On load, the map zooms to fit the new waypoints a 
+  skill or teammate added. Covered by `tests/basic.spec.ts` and 
+  `tests/new-halo.spec.ts` ✅
 
 - **The map makes room for new waypoints** (Nov 7; `app/lib/make-room.ts`), 
   like pushing sticky notes aside: layout *adjustment*, not automatic 

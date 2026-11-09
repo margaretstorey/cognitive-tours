@@ -19,6 +19,37 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(key => localStorage.setItem(key, '1'), START_HERE_SEEN_KEY);
 });
 
+/**
+ * A point on screen in map coordinates, from the map's current pan and zoom.
+ * Placement tests compare in map coordinates because the map zooms to a new
+ * waypoint as it's saved, so its position on screen moves.
+ */
+async function toMap(page: import('@playwright/test').Page, p: { x: number; y: number }) {
+  const pane = (await page.locator('.react-flow__pane').boundingBox())!;
+  const style = (await page.locator('.react-flow__viewport').getAttribute('style'))!;
+  const [, tx, ty, k] = style.match(/translate\(([-\d.]+)px, ([-\d.]+)px\) scale\(([\d.]+)\)/)!.map(Number);
+  return { x: (p.x - pane.x - tx) / k, y: (p.y - pane.y - ty) / k, zoom: k };
+}
+
+/** Wait until the map has stopped moving (it pans to a waypoint you just saved). */
+async function mapSettled(page: import('@playwright/test').Page) {
+  const style = () => page.locator('.react-flow__viewport').getAttribute('style');
+  let last = await style();
+  for (let i = 0; i < 20; i++) {
+    await page.waitForTimeout(150);
+    const now = await style();
+    if (now === last) return;
+    last = now;
+  }
+}
+
+/** The saved centre of a waypoint, by label (nodes are up to 180 x 60). */
+async function savedCentre(request: import('@playwright/test').APIRequestContext, label: string) {
+  const { waypoints } = await (await request.get('/api/data')).json();
+  const w = waypoints.find((x: { label: string }) => x.label === label);
+  return { x: w.position.x + 90, y: w.position.y + 30 };
+}
+
 test.describe('create a waypoint', () => {
   let waypointLabel: string;
 
@@ -39,12 +70,13 @@ test.describe('create a waypoint', () => {
     await expect(page.getByText(waypointLabel)).toBeVisible();
   });
 
-  test('a new waypoint appears where the cursor was on the map', async ({ page }) => {
+  test('a new waypoint appears where the cursor was on the map', async ({ page, request }) => {
     waypointLabel = `Playwright Cursor Waypoint ${Date.now()}`;
     await page.goto('/');
     const pane = (await page.locator('.react-flow__pane').boundingBox())!;
     const cursor = { x: pane.x + pane.width * 0.4, y: pane.y + pane.height * 0.6 };
     await page.mouse.move(cursor.x, cursor.y);
+    const expected = await toMap(page, cursor);
     // The waypoint panel's button, outside the map, so the last position the
     // map saw is the one above.
     await page.getByRole('button', { name: '+ Add Waypoint' }).and(page.locator(':not([data-testid])')).click();
@@ -53,12 +85,35 @@ test.describe('create a waypoint', () => {
     await form.locator('select').selectOption('Feature');
     await form.getByRole('button', { name: 'Save' }).click();
 
-    const node = (await page.locator('.react-flow__node', { hasText: waypointLabel }).boundingBox())!;
-    expect(Math.abs(node.x + node.width / 2 - cursor.x)).toBeLessThan(node.width);
-    expect(Math.abs(node.y + node.height / 2 - cursor.y)).toBeLessThan(node.height);
+    await expect(page.locator('.react-flow__node', { hasText: waypointLabel })).toBeVisible();
+    const got = await savedCentre(request, waypointLabel);
+    expect(Math.abs(got.x - expected.x)).toBeLessThan(180);
+    expect(Math.abs(got.y - expected.y)).toBeLessThan(60);
   });
 
-  test('a new waypoint from the canvas button goes where you last clicked on the map', async ({ page }) => {
+  test('a waypoint you create glows and is centred until you click it', async ({ page }) => {
+    waypointLabel = `Playwright Glow Waypoint ${Date.now()}`;
+    await page.goto('/');
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await form.getByPlaceholder('Short descriptive title').fill(waypointLabel);
+    await form.locator('select').selectOption('Feature');
+    await form.getByRole('button', { name: 'Save' }).click();
+
+    const node = page.locator('.react-flow__node', { hasText: waypointLabel });
+    await expect(node.locator('[data-new]')).toHaveAttribute('data-new', 'true');
+    // Centred: the map zooms to it (animated, so poll).
+    const pane = (await page.locator('.react-flow__pane').boundingBox())!;
+    await expect.poll(async () => {
+      const b = (await node.boundingBox())!;
+      return Math.abs(b.x + b.width / 2 - (pane.x + pane.width / 2)) + Math.abs(b.y + b.height / 2 - (pane.y + pane.height / 2));
+    }, { timeout: 5000 }).toBeLessThan(40);
+
+    await node.click();
+    await expect(node.locator('[data-new]')).toHaveCount(0);
+  });
+
+  test('a new waypoint from the canvas button goes where you last clicked on the map', async ({ page, request }) => {
     waypointLabel = `Playwright Click Waypoint ${Date.now()}`;
     await page.goto('/');
     const pane = (await page.locator('.react-flow__pane').boundingBox())!;
@@ -74,6 +129,7 @@ test.describe('create a waypoint', () => {
     }, { x: pane.x, y: pane.y, w: pane.width, h: pane.height });
     if (!click) throw new Error('no empty canvas point found');
     await page.mouse.click(click.x, click.y);
+    const expected = await toMap(page, click);
     // The canvas's own button, top right: the cursor ends up there, not at the click.
     await page.getByTestId('canvas-add-waypoint').click();
     const form = page.locator('.fixed.inset-0.z-50');
@@ -81,9 +137,10 @@ test.describe('create a waypoint', () => {
     await form.locator('select').selectOption('Feature');
     await form.getByRole('button', { name: 'Save' }).click();
 
-    const node = (await page.locator('.react-flow__node', { hasText: waypointLabel }).boundingBox())!;
-    expect(Math.abs(node.x + node.width / 2 - click.x)).toBeLessThan(node.width);
-    expect(Math.abs(node.y + node.height / 2 - click.y)).toBeLessThan(node.height * 1.5);
+    await expect(page.locator('.react-flow__node', { hasText: waypointLabel })).toBeVisible();
+    const got = await savedCentre(request, waypointLabel);
+    expect(Math.abs(got.x - expected.x)).toBeLessThan(180);
+    expect(Math.abs(got.y - expected.y)).toBeLessThan(90);
   });
 });
 
@@ -113,6 +170,7 @@ test.describe('double-click a waypoint', () => {
     const scale = async () => Number((await page.locator('.react-flow__viewport').getAttribute('style'))!.match(/scale\(([\d.]+)\)/)![1]);
     const node = page.locator('.react-flow__node', { hasText: label });
     await expect(node).toBeVisible();
+    await mapSettled(page);
     const before = await scale();
     // Clicked like a person: Playwright's own dblclick() sends the second
     // click at once, and selecting a node makes React Flow hide it for one

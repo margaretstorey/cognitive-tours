@@ -64,6 +64,32 @@ test.describe('red halo on new waypoints and stops', () => {
     await expect(page.locator('.react-flow__node', { hasText: label }).locator('[data-new]')).toHaveCount(0);
   });
 
+  test('the map zooms to a batch a skill added', async ({ page, request }) => {
+    await firstLoad(page);
+    const a = `Halo Batch A ${rand()}`;
+    const b = `Halo Batch B ${rand()}`;
+    const ida = await addWaypoint(request, a);
+    const idb = await addWaypoint(request, b);
+    // Two spots inside the seeded map, apart from each other.
+    await request.put(`/api/waypoints/${ida}`, { data: { position: { x: 100, y: 80 } } });
+    await request.put(`/api/waypoints/${idb}`, { data: { position: { x: 940, y: 80 } } });
+    await page.reload();
+
+    const pane = (await page.locator('.react-flow__pane').boundingBox())!;
+    const inView = async (label: string) => {
+      const box = await page.locator('.react-flow__node', { hasText: label }).boundingBox();
+      return !!box && box.x >= pane.x && box.x + box.width <= pane.x + pane.width && box.y >= pane.y && box.y + box.height <= pane.y + pane.height;
+    };
+    // Fitted to the two: both in view, and far apart on screen (zoomed in
+    // further than the whole map would be).
+    await expect.poll(async () => (await inView(a)) && (await inView(b)), { timeout: 5000 }).toBe(true);
+    await expect.poll(async () => {
+      const box = (await page.locator('.react-flow__node', { hasText: a }).boundingBox())!;
+      const other = (await page.locator('.react-flow__node', { hasText: b }).boundingBox())!;
+      return Math.abs(other.x - box.x);
+    }, { timeout: 5000 }).toBeGreaterThan(pane.width * 0.5);
+  });
+
   test('a waypoint added later with a description has no halo', async ({ page, request }) => {
     await firstLoad(page);
     const label = `Halo Described ${rand()}`;

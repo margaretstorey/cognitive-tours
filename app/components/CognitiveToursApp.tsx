@@ -138,6 +138,18 @@ export default function CognitiveToursApp() {
     () => (roomMadeOnLoad ? createdNeedingRoom : [...newAtLoad, ...createdNeedingRoom]),
     [roomMadeOnLoad, newAtLoad, createdNeedingRoom],
   );
+  // What you just created glows until you click or edit it (this page view
+  // only), and the map zooms to it. On load, the map zooms to fit the new
+  // waypoints a skill or teammate added (they glow via the seen list).
+  const [justCreated, setJustCreated] = useState<string[]>([]);
+  const [createdFocus, setCreatedFocus] = useState<{ ids: string[]; key: number } | null>(null);
+  const focusRequest = useMemo(
+    () => createdFocus ?? (newAtLoad.length > 0 ? { ids: newAtLoad, key: 0 } : null),
+    [createdFocus, newAtLoad],
+  );
+  const clearJustCreated = useCallback((id: string | null) => {
+    if (id) setJustCreated(prev => (prev.includes(id) ? prev.filter(x => x !== id) : prev));
+  }, []);
   const onRoomMade = useCallback(() => {
     setCreatedNeedingRoom([]);
     if (newAtLoad.length > 0) setRoomMadeOnLoad(true);
@@ -211,6 +223,7 @@ export default function CognitiveToursApp() {
   const selectWaypoint = useCallback(
     (id: string | null) => {
       setSelectedWaypointId(id);
+      clearJustCreated(id);
       // Clicking an off-tour node suspends the tour rather than ending it:
       // Tour Controls collapses (its existing collapse affordance) and the
       // Waypoint panel opens to show the clicked node.
@@ -220,7 +233,7 @@ export default function CognitiveToursApp() {
         setPanelCollapsed(false);
       }
     },
-    [activeTour, currentStopWaypointId],
+    [activeTour, currentStopWaypointId, clearJustCreated],
   );
 
   const resumeTour = useCallback(() => {
@@ -245,6 +258,8 @@ export default function CognitiveToursApp() {
       markWaypointsSeen([id]); // your own waypoint is never "new" to you
       setWaypoints(prev => [...prev, newWaypoint]);
       setCreatedNeedingRoom(prev => [...prev, id]);
+      setJustCreated(prev => [...prev, id]);
+      setCreatedFocus({ ids: [id], key: Date.now() });
       void (async () => {
         try {
           await apiFetch('/api/waypoints', {
@@ -568,8 +583,11 @@ export default function CognitiveToursApp() {
     [],
   );
   const openEditForm = useCallback(
-    (waypoint: Waypoint) => setForm({ open: true, mode: 'edit', waypoint }),
-    [],
+    (waypoint: Waypoint) => {
+      clearJustCreated(waypoint.id);
+      setForm({ open: true, mode: 'edit', waypoint });
+    },
+    [clearJustCreated],
   );
   const editWaypointById = useCallback(
     (id: string) => {
@@ -717,6 +735,8 @@ export default function CognitiveToursApp() {
               isNewWaypoint={isNewWaypoint}
               makeRoomFor={makeRoomFor}
               onRoomMade={onRoomMade}
+              justCreatedIds={justCreated}
+              focusRequest={focusRequest}
             />
           )}
         </div>

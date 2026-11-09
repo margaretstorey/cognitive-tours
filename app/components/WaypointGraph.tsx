@@ -86,6 +86,10 @@ interface WaypointGraphProps {
   /** Waypoints to make room for (pushing overlapping ones aside), once they're on screen. */
   makeRoomFor?: string[];
   onRoomMade?: () => void;
+  /** Created in this page view and not yet clicked: the same red halo. */
+  justCreatedIds?: string[];
+  /** Zoom to these waypoints once they're drawn; a new key asks again. */
+  focusRequest?: { ids: string[]; key: number } | null;
 }
 
 // Roughly a waypoint node's size on screen at zoom 1 (nodes are max-w-[180px]),
@@ -116,6 +120,8 @@ function Graph({
   isNewWaypoint,
   makeRoomFor,
   onRoomMade,
+  justCreatedIds,
+  focusRequest,
 }: WaypointGraphProps) {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const { getNodesBounds, setViewport, setCenter, getInternalNode, getViewport, screenToFlowPosition, getNodes } = useReactFlow();
@@ -252,14 +258,19 @@ function Graph({
             id: w.id,
             type: 'waypointNode',
             position: w.position,
-            data: { waypoint: w, isActiveTourStep: isCurrentStop, isCurrentMatch, isNew: isNewWaypoint?.(w) ?? false },
+            data: {
+              waypoint: w,
+              isActiveTourStep: isCurrentStop,
+              isCurrentMatch,
+              isNew: (isNewWaypoint?.(w) ?? false) || !!justCreatedIds?.includes(w.id),
+            },
             selected: w.id === selectedWaypointId,
             // Draw the enlarged current stop above neighbours it grows into.
             zIndex: isCurrentStop || isCurrentMatch ? 1000 : undefined,
             style: opacity !== undefined ? { opacity } : undefined,
           };
         }),
-    [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds, searching, currentMatchId, matchIds, isNewWaypoint]
+    [waypoints, selectedWaypointId, activeTourWaypointIds, hiddenNodeIds, searching, currentMatchId, matchIds, isNewWaypoint, justCreatedIds]
   );
 
   const nodesRef = useRef(nodes);
@@ -395,6 +406,41 @@ function Graph({
     frame = requestAnimationFrame(attempt);
     return () => cancelAnimationFrame(frame);
   }, [makeRoomFor, getInternalNode, hiddenNodeIds, runMakeRoom, onRoomMade]);
+
+  // Zoom to what was just added: one waypoint is centred at a readable zoom
+  // (1.0 to 1.5, as for a tour stop); several are fitted. Waits a few
+  // frames, after the map's own first fit, until they've been measured.
+  const focusKey = focusRequest ? `${focusRequest.key}:${focusRequest.ids.join(',')}` : '';
+  useEffect(() => {
+    if (!focusRequest || focusRequest.ids.length === 0) return;
+    const ids = focusRequest.ids;
+    let frame = 0;
+    let tries = 0;
+    const attempt = () => {
+      tries++;
+      const measured = ids.filter(id => getInternalNode(id)?.measured.width);
+      const container = paneRef.current;
+      if ((tries < 4 || measured.length < ids.length) && tries < 30) {
+        frame = requestAnimationFrame(attempt);
+        return;
+      }
+      if (!container || measured.length === 0) return;
+      if (measured.length === 1) {
+        const node = getInternalNode(measured[0])!;
+        const { x, y } = node.internals.positionAbsolute;
+        const zoom = Math.min(1.5, Math.max(1, getViewport().zoom));
+        setCenter(x + (node.measured.width ?? 0) / 2, y + (node.measured.height ?? 0) / 2, { zoom, duration: 400 });
+      } else {
+        const bounds = getNodesBounds(measured);
+        const pad = { top: '15%', bottom: '15%', left: '10%', right: '10%' } as const;
+        setViewport(getViewportForBounds(bounds, container.clientWidth, container.clientHeight, 0.05, 1.5, pad), { duration: 400 });
+      }
+    };
+    frame = requestAnimationFrame(attempt);
+    return () => cancelAnimationFrame(frame);
+    // The key decides when to run; the ids come with it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusKey, getInternalNode, getViewport, setCenter, getNodesBounds, setViewport]);
 
   // Dropping a waypoint on others pushes them aside.
   const onNodeDragStop = useCallback((_: React.MouseEvent, node: Node) => runMakeRoom([node.id]), [runMakeRoom]);
