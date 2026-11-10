@@ -30,6 +30,9 @@ export function parseSiteColor(raw: string | undefined): string | null {
 // Each set per Vercel project and inlined at build time; unset everywhere by default.
 export const SITE_NOTICE: string | null = parseSiteNotice(process.env.NEXT_PUBLIC_SITE_NOTICE);
 export const SITE_COLOR: string | null = parseSiteColor(process.env.NEXT_PUBLIC_SITE_COLOR);
+// The map canvas's background (Nov 10), same rules as the header colour; keep
+// it light, so waypoints and link labels stay readable. Unset: white.
+export const CANVAS_COLOR: string | null = parseSiteColor(process.env.NEXT_PUBLIC_CANVAS_COLOR);
 
 /**
  * Which tour the "Start here" walkthrough opens (Nov 7): the tour with exactly

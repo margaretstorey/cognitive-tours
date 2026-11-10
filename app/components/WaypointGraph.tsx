@@ -22,6 +22,7 @@ import type { Waypoint, WaypointEdge, FilterState } from '@/app/lib/types';
 import { WAYPOINT_COLORS } from '@/app/lib/waypoint-colors';
 import { WaypointTypeIcon } from '@/app/lib/waypoint-icons';
 import { makeRoom, type Box } from '@/app/lib/make-room';
+import { CANVAS_COLOR } from '@/app/lib/project';
 import { CopyCommand, PLUGIN_INSTALL_URL, skillCommand, useSiteOrigin } from '@/app/components/ClaudeCodePanel';
 
 type WaypointNodeData = { waypoint: Waypoint; isActiveTourStep: boolean; isCurrentMatch: boolean; isNew: boolean };
@@ -568,6 +569,8 @@ function Graph({
         onMouseMove={onPaneMouseMove}
       >
         <ReactFlow
+          // NEXT_PUBLIC_CANVAS_COLOR (app/lib/project.ts); unset, React Flow's white.
+          style={CANVAS_COLOR ? { background: CANVAS_COLOR } : undefined}
           nodes={nodes}
           edges={rfEdges}
           nodeTypes={nodeTypes}

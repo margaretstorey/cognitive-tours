@@ -525,6 +525,8 @@ test.describe('project name', () => {
     for (const bad of [undefined, '', 'red', '7f1d1d', '#12345', 'url(x)', '#7f1d1d; color: red']) {
       expect(parseSiteColor(bad), String(bad)).toBeNull();
     }
+    // NEXT_PUBLIC_CANVAS_COLOR goes through the same parser (CANVAS_COLOR).
+    expect(parseSiteColor('#fce7f3')).toBe('#fce7f3');
   });
 
   test('no project pill when NEXT_PUBLIC_PROJECT_NAME is unset', async ({ page }) => {
