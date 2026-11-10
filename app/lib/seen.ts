@@ -53,6 +53,25 @@ export function useSeen(waypoints: Waypoint[], tours: Tour[], loaded: boolean) {
     setNewAtLoad(waypoints.filter(x => !w.has(x.id) && !x.description?.trim()).map(x => x.id));
   }, [loaded, waypoints, tours]);
 
+  // Waypoints that turned up after the first load (the map refreshes itself
+  // when you come back to the tab), new to this browser and undescribed: the
+  // map makes room around them, as it does for newAtLoad. Ones you create or
+  // restore here are marked seen first, so they never appear in this list.
+  const known = useRef<Set<string> | null>(null);
+  const [arrivedAfterLoad, setArrivedAfterLoad] = useState<string[]>([]);
+  useEffect(() => {
+    if (!seen) return;
+    if (!known.current) {
+      known.current = new Set(waypoints.map(x => x.id));
+      return;
+    }
+    const fresh = waypoints.filter(x => !known.current!.has(x.id));
+    if (fresh.length === 0) return;
+    fresh.forEach(x => known.current!.add(x.id));
+    const arrived = fresh.filter(x => !seen.waypoints.has(x.id) && !x.description?.trim()).map(x => x.id);
+    if (arrived.length > 0) setArrivedAfterLoad(prev => [...prev, ...arrived]);
+  }, [waypoints, seen]);
+
   const markWaypointsSeen = useCallback((ids: string[]) => {
     setSeen(prev => {
       if (!prev || ids.every(id => prev.waypoints.has(id))) return prev;
@@ -86,5 +105,5 @@ export function useSeen(waypoints: Waypoint[], tours: Tour[], loaded: boolean) {
     [seen],
   );
 
-  return { newAtLoad, isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen };
+  return { newAtLoad, arrivedAfterLoad, isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen };
 }

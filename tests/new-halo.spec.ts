@@ -155,6 +155,39 @@ test.describe('red halo on new waypoints and stops', () => {
     }
   });
 
+  test('coming back to the tab shows what a skill added, with its halo, without a reload', async ({ page, request }) => {
+    await firstLoad(page);
+    const label = `Halo Refresh ${rand()}`;
+    await addWaypoint(request, label);
+    const node = page.locator('.react-flow__node', { hasText: label });
+    await expect(node).toHaveCount(0); // not until you come back
+
+    // No page reload: the window regains focus, as after the terminal.
+    await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+    await expect(node).toBeVisible();
+    await expect(node.locator('[data-new]')).toHaveAttribute('data-new', 'true');
+  });
+
+  test('coming back to the tab doesn\'t refresh while a form is open', async ({ page, request }) => {
+    await firstLoad(page);
+    await page.getByTestId('canvas-add-waypoint').click();
+    const form = page.locator('.fixed.inset-0.z-50');
+    await expect(form.getByPlaceholder('Short descriptive title')).toBeVisible();
+
+    const label = `Halo Refresh Later ${rand()}`;
+    await addWaypoint(request, label);
+    await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+    // Give a refresh the chance to happen; it mustn't.
+    await page.waitForTimeout(1500);
+    await expect(page.locator('.react-flow__node', { hasText: label })).toHaveCount(0);
+
+    // Close the form; the next return refreshes.
+    await page.keyboard.press('Escape');
+    await expect(form).toHaveCount(0);
+    await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+    await expect(page.locator('.react-flow__node', { hasText: label })).toBeVisible();
+  });
+
   test('a waypoint added later with a description has no halo', async ({ page, request }) => {
     await firstLoad(page);
     const label = `Halo Described ${rand()}`;

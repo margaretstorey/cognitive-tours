@@ -112,20 +112,29 @@ function askForPasscode(again: boolean): Promise<string | null> {
   return passcodePrompt;
 }
 
+// Saves still on their way to the server; the map doesn't refresh itself
+// while any are, so an older copy can't overwrite an optimistic change.
+let pendingWrites = 0;
+
 async function apiFetch(url: string, options: RequestInit): Promise<void> {
-  let passcode = savedPasscode();
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const headers = new Headers(options.headers);
-    if (passcode) headers.set(EDIT_PASSCODE_HEADER, passcode);
-    const res = await fetch(url, { ...options, headers });
-    if (res.status !== 401) {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return;
+  pendingWrites++;
+  try {
+    let passcode = savedPasscode();
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const headers = new Headers(options.headers);
+      if (passcode) headers.set(EDIT_PASSCODE_HEADER, passcode);
+      const res = await fetch(url, { ...options, headers });
+      if (res.status !== 401) {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return;
+      }
+      passcode = await askForPasscode(passcode !== null);
+      if (!passcode) throw new Error('Edit cancelled: this map needs a passcode');
     }
-    passcode = await askForPasscode(passcode !== null);
-    if (!passcode) throw new Error('Edit cancelled: this map needs a passcode');
+    throw new Error('HTTP 401');
+  } finally {
+    pendingWrites--;
   }
-  throw new Error('HTTP 401');
 }
 
 export default function CognitiveToursApp() {
@@ -161,14 +170,21 @@ export default function CognitiveToursApp() {
   const placementRef = useRef<(() => { x: number; y: number } | null) | null>(null);
 
   // Red "new" halo on what this browser hasn't seen yet (app/lib/seen.ts).
-  const { newAtLoad, isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen } = useSeen(waypoints, tours, loadState === 'ready');
+  const { newAtLoad, arrivedAfterLoad, isNewWaypoint, isNewStop, markWaypointsSeen, markStopsSeen } =
+    useSeen(waypoints, tours, loadState === 'ready');
   // Waypoints the graph should make room for (app/lib/make-room.ts): ones you
-  // create, and, once per page load, the new ones a skill or teammate added.
+  // create, once per page load the new ones a skill or teammate added, and
+  // those that turn up when the map refreshes on your return to the tab.
   const [createdNeedingRoom, setCreatedNeedingRoom] = useState<string[]>([]);
   const [roomMadeOnLoad, setRoomMadeOnLoad] = useState(false);
+  const [arrivedRoomed, setArrivedRoomed] = useState(0);
   const makeRoomFor = useMemo(
-    () => (roomMadeOnLoad ? createdNeedingRoom : [...newAtLoad, ...createdNeedingRoom]),
-    [roomMadeOnLoad, newAtLoad, createdNeedingRoom],
+    () => [
+      ...(roomMadeOnLoad ? [] : newAtLoad),
+      ...arrivedAfterLoad.slice(arrivedRoomed),
+      ...createdNeedingRoom,
+    ],
+    [roomMadeOnLoad, newAtLoad, arrivedAfterLoad, arrivedRoomed, createdNeedingRoom],
   );
   // What you just created glows, like a skill's new waypoint, until you click
   // into its Description field or it has a description (this page view only),
@@ -186,7 +202,8 @@ export default function CognitiveToursApp() {
   const onRoomMade = useCallback(() => {
     setCreatedNeedingRoom([]);
     if (newAtLoad.length > 0) setRoomMadeOnLoad(true);
-  }, [newAtLoad]);
+    setArrivedRoomed(arrivedAfterLoad.length);
+  }, [newAtLoad, arrivedAfterLoad]);
   // Selecting a waypoint doesn't count as seeing it: its red halo stays until
   // you click into its Description field (WaypointForm) or it has one. The
   // same goes for the glow on one you just created.
@@ -223,13 +240,19 @@ export default function CognitiveToursApp() {
     document.getElementById(`stop-${markdownJumpIndex}`)?.scrollIntoView({ behavior: 'auto', block: 'start' });
   }, [showingMarkdown, markdownJumpIndex]);
 
+  // The map as last loaded from the server (its JSON), so a refresh that
+  // finds nothing new changes nothing.
+  const lastLoadedRef = useRef('');
+
   // T015: Startup fetch — load all persisted data on mount.
   useEffect(() => {
     void (async () => {
       try {
         const res = await fetch('/api/data');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as BulkDataResponse;
+        const text = await res.text();
+        const data = JSON.parse(text) as BulkDataResponse;
+        lastLoadedRef.current = text;
         setWaypoints(data.waypoints);
         setEdges(data.edges);
         setTours(data.tours);
@@ -250,6 +273,56 @@ export default function CognitiveToursApp() {
   const undoStackRef = useRef<UndoEntry[]>([]);
   const undoKeyRef = useRef(0);
   const [undoToast, setUndoToast] = useState<UndoEntry | null>(null);
+
+  // Refresh on return (Nov 11): when you come back to the tab (say, after
+  // running a suggest skill in the terminal), reload the map quietly, so what
+  // a skill or teammate added appears with its red halo. At most every 5 s;
+  // never while a form, the tour editor or a dialog is open, a save is on its
+  // way, or a waypoint is being dragged (it tries again on the next return).
+  // Selection, the active tour, the camera and filters stay as they are.
+  const busyRef = useRef(false);
+  busyRef.current = form.open || tourEditorOpen || loadState !== 'ready';
+  useEffect(() => {
+    let lastTry = 0;
+    const blocked = () =>
+      busyRef.current ||
+      pendingWrites > 0 ||
+      positionDebounceMap.current.size > 0 ||
+      !!document.querySelector('[role="dialog"], .react-flow__node.dragging');
+    const refresh = async () => {
+      if (document.visibilityState !== 'visible' || blocked()) return;
+      if (Date.now() - lastTry < 5000) return;
+      lastTry = Date.now();
+      try {
+        const res = await fetch('/api/data', { cache: 'no-store' });
+        if (!res.ok) return;
+        const text = await res.text();
+        if (text === lastLoadedRef.current || blocked()) return;
+        const data = JSON.parse(text) as BulkDataResponse;
+        lastLoadedRef.current = text;
+        setWaypoints(data.waypoints);
+        setEdges(data.edges);
+        setTours(data.tours);
+        const waypointIds = new Set(data.waypoints.map(w => w.id));
+        const edgeIds = new Set(data.edges.map(e => e.id));
+        setSelectedWaypointId(prev => (prev && !waypointIds.has(prev) ? null : prev));
+        setActiveTourId(prev => (prev && !data.tours.some(t => t.id === prev) ? null : prev));
+        // A delete someone undid or redid elsewhere: don't let undo duplicate it.
+        undoStackRef.current = undoStackRef.current.filter(e =>
+          e.kind === 'waypoint' ? !waypointIds.has(e.waypoint.id) : !edgeIds.has(e.edge.id),
+        );
+      } catch {
+        // Offline or a hiccup: keep what's shown; the next return tries again.
+      }
+    };
+    const onReturn = () => void refresh();
+    document.addEventListener('visibilitychange', onReturn);
+    window.addEventListener('focus', onReturn);
+    return () => {
+      document.removeEventListener('visibilitychange', onReturn);
+      window.removeEventListener('focus', onReturn);
+    };
+  }, []);
 
   useEffect(() => {
     if (!undoToast) return;

@@ -387,6 +387,23 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   the rest (that's what search does). Covered by 
   `tests/new-halo.spec.ts` ✅
 
+- **The map refreshes when you come back to the tab** (Nov 11; 
+  `CognitiveToursApp.tsx`, `app/lib/seen.ts`). On `visibilitychange` 
+  or window `focus`, at most every 5 s, it quietly reloads `/api/data`, 
+  so what a suggest skill (run in the terminal) or a teammate added 
+  appears without a page reload, with its red halo, and the map makes 
+  room around it as on load (`arrivedAfterLoad` in `useSeen`). Nothing 
+  changes if the data is the same. It skips while a form, the tour 
+  editor or a dialog is open, a save is in flight (`pendingWrites` in 
+  `apiFetch`) or a drag hasn't saved, and tries again on the next 
+  return. Selection, the active tour, the camera and filters stay; a 
+  selected waypoint or active tour deleted elsewhere falls back to 
+  none; undo entries for waypoints or links re-created elsewhere are 
+  dropped. Asked for after running the 0.2.x skills ("I need to 
+  refresh manually right?"); chosen over polling (requests on all 19 
+  sites, and mostly other people's edits). Covered by 
+  `tests/new-halo.spec.ts` ✅
+
 ### What is NOT yet built
 - File content preview in detail panel
 - AI-guided waypoint creation
