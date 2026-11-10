@@ -13,7 +13,7 @@ yourself; writing it is how the understanding gets built. See the
 |---|---|
 | [The demo](https://cognitive-tours-demo.vercel.app) | A copy of the author's own map of Cognitive Tours. Choose **"A Research Story Behind Cognitive Tours"** in the tour selector and step through it with **Next**. It's reset every hour, so edits don't last. |
 | [The Flask example](https://cognitive-tours-demo-flask.vercel.app) | The same tool used on a codebase its author didn't write (a fork of Flask). |
-| Sandboxes: [1](https://cognitive-tours-sandbox1.vercel.app), [2](https://cognitive-tours-sandbox2.vercel.app), [3](https://cognitive-tours-sandbox3.vercel.app), [4](https://cognitive-tours-sandbox4.vercel.app), [5](https://cognitive-tours-sandbox5.vercel.app), [6](https://cognitive-tours-sandbox6.vercel.app), [7](https://cognitive-tours-sandbox7.vercel.app), [8](https://cognitive-tours-sandbox8.vercel.app), [9](https://cognitive-tours-sandbox9.vercel.app) | Blank maps for writing your own waypoints and tours. Pick one nobody else is using. |
+| **A sandbox of your own** | A blank map for writing your own waypoints and tours: ask the author for one. |
 
 **Things to try in a sandbox:**
 - **Add Waypoint** (in the waypoint panel): give it a label, a type and, if it

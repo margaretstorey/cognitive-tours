@@ -527,7 +527,14 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   | Mine (edit passcode; header `#0f4c5c`) | cognitive-tours (address in `MY_SITE_URL`) | cognitive-tours | Cognitive Tours Repo | https://github.com/margaretstorey/cognitive-tours |
   | Demo (public, copy of your map) | cognitive-tours-demo | ct-demo | Cognitive Tours (demo) | https://github.com/margaretstorey/cognitive-tours |
   | Demo, Flask (public, brownfield) | cognitive-tours-demo-flask | ct-demo-flask | Flask (demo) | https://github.com/margaretstorey/flask |
-  | Sandbox 1 … Sandbox 9 (public, blank, to try authoring) | cognitive-tours-sandbox1 … sandbox9 | ct-sandbox1 … ct-sandbox9 | Sandbox 1 … Sandbox 9 | (unset) |
+
+  **Sandbox 1–9** (Nov 11): blank sites handed out one per person, no 
+  longer listed here or in the docs; their addresses, and who has which, 
+  are in `CLAUDE.local.md`. Caveat: the addresses follow an obvious 
+  pattern and are in this file's public git history (Nov 4–11), so 
+  unlisting hides them from casual readers, not from someone looking. 
+  They have no passcode; if one person's sandbox needs protecting, set 
+  `EDIT_PASSCODE` on that project and redeploy it.
 
   **Your own site's address is read from `MY_SITE_URL`** (Nov 3), in 
   your local `.env` and in the cognitive-tours Vercel project 

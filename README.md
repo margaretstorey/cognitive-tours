@@ -75,6 +75,8 @@ quickly as the map grows.
 New waypoints, whether a skill added them, a teammate did, or you just made 
 one, wear a **red halo** until you click into their description, so nothing 
 slips in unnoticed; the filter panel's **New to you only** shows just those. 
+Come back to the tab after running a skill and the map **reloads by itself**, 
+so what it added appears, with its halo. 
 When something new lands on top of others, the map **makes room** by nudging 
 only the waypoints in the way, so the layout you know stays put. Deleting a 
 waypoint or a link can be **undone** (Undo, or Ctrl/⌘-Z).
@@ -129,7 +131,18 @@ the right skill.
   no longer exist (with the commit that removed them), stale tour
   narratives, and edge labels drifting apart.
 
-Try it on a blank sandbox of your own (ask the author for one).
+**Try the skills on the demo.** The skills run in a copy of the repo a map
+describes, and the demo maps this repo. In a terminal:
+
+```
+git clone https://github.com/margaretstorey/cognitive-tours && cd cognitive-tours && claude
+```
+
+Then copy a command from the demo's **Claude Code skills** button (it has
+the demo's address filled in) and paste it into Claude Code. The demo has
+no passcode, and it resets every hour, so nothing you add there lasts.
+
+Or try it on a blank sandbox of your own (ask the author for one).
 Details in [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md#3-the-ai-skills-claude-code).
 The plugin's files are in [`plugins/cognitive-tours/`](plugins/cognitive-tours/).
 
