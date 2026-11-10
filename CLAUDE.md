@@ -545,15 +545,20 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   (`app/lib/edit-passcode.ts`, checked in all eight write handlers under 
   `app/api/`); the app asks once per browser and remembers it. Reading 
   stays open, so backups, the nightly jobs, the skills and the restore 
-  tool (which writes through `turso db shell`) are unaffected. **Since 
-  Nov 5 the team sites set it too** (Test, Finito, Vitalitree, Evernear, 
-  Elevate, Poold, Ciara), all to one shared team passcode (in 
-  `CLAUDE.local.md`), the user's choice for an MVP: reading stays open, 
-  so teams can read each other's maps, and that's fine for now. A team 
-  that wants its own gets one by changing that project's setting and 
-  redeploying. Demo, demo-flask and the sandboxes stay open on purpose. 
-  **Adding a team** now includes setting `EDIT_PASSCODE` (step in 
-  `CLAUDE.local.md`). No passcode is ever written in the repo. To 
+  tool (which writes through `turso db shell`) are unaffected. **Only 
+  your own site has a passcode** (since Nov 11). The team sites (Test, 
+  Finito, Vitalitree, Evernear, Elevate, Poold, Ciara) shared one from 
+  Nov 5 to Nov 11; it was removed from all seven (setting deleted, each 
+  redeployed from `stable`), the user's choice after it got in the way 
+  of the skills. They're now open like the demo and sandboxes, protected 
+  only by unlisted addresses and the backups. Caveat, accepted for an 
+  MVP: the repo is public, and six commits from Oct 20–Nov 4 (`3be6de6`, 
+  `46f4f82`, `a0d73f3`, `7db0dd8`, `506b913`, `9fc37f2`) still contain 
+  team site addresses in their history. With no `EDIT_PASSCODE`, the 
+  server ignores any passcode a browser or skill still sends, so nothing 
+  broke. A team that wants protection gets it by setting `EDIT_PASSCODE` 
+  on its project and redeploying. No passcode is ever written in the 
+  repo. To 
   hide the map from readers too, the next step would be Vercel 
   Authentication (free on Pro) plus a protection bypass for the scripts, 
   nightly jobs and skills.
