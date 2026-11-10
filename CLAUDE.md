@@ -614,8 +614,9 @@ create yourself repair your own cognitive debt. AI is a scaffold, not a substitu
   `#1e3a8a` with "Sandbox: try writing waypoints and tours. …". Team sites and your own site set neither (black header). 
   `NEXT_PUBLIC_CANVAS_COLOR` (Nov 10; `CANVAS_COLOR` in 
   `app/lib/project.ts`, same parser) is the map canvas's background, 
-  hex only; keep it light. Unset everywhere but your own site, which 
-  uses light pink `#fce7f3` (the user's choice: "make my canvas pink"). 
+  hex only; keep it light. Unset on every site (your own site tried 
+  light pink `#fce7f3` on Nov 10 and went back to white on Nov 11); set 
+  it on a project, and redeploy, to colour that site's canvas. 
   A third, `NEXT_PUBLIC_START_HERE_TOUR` (Nov 7), names the tour the 
   "Start here" walkthrough opens (else the map's first tour; 
   `pickStartHereTourId` in `app/lib/project.ts`). The demo and your own site set it, 
