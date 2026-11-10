@@ -7,14 +7,14 @@
   },
   "metadata": {
     "description": "Claude Code skills for Cognitive Tours: start a map of an unfamiliar repo, then record and check your own understanding as waypoints and tours.",
-    "version": "0.2.4"
+    "version": "0.2.5"
   },
   "plugins": [
     {
       "name": "cognitive-tours",
       "source": "./plugins/cognitive-tours",
       "description": "Five skills for a Cognitive Tours map: first-tours drafts a starting map of an unfamiliar repo; suggest-waypoint and suggest-tour add your recent work to the map and leave the writing to you; audit-waypoints and audit-tours check the map against the code.",
-      "version": "0.2.4",
+      "version": "0.2.5",
       "author": { "name": "Margaret-Anne Storey", "url": "https://margaretstorey.com" },
       "keywords": ["comprehension", "cognitive-debt", "onboarding", "documentation", "education"],
       "category": "education"

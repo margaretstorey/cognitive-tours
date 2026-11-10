@@ -225,10 +225,30 @@ waypoints, so this only makes it happen once, visibly, in the plan.
 - Never move an existing waypoint except by a shift shown in the plan
   and approved.
 
-**If a request returns 401**, the site has an edit passcode. Ask the
-user for it, and send it in the `x-edit-passcode` header. Keep it out of
-files you leave behind: delete the scratch files at the end, and never
-echo it back.
+**If a request returns 401**, the site has an edit passcode, sent in the
+`x-edit-passcode` header. Never print it, put it in a variable you echo,
+or leave it in a file.
+
+- **First try the macOS Keychain** (when the `security` command exists):
+  the user may have stored it once under the service
+  `cognitive-tours-edit:<site host>` (e.g.
+  `cognitive-tours-edit:cognitive-tours.vercel.app`). Pass it straight to
+  `curl`:
+  `curl … -H @<(printf 'x-edit-passcode: %s\n' "$(security find-generic-password -s 'cognitive-tours-edit:<site host>' -w)")`.
+  Say "using the passcode from your Keychain", never the passcode.
+- **If there's no entry, or it's refused** (or this isn't a Mac), ask the
+  user, but ask them **not to paste it into the chat** (a passcode in a
+  transcript counts as leaked). Offer either:
+  - storing it once in the Keychain, then retrying (it prompts without
+    showing it):
+    `security add-generic-password -a "$USER" -s "cognitive-tours-edit:<site host>" -w`
+  - or writing it, in their own terminal, to a temporary header file in
+    the session's scratch folder
+    (`printf 'x-edit-passcode: %s\n' '<passcode>' > <scratch>/ct-hdr && chmod 600 <scratch>/ct-hdr`),
+    used as `curl -H @<scratch>/ct-hdr` and deleted at the end.
+
+  If they paste it in the chat anyway, use it, and remind them to change
+  it (the site's `EDIT_PASSCODE` setting) afterwards.
 
 **Stop at the first failure.** Report what was created and what wasn't,
 by label. Don't retry blindly and don't delete what was made.

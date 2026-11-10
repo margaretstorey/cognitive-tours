@@ -92,6 +92,18 @@ skill ask once: it offers to remember it for that repo as a line in
 ignores that file. Each map is its own site, so a new repo needs a site of
 its own (or a sandbox, to try things out).
 
+**Edit passcodes.** If your site has an edit passcode, the skills need it
+to add things. Don't paste it into the chat. On a Mac, store it once in
+the Keychain (it asks for the passcode without showing it), with your
+site's address in place of `<your-site>`:
+
+```
+security add-generic-password -a "$USER" -s "cognitive-tours-edit:<your-site>.vercel.app" -w
+```
+
+From then on the skills read it from there and never ask. Elsewhere,
+they'll ask once per session and suggest a safe way to hand it over.
+
 Run them from your repo's folder; they use `git log` to see what changed.
 If your repo uses [Bram](https://github.com/judell/bram), the suggest skills
 also read its worklist history for the "why" behind changes. Not needed.
