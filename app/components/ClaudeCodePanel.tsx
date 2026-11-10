@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { SITE_REPO_URL } from '@/app/lib/repo';
+import { SITE_NOTICE } from '@/app/lib/project';
 
 // The Cognitive Tours plugin for Claude Code (plugins/cognitive-tours in the
 // repo). A web page can't run a skill (skills run in the user's terminal, in
@@ -10,9 +12,19 @@ export const PLUGIN_INSTALL_URL = 'https://github.com/margaretstorey/cognitive-t
 const MARKETPLACE = 'margaretstorey/cognitive-tours';
 export const INSTALL_TERMINAL = `claude plugin install cognitive-tours --marketplace ${MARKETPLACE}`;
 const INSTALL_IN_CLAUDE = `/plugin install cognitive-tours --marketplace ${MARKETPLACE}`;
+export const UPDATE_TERMINAL = 'claude plugin update cognitive-tours';
 
 export function skillCommand(skill: string, origin: string): string {
   return `/cognitive-tours:${skill} site ${origin}`;
+}
+
+// How to start Claude Code in the repo this map describes: a clone command
+// when the site knows its repo (NEXT_PUBLIC_REPO_URL, normalized), else null
+// (the panel then says to cd into your own copy).
+export function startInRepoCommand(repoUrl: string | null): string | null {
+  if (!repoUrl) return null;
+  const name = repoUrl.replace(/\/+$/, '').split('/').pop();
+  return name ? `git clone ${repoUrl} && cd ${name} && claude` : null;
 }
 
 const noSubscribe = () => () => {};
@@ -62,8 +74,8 @@ export function CopyCommand({
 
 const SKILLS: { name: string; when: string }[] = [
   { name: 'first-tours', when: 'A repo you don’t know yet: drafts a starting map, for you to check and rewrite.' },
-  { name: 'suggest-waypoint', when: 'After a work session: asks you about what changed, so you record it.' },
-  { name: 'suggest-tour', when: 'Fits new waypoints into tours; you write each stop’s narrative.' },
+  { name: 'suggest-waypoint', when: 'After a work session: finds what’s worth recording and, after you OK it, adds it to the map for you to describe.' },
+  { name: 'suggest-tour', when: 'Fits new waypoints into tours after you OK it; you write each stop’s narrative.' },
   { name: 'audit-waypoints', when: 'Checks waypoints against the code they link to.' },
   { name: 'audit-tours', when: 'Finds recent changes no waypoint or tour covers, and stale narratives.' },
 ];
@@ -119,27 +131,56 @@ export function ClaudeCodeSkillsButton({ mapIsEmpty }: { mapIsEmpty: boolean }) 
               </button>
             </div>
             <div className="flex flex-col gap-4 px-6 pb-6 overflow-y-auto text-sm text-gray-700">
-              <p>
+              <p data-testid="skills-intro">
                 Five skills for <a className="underline" href="https://claude.com/claude-code" target="_blank" rel="noopener noreferrer">Claude Code</a>,
-                run in your own repo. Apart from first-tours, they ask you questions and report; you write
-                the map yourself.
+                run in a copy of the repo this map describes. The suggest skills add the waypoints, links
+                and tour stops you approve; you write the descriptions and narratives. The audit skills only
+                read and report. first-tours drafts a whole starting map, marked as drafted.
               </p>
 
               <section aria-label="Install">
-                <h3 className="font-semibold text-gray-900">1. Install once, in your terminal</h3>
+                <h3 className="font-semibold text-gray-900">
+                  1. You need <a className="underline" href="https://claude.com/claude-code" target="_blank" rel="noopener noreferrer">Claude Code</a>, and the plugin, installed once in your terminal
+                </h3>
                 <div className="mt-1.5">
                   <CopyCommand command={INSTALL_TERMINAL} testId="install-command" />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  Or inside Claude Code: <code>{INSTALL_IN_CLAUDE}</code>.{' '}
+                  Or inside Claude Code: <code>{INSTALL_IN_CLAUDE}</code>. Already installed? Update it:{' '}
+                  <code data-testid="update-command">{UPDATE_TERMINAL}</code>.{' '}
                   <a className="underline hover:text-gray-700" href={PLUGIN_INSTALL_URL} target="_blank" rel="noopener noreferrer">
                     More
                   </a>
                 </p>
               </section>
 
+              <section aria-label="Start Claude Code">
+                <h3 className="font-semibold text-gray-900">2. Open the repo this map describes, and start Claude Code there</h3>
+                {startInRepoCommand(SITE_REPO_URL) ? (
+                  <>
+                    <p className="mt-1">
+                      This map describes <a className="underline" href={SITE_REPO_URL!} target="_blank" rel="noopener noreferrer">{SITE_REPO_URL!.replace(/^https?:\/\//, '')}</a>.
+                      If you don’t have a copy yet:
+                    </p>
+                    <div className="mt-1.5">
+                      <CopyCommand command={startInRepoCommand(SITE_REPO_URL)!} testId="start-command" />
+                    </div>
+                  </>
+                ) : (
+                  <p className="mt-1" data-testid="start-steps">
+                    In a terminal, go to your copy of the repo this map describes (<code>cd</code> into its
+                    folder), then type <code>claude</code>.
+                  </p>
+                )}
+                {SITE_NOTICE?.toLowerCase().includes('reset') && (
+                  <p className="mt-1 text-xs text-amber-700" data-testid="reset-note">
+                    Anything you add to this map is reset every hour.
+                  </p>
+                )}
+              </section>
+
               <section aria-label="Skills">
-                <h3 className="font-semibold text-gray-900">2. Then, in Claude Code, in your repo’s folder</h3>
+                <h3 className="font-semibold text-gray-900">3. Then paste a command, with this map’s address</h3>
                 <p className="mt-1" data-testid="first-time-note">
                   The first time, copy a full command below: it tells the skill which map is yours, and the
                   skill offers to remember it. After that, just type <code>/cognitive-tours:</code> and the

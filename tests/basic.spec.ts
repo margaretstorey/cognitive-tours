@@ -9,6 +9,7 @@ import { parseSiteColor, parseSiteNotice, pickStartHereTourId } from '../app/lib
 import { resetPlan } from '../app/api/reset-nightly/reset';
 import { EDIT_PASSCODE_HEADER, editAllowed, requireEditPasscode } from '../app/lib/edit-passcode';
 import { START_HERE_SEEN_KEY } from '../app/components/StartHere';
+import { startInRepoCommand } from '../app/components/ClaudeCodePanel';
 import { keepPositions } from './keep-positions';
 
 keepPositions(test);
@@ -942,6 +943,12 @@ test.describe('Claude Code skills panel', () => {
     }
     await expect(dialog.getByTestId('first-time-note')).toContainText('The first time, copy a full command');
     await expect(dialog.getByTestId('first-time-note')).toContainText('Or just ask Claude Code in your own words');
+    // How to get there: Claude Code, an update line, and (no repo set on the
+    // test site) cd into your copy, then `claude`. No reset note off the demo.
+    await expect(dialog.getByTestId('skills-intro')).toContainText('The suggest skills add the waypoints');
+    await expect(dialog.getByTestId('update-command')).toHaveText('claude plugin update cognitive-tours');
+    await expect(dialog.getByTestId('start-steps')).toContainText('then type claude');
+    await expect(dialog.getByTestId('reset-note')).toHaveCount(0);
     // This map has waypoints, so first-tours says it's meant for an empty one.
     await expect(dialog.getByTestId('skill-first-tours')).toContainText('Meant for an empty map');
 
@@ -954,6 +961,16 @@ test.describe('Claude Code skills panel', () => {
 
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
+  });
+
+  test('a site that knows its repo offers a clone-and-start command', () => {
+    expect(startInRepoCommand('https://github.com/margaretstorey/cognitive-tours')).toBe(
+      'git clone https://github.com/margaretstorey/cognitive-tours && cd cognitive-tours && claude',
+    );
+    expect(startInRepoCommand('https://github.com/acme-startup/acme/')).toBe(
+      'git clone https://github.com/acme-startup/acme/ && cd acme && claude',
+    );
+    expect(startInRepoCommand(null)).toBeNull();
   });
 
   test('Escape closes the panel without leaving an active tour', async ({ page }) => {
